@@ -1,0 +1,21 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "travelee",
+      "path": "./apps/travelee"
+    }
+  ],
+  "settings": {
+    "githubPullRequests.ignoredPullRequestBranches": ["main"],
+    "todo-tree.tree.scanMode": "workspace only",
+    "workbench.tree.expandMode": "singleClick",
+    "workbench.tree.indent": 16,
+    "workbench.tree.renderIndentGuides": "always",
+    "workbench.tree.enableStickyScroll": true,
+    "workbench.tree.stickyScrollMaxItemCount": 3
+  }
+}
