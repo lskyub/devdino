@@ -1,0 +1,26 @@
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="28" height="28" fill="#1E1E1E" />
+    <g
+        id="&#235;&#169;&#148;&#235;&#137;&#180; &#237;&#149;&#132;&#237;&#132;&#176; &#234;&#184;&#176;&#235;&#138;&#165; &#236;&#182;&#148;&#234;&#176;&#128; &#235;&#148;&#148;&#236;&#158;&#144;&#236;&#157;&#184; &#234;&#176;&#128;&#236;&#157;&#180;&#235;&#147;&#156;">
+        <path d="M-4790 -7131H2842V5251H-4790V-7131Z" fill="#404040" />
+        <path
+            d="M-4790 -7131V-7132H-4791V-7131H-4790ZM2842 -7131H2843V-7132H2842V-7131ZM2842 5251V5252H2843V5251H2842ZM-4790 5251H-4791V5252H-4790V5251ZM-4790 -7130H2842V-7132H-4790V-7130ZM2841 -7131V5251H2843V-7131H2841ZM2842 5250H-4790V5252H2842V5250ZM-4789 5251V-7131H-4791V5251H-4789Z"
+            fill="white" fill-opacity="0.1" />
+        <g id="svg icon">
+            <rect width="256" height="258" transform="translate(-100 -188)" fill="white" />
+            <g id="Checkbox">
+                <rect x="-69.5" y="-19.5" width="124" height="67" rx="11.5" fill="white" />
+                <rect x="-69.5" y="-19.5" width="124" height="67" rx="11.5" stroke="#9747FF"
+                    stroke-dasharray="10 5" />
+                <g id="state=black check">
+                    <rect id="Rectangle 980" x="0.5" y="0.5" width="27" height="27" rx="5.5"
+                        fill="#2E3137" stroke="#2E3137" />
+                    <g id="check box_sel">
+                        <path id="Path 2" d="M8 14L11.9948 18.5L21.5 9" stroke="white"
+                            stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

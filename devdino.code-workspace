@@ -7,6 +7,10 @@
     {
       "name": "travelee",
       "path": "./apps/travelee"
+    },
+    {
+      "name": "design_systems",
+      "path": "./packages/design_systems"
     }
   ],
   "settings": {
