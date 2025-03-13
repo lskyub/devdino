@@ -7,27 +7,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mix/mix.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:design_systems/b2b/b2b.dart';
-import 'package:travelee/router.dart';
-import 'package:travelee/screen/firstscreen.dart';
+import 'package:travelee/providers/travel_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travelee/screen/input/travel_detail_screen.dart';
 
-class DateScreen extends ConsumerStatefulWidget {
+class DateScreen extends ConsumerWidget {
   static const routeName = 'date';
   static const routePath = '/date';
 
   const DateScreen({super.key});
-
-  @override
-  ConsumerState<DateScreen> createState() => _ScheduleScreenState();
-}
-
-class _ScheduleScreenState extends ConsumerState<DateScreen> {
-  String start = '-';
-  String end = '-';
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
@@ -35,7 +23,9 @@ class _ScheduleScreenState extends ConsumerState<DateScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final travelInfo = ref.watch(travelInfoProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -83,12 +73,12 @@ class _ScheduleScreenState extends ConsumerState<DateScreen> {
                 minDate: DateTime(DateTime.now().year - 1),
                 maxDate: DateTime(DateTime.now().year + 5),
                 onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                  setState(() {
-                    if (args.value is PickerDateRange) {
-                      start = _formatDate(args.value.startDate);
-                      end = _formatDate(args.value.endDate);
-                    }
-                  });
+                  if (args.value is PickerDateRange) {
+                    ref.read(travelInfoProvider.notifier).setDates( 
+                          args.value.startDate,
+                          args.value.endDate,
+                        );
+                  }
                 },
                 selectionMode: DateRangePickerSelectionMode.range,
                 monthCellStyle: DateRangePickerMonthCellStyle(
@@ -157,7 +147,7 @@ class _ScheduleScreenState extends ConsumerState<DateScreen> {
                       ),
                       B2bText.regular(
                         type: B2bTextType.body2,
-                        text: start,
+                        text: _formatDate(travelInfo.startDate),
                         color: $b2bToken.color.gray500.resolve(context),
                       ),
                       Divider(
@@ -180,7 +170,7 @@ class _ScheduleScreenState extends ConsumerState<DateScreen> {
                       ),
                       B2bText.regular(
                         type: B2bTextType.body2,
-                        text: end,
+                        text: _formatDate(travelInfo.endDate),
                         color: $b2bToken.color.gray500.resolve(context),
                       ),
                       Divider(
@@ -208,7 +198,9 @@ class _ScheduleScreenState extends ConsumerState<DateScreen> {
               child: B2bButton.medium(
                 title: '새 여행 만들기',
                 type: B2bButtonType.primary,
-                onTap: () {},
+                onTap: () {
+                  GoRouter.of(context).push(TravelDetailScreen.routePath);
+                },
               ),
             ),
           )

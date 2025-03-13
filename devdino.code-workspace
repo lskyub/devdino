@@ -21,5 +21,6 @@
     "workbench.tree.renderIndentGuides": "always",
     "workbench.tree.enableStickyScroll": true,
     "workbench.tree.stickyScrollMaxItemCount": 3
-  }
+  },
+  "melos.executable.path": "/Users/devdino/.pub-cache/bin/melos"
 }

@@ -1,7 +1,6 @@
 import 'package:design_systems/b2b/components/buttons/button.variant.dart';
 import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
-import 'package:design_systems/b2b/components/dropdown/dropdown.dart';
 import 'package:design_systems/b2b/components/textfield/textfield.dart';
 import 'package:design_systems/b2b/components/textfield/textfield.variant.dart';
 import 'package:flutter/material.dart';

@@ -20,7 +20,7 @@ class B2bDropdown extends StatefulWidget {
   B2bDropdown({
     super.key,
     required this.defaultValue,
-    required List<String> this.dropdownList,
+    required this.dropdownList,
     this.selectIndex = 0,
     this.errorText = '',
     required this.isEnabled,

@@ -10,7 +10,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {
@@ -24,6 +28,11 @@ class MyApp extends ConsumerWidget {
     return MixTheme(
       data: b2bTheme,
       child: MaterialApp.router(
+        title: 'Travelee',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
         supportedLocales: const [
           Locale('ko', 'KR'),
           Locale('en', 'US'),

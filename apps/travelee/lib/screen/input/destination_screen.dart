@@ -7,30 +7,20 @@ import 'package:design_systems/b2b/components/buttons/button.variant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:travelee/router.dart';
-import 'package:travelee/screen/input/datescreen.dart';
+import 'package:travelee/screen/input/date_screen.dart';
+import 'package:travelee/providers/travel_provider.dart';
 
 final searchTextProvider = StateProvider<String>((ref) => '');
-final destinationsProvider = StateProvider<List<String>>((ref) => []);
 
-class DestinationScreen extends ConsumerStatefulWidget {
+class DestinationScreen extends ConsumerWidget {
   static const routeName = 'destination';
   static const routePath = '/destination';
 
   const DestinationScreen({super.key});
 
   @override
-  ConsumerState<DestinationScreen> createState() => _DestinationScreenState();
-}
-
-class _DestinationScreenState extends ConsumerState<DestinationScreen> {
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final destinations = ref.watch(destinationsProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final travelInfo = ref.watch(travelInfoProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -63,10 +53,14 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                 showPhoneCode: false,
                 exclude: ['KR', 'US'],
                 onSelect: (Country country) {
-                  ref.read(destinationsProvider.notifier).state = [
-                    ...destinations,
-                    country.nameLocalized ?? country.name,
-                  ];
+                  // ref.read(destinationsProvider.notifier).state = [
+                  //   ...destinations,
+                  //   country.nameLocalized ?? country.name,
+                  // ];
+
+                  ref.read(travelInfoProvider.notifier).setDestination(
+                        country.nameLocalized ?? country.name,
+                      );
                 },
                 countryListTheme: CountryListThemeData(
                   backgroundColor: Colors.white,
@@ -121,18 +115,11 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
           Expanded(
             child: Stack(
               children: [
-                if (destinations.isEmpty) ...{
-                  Center(
-                    child: B2bText.regular(
-                      type: B2bTextType.display,
-                      text: '여행 목적지를 추가해주세요.',
-                    ),
-                  )
-                },
+                if (travelInfo.destination.isEmpty) ...{},
                 ListView.builder(
-                  itemCount: destinations.length,
+                  itemCount: travelInfo.destination.length,
                   itemBuilder: (context, index) {
-                    final destination = destinations[index];
+                    final data = travelInfo.destination[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -143,7 +130,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                         children: [
                           B2bText.regular(
                             type: B2bTextType.body4,
-                            text: destination,
+                            text: data,
                           ),
                           IconButton(
                             icon: Icon(
@@ -151,10 +138,9 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                               color: $b2bToken.color.gray400.resolve(context),
                             ),
                             onPressed: () {
-                              ref.read(destinationsProvider.notifier).state =
-                                  destinations
-                                      .where((d) => d != destination)
-                                      .toList();
+                              ref
+                                  .read(travelInfoProvider.notifier)
+                                  .setDestination(data);
                             },
                           ),
                         ],
@@ -178,7 +164,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                 title: '다음',
                 type: B2bButtonType.primary,
                 onTap: () {
-                  if (destinations.isEmpty) {
+                  if (travelInfo.destination.isEmpty) {
                     return;
                   }
                   ref.read(routerProvider).push(DateScreen.routePath);

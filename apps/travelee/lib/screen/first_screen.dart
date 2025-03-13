@@ -1,15 +1,11 @@
 import 'package:design_systems/b2b/b2b.dart';
 import 'package:design_systems/b2b/components/buttons/button.variant.dart';
-import 'package:design_systems/b2b/components/dialog/dialog.dart';
-import 'package:design_systems/b2b/components/dialog/dialog.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelee/router.dart';
-import 'package:travelee/screen/input/destinationscreen.dart';
-import 'package:travelee/screen/schedulescreen.dart';
-import 'package:travelee/screen/writescreen.dart';
+import 'package:travelee/screen/input/destination_screen.dart';
 
 class FirstScreen extends ConsumerWidget {
   static const routeName = 'inital';
