@@ -11,6 +11,7 @@ class B2bTextField extends StatefulWidget {
   final Widget? leading;
   final Widget? trailing;
   final String? Function(String)? onChanged;
+  String initialValue;
   String title;
   String hint;
   String errorText;
@@ -27,6 +28,7 @@ class B2bTextField extends StatefulWidget {
     this.leading,
     this.trailing,
     this.onChanged,
+    this.initialValue = '',
     this.title = '',
     this.errorText = '',
     this.hint = '',
@@ -42,7 +44,7 @@ class B2bTextField extends StatefulWidget {
 
 class _B2bTextFieldState extends State<B2bTextField> {
   final FocusNode _focusNode = FocusNode();
-  final TextEditingController _controller = TextEditingController();
+  late TextEditingController _controller;
   String _errorText = '';
   bool _isFocused = false;
 
@@ -58,6 +60,7 @@ class _B2bTextFieldState extends State<B2bTextField> {
   @override
   void initState() {
     super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
     _errorText = widget.errorText;
     _focusNode.removeListener(listener);
     _focusNode.addListener(listener);

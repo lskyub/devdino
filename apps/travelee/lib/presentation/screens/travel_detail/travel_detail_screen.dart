@@ -133,6 +133,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         date: date,
         countryName: travelInfo.destination.isNotEmpty ? travelInfo.destination.first : '',
         flagEmoji: travelInfo.countryInfos.isNotEmpty ? travelInfo.countryInfos.first.flagEmoji : '',
+        countryCode: travelInfo.countryInfos.isNotEmpty ? travelInfo.countryInfos.first.countryCode : '',
         dayNumber: dayNumber,
         schedules: schedulesForDay,
       );

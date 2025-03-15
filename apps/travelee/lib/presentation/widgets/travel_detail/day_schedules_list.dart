@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/b2b/components/text/text.dart';
+import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:travelee/components/travel_day_card.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
@@ -129,20 +132,26 @@ class DaySchedulesList extends ConsumerWidget {
   
   /// 드래그 앤 드롭 처리 핸들러
   void _handleDragAccept(WidgetRef ref, TravelDragDropManager dragDropManager, Map<String, dynamic> data, DayScheduleData updatedDaySchedule) {
-    final scheduleIds = data['scheduleIds'] as List<String>;
+    final scheduleIds = data['scheduleIds'] as List<dynamic>;
     final sourceDate = data['date'] as DateTime;
     final sourceDayNumber = data['dayNumber'] as int;
     final sourceCountry = data['country'] as String;
-    final sourceCountryFlag = data['countryFlag'] as String;
+    
+    // countryFlag 대신 countryCode로 변경
+    // 호환성을 위해 'countryFlag'와 'countryCode' 둘 다 체크
+    final String? sourceCountryCode = data.containsKey('countryCode') ? data['countryCode'] as String? : null;
+    final String? sourceCountryFlag = data.containsKey('countryFlag') ? data['countryFlag'] as String? : null;
+    
+    dev.log('드래그 데이터: countryCode=$sourceCountryCode, countryFlag=$sourceCountryFlag');
     
     dragDropManager.handleDragAccept(
       travelId: travelInfo.id,
       sourceDate: sourceDate,
       targetDate: updatedDaySchedule.date,
-      scheduleIds: scheduleIds,
+      scheduleIds: scheduleIds.cast<String>(), // 추가 안전 캐스팅
       sourceDayNumber: sourceDayNumber,
       sourceCountry: sourceCountry,
-      sourceCountryFlag: sourceCountryFlag,
+      sourceCountryFlag: sourceCountryCode ?? sourceCountryFlag ?? '', // countryCode 우선, 없으면 flag 사용
     );
     
     // 컨트롤러에 수정 플래그 설정

@@ -32,7 +32,8 @@ class EditTravelDialog extends StatefulWidget {
     return showModalBottomSheet<Map<String, dynamic>>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
+      useSafeArea: true,
       builder: (context) => EditTravelDialog(
         initialDestination: initialDestination,
         initialCountryInfos: initialCountryInfos,

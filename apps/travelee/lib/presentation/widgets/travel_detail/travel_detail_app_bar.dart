@@ -6,7 +6,6 @@ import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:travelee/utils/travel_dialog_manager.dart';
 import 'package:travelee/data/controllers/travel_detail_controller.dart';
-import 'dart:developer' as dev;
 
 /// 여행 상세 화면의 앱바 위젯
 class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {

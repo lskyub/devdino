@@ -7,6 +7,7 @@ import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/screen/input/schedule_detail_screen.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
+import 'package:country_icons/country_icons.dart';
 
 /**
  * TravelDayCard
@@ -46,20 +47,20 @@ class TravelDayCard extends ConsumerWidget {
 
     // 최신 국가 정보 (없으면 daySchedule의 기본값 사용)
     final countryName = latestDayData?.countryName ?? daySchedule.countryName;
-    final flagEmoji = latestDayData?.flagEmoji ?? daySchedule.flagEmoji;
+    final countryCode = latestDayData?.countryCode ?? daySchedule.countryCode;
 
     // 디버그 로그
     print(
-        'TravelDayCard - build: 날짜=$dateKey, 국가=$countryName, 플래그=$flagEmoji');
+        'TravelDayCard - build: 날짜=$dateKey, 국가=$countryName, 코드=$countryCode');
 
     // 드래그 가능 여부에 따라 다른 컨텐츠 반환
     return isDraggable
-        ? _buildDraggableContent(context, ref, countryName, flagEmoji)
-        : _buildStaticContent(context, countryName, flagEmoji);
+        ? _buildDraggableContent(context, ref, countryName, countryCode)
+        : _buildStaticContent(context, countryName, countryCode);
   }
 
   Widget _buildDraggableContent(BuildContext context, WidgetRef ref,
-      String countryName, String flagEmoji) {
+      String countryName, String countryCode) {
     return DragTarget<Map<String, dynamic>>(
       onAccept: onAccept,
       builder: (context, candidateData, rejectedData) {
@@ -69,19 +70,19 @@ class TravelDayCard extends ConsumerWidget {
             'date': daySchedule.date,
             'dayNumber': daySchedule.dayNumber,
             'country': countryName,
-            'countryFlag': flagEmoji,
+            'countryCode': countryCode,
           },
-          feedback: _buildCardFeedback(context, countryName, flagEmoji),
+          feedback: _buildCardFeedback(context, countryName, countryCode),
           childWhenDragging: Opacity(
             opacity: 0.3,
-            child: _buildCardContent(context, ref, countryName, flagEmoji,
+            child: _buildCardContent(context, ref, countryName, countryCode,
                 isAccepting: false),
           ),
           child: _buildCardContent(
             context,
             ref,
             countryName,
-            flagEmoji,
+            countryCode,
             isAccepting: candidateData.isNotEmpty,
           ),
         );
@@ -90,19 +91,19 @@ class TravelDayCard extends ConsumerWidget {
   }
 
   Widget _buildStaticContent(
-      BuildContext context, String countryName, String flagEmoji) {
+      BuildContext context, String countryName, String countryCode) {
     // 상위 빌드 메서드에서 ref를 받아오기 때문에 WidgetRef를 파라미터로 전달할 수 없음
     // Consumer 위젯으로 감싸서 ref에 접근
     return Consumer(
       builder: (context, ref, child) {
-        return _buildCardContent(context, ref, countryName, flagEmoji,
+        return _buildCardContent(context, ref, countryName, countryCode,
             isAccepting: false);
       },
     );
   }
 
   Widget _buildCardFeedback(
-      BuildContext context, String countryName, String flagEmoji) {
+      BuildContext context, String countryName, String countryCode) {
     return Opacity(
       opacity: 0.8,
       child: Material(
@@ -111,7 +112,7 @@ class TravelDayCard extends ConsumerWidget {
           // 여기서도 ref가 필요하지만 실제로는 사용하지 않으므로 피드백에서는 일부 기능 제한
           child: Consumer(
             builder: (context, ref, child) {
-              return _buildCardContent(context, ref, countryName, flagEmoji,
+              return _buildCardContent(context, ref, countryName, countryCode,
                   isAccepting: false);
             },
           ),
@@ -120,8 +121,8 @@ class TravelDayCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildCardContent(
-      BuildContext context, WidgetRef ref, String countryName, String flagEmoji,
+  Widget _buildCardContent(BuildContext context, WidgetRef ref,
+      String countryName, String countryCode,
       {required bool isAccepting}) {
     return GestureDetector(
       onTap: () async {
@@ -143,11 +144,20 @@ class TravelDayCard extends ConsumerWidget {
         // 결과 확인 및 로깅
         if (result != null && result is Map<String, dynamic>) {
           print('TravelDayCard - ScheduleDetailScreen 결과: $result');
-          final updatedCountry = result['country'] as String?;
-          final updatedFlag = result['flag'] as String?;
 
-          if (updatedCountry != null && updatedFlag != null) {
-            print('TravelDayCard - 국가 정보 업데이트: $updatedCountry $updatedFlag');
+          // 다음 키들이 있는지 확인
+          final updatedCountry = result.containsKey('country')
+              ? result['country'] as String?
+              : null;
+          final updatedCode = result.containsKey('countryCode')
+              ? result['countryCode'] as String?
+              : null;
+          final updatedFlag =
+              result.containsKey('flag') ? result['flag'] as String? : null;
+
+          if (updatedCountry != null) {
+            print(
+                'TravelDayCard - 국가 정보 업데이트: $updatedCountry ${updatedCode ?? "코드 없음"} ${updatedFlag ?? "플래그 없음"}');
           }
         }
       },
@@ -180,45 +190,54 @@ class TravelDayCard extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: $b2bToken.color.primary
-                            .resolve(context)
-                            .withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: B2bText.bold(
-                          type: B2bTextType.body1,
-                          text: '${daySchedule.dayNumber}',
-                          color: $b2bToken.color.primary.resolve(context),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: $b2bToken.color.gray100.resolve(context),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: $b2bToken.color.gray100.resolve(context),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.zero,
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: CountryIcons.getSvgFlag(countryCode),
+                            ),
+                          ),
                         ),
-                      ),
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ),
+                        B2bText.bold(
+                          type: B2bTextType.body1,
+                          text: 'D${daySchedule.dayNumber}',
+                          color: $b2bToken.color.white.resolve(context),
+                        )
+                      ],
                     ),
                     const SizedBox(width: 8),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (flagEmoji.isNotEmpty) ...[
-                              Text(
-                                flagEmoji,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(width: 4),
-                            ],
-                            B2bText.regular(
-                              type: B2bTextType.body2,
-                              text: countryName,
-                              color:
-                                  $b2bToken.color.labelNomal.resolve(context),
-                            ),
-                          ],
-                        ),
                         B2bText.regular(
+                          type: B2bTextType.caption1,
+                          text: countryName,
+                          color: $b2bToken.color.labelNomal.resolve(context),
+                        ),
+                        B2bText.medium(
                           type: B2bTextType.body2,
                           text: formatDate(daySchedule.date),
                           color: $b2bToken.color.labelNomal.resolve(context),
@@ -252,7 +271,7 @@ class TravelDayCard extends ConsumerWidget {
             // const SizedBox(height: 16),
             if (daySchedule.schedules.isEmpty) ...[
               B2bText.regular(
-                type: B2bTextType.body2,
+                type: B2bTextType.body4,
                 text: '아직 일정이 없습니다. 탭하여 일정을 추가하세요.',
                 color: $b2bToken.color.gray400.resolve(context),
               ),
@@ -273,17 +292,17 @@ class TravelDayCard extends ConsumerWidget {
         '${schedule.time.hour.toString().padLeft(2, '0')}:${schedule.time.minute.toString().padLeft(2, '0')}';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
             decoration: BoxDecoration(
               color: $b2bToken.color.gray100.resolve(context),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(15),
             ),
             child: B2bText.medium(
-              type: B2bTextType.body2,
+              type: B2bTextType.body3,
               text: timeStr,
               color: $b2bToken.color.labelNomal.resolve(context),
             ),
@@ -291,7 +310,7 @@ class TravelDayCard extends ConsumerWidget {
           const SizedBox(width: 8),
           Expanded(
             child: B2bText.regular(
-              type: B2bTextType.body2,
+              type: B2bTextType.body3,
               text: schedule.location,
               color: $b2bToken.color.labelNomal.resolve(context),
             ),

@@ -28,7 +28,7 @@ class TravelDragDropManager {
    * @param scheduleIds 이동할 일정 ID 목록
    * @param sourceDayNumber 원본 Day 번호
    * @param sourceCountry 원본 국가
-   * @param sourceCountryFlag 원본 국가 플래그
+   * @param sourceCountryFlag 원본 국가 코드 또는 플래그 (호환성 유지를 위해 파라미터명은 유지)
    */
   void handleDragAccept({
     required String travelId,

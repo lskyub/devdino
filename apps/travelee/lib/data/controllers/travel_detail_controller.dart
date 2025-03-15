@@ -78,6 +78,7 @@ class TravelDetailController {
           countryName: dayData.countryName,
           flagEmoji: dayData.flagEmoji,
           dayNumber: dayData.dayNumber,
+          countryCode: dayData.countryCode,
           schedules: dayData.schedules.map((schedule) {
             return Schedule(
               id: schedule.id,
