@@ -912,12 +912,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               final sourceDayNumber = data['dayNumber'] as int;
               final sourceCountry = data['country'] as String;
               
-              // countryFlag 대신 countryCode로 변경
-              // 호환성을 위해 'countryFlag'와 'countryCode' 둘 다 체크
-              final String? sourceCountryCode = data.containsKey('countryCode') ? data['countryCode'] as String? : null;
-              final String? sourceCountryFlag = data.containsKey('countryFlag') ? data['countryFlag'] as String? : null;
+              // 항상 countryCode 키를 우선 확인
+              final String sourceCountryCode = data.containsKey('countryCode') 
+                  ? (data['countryCode'] as String? ?? '') // null이면 빈 문자열로
+                  : ''; // 키가 없으면 빈 문자열로
               
-              dev.log('드래그 데이터: countryCode=$sourceCountryCode, countryFlag=$sourceCountryFlag');
+              // 로그 추가
+              dev.log('드래그 데이터 수신: 국가=$sourceCountry, 코드=$sourceCountryCode');
 
               dragDropManager.handleDragAccept(
                 travelId: travelInfo.id,
@@ -926,7 +927,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                 scheduleIds: scheduleIds.cast<String>(),
                 sourceDayNumber: sourceDayNumber,
                 sourceCountry: sourceCountry,
-                sourceCountryFlag: sourceCountryCode ?? sourceCountryFlag ?? '',
+                sourceCountryFlag: sourceCountryCode, // countryCode 값 전달
               );
 
               _setModified(); // 드래그 앤 드롭 시 수정 플래그 설정

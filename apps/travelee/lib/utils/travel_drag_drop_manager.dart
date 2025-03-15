@@ -94,10 +94,12 @@ class TravelDragDropManager {
       // 소스 국가 정보 확정 (항상 전달받은 파라미터 사용 - 가장 최신 정보)
       String sourceCountryName = sourceCountry;
       String sourceFlagEmoji = sourceCountryFlag;
+      String sourceCountryCode = sourceCountryFlag;
       
       // 타겟 국가 정보 확정 (타겟에 데이터가 있으면 그것을 사용)
       String targetCountryName = targetDayData?.countryName ?? "";
       String targetFlagEmoji = targetDayData?.flagEmoji ?? "";
+      String targetCountryCode = targetDayData?.countryCode ?? "";
       
       // 양쪽 다 데이터가 있는 경우 - 완전 교환
       if (!isSourceEmpty && !isTargetEmpty) {
@@ -128,14 +130,17 @@ class TravelDragDropManager {
         // 5.3. 국가 정보 교환 (명시적으로 저장)
         String tempCountryName = sourceCountryName;
         String tempFlagEmoji = sourceFlagEmoji;
+        String tempCountryCode = sourceCountryCode;
         
         // 소스 → 타겟의 국가 정보로 변경
         sourceCountryName = targetCountryName;
         sourceFlagEmoji = targetFlagEmoji;
+        sourceCountryCode = targetCountryCode;
         
         // 타겟 → 소스의 국가 정보로 변경
         targetCountryName = tempCountryName;
         targetFlagEmoji = tempFlagEmoji;
+        targetCountryCode = tempCountryCode;
         
         // 이모지 확인 및 설정 - 국가 정보는 있는데 이모지가 없는 경우
         if (sourceCountryName.isNotEmpty && (sourceFlagEmoji.isEmpty || sourceFlagEmoji == "🏳️")) {
@@ -162,6 +167,7 @@ class TravelDragDropManager {
         updatedDayDataMap[sourceDateKey] = sourceDayData!.copyWith(
           countryName: sourceCountryName,
           flagEmoji: sourceFlagEmoji,
+          countryCode: sourceCountryCode,
           schedules: targetExistingSchedules.map((s) => s.copyWith(
             date: sourceDate,
             dayNumber: sourceDayNumber,
@@ -172,6 +178,7 @@ class TravelDragDropManager {
         updatedDayDataMap[targetDateKey] = targetDayData!.copyWith(
           countryName: targetCountryName, 
           flagEmoji: targetFlagEmoji,
+          countryCode: targetCountryCode,
           schedules: schedulesToMove.map((s) => s.copyWith(
             date: targetDate,
             dayNumber: targetDayNumber,
@@ -196,6 +203,7 @@ class TravelDragDropManager {
         // 5.2. 국가 정보 교환 (명시적으로 저장)
         String tempCountryName = sourceCountryName;
         String tempFlagEmoji = sourceFlagEmoji;
+        String tempCountryCode = sourceCountryCode;
         
         // 소스 → 타겟의 국가 정보로 변경 (타겟이 비어있으면 비워두지 않고 기본 국가 사용)
         sourceCountryName = targetCountryName.isNotEmpty ? targetCountryName : 
@@ -205,6 +213,7 @@ class TravelDragDropManager {
         // 타겟 → 소스의 국가 정보로 변경
         targetCountryName = tempCountryName;
         targetFlagEmoji = tempFlagEmoji;
+        targetCountryCode = tempCountryCode;
         
         // 빈 값 검사 - 타겟 국가가 비어있으면 소스의 값을 그대로 사용
         if (targetCountryName.isEmpty && currentTravel.destination.isNotEmpty) {
@@ -242,6 +251,7 @@ class TravelDragDropManager {
           updatedDayDataMap[sourceDateKey] = sourceDayData.copyWith(
             countryName: sourceCountryName,
             flagEmoji: sourceFlagEmoji,
+            countryCode: sourceCountryCode,
             schedules: remainingSourceSchedules,
           );
         } else {
@@ -250,6 +260,7 @@ class TravelDragDropManager {
             date: sourceDate,
             countryName: sourceCountryName,
             flagEmoji: sourceFlagEmoji,
+            countryCode: sourceCountryCode,
             dayNumber: sourceDayNumber,
             schedules: remainingSourceSchedules,
           );
@@ -260,6 +271,7 @@ class TravelDragDropManager {
           updatedDayDataMap[targetDateKey] = targetDayData.copyWith(
             countryName: targetCountryName,
             flagEmoji: targetFlagEmoji,
+            countryCode: targetCountryCode,
             schedules: targetExistingSchedules + schedulesToMove.map((s) => s.copyWith(
               date: targetDate,
               dayNumber: targetDayNumber,
@@ -271,6 +283,7 @@ class TravelDragDropManager {
             date: targetDate,
             countryName: targetCountryName,
             flagEmoji: targetFlagEmoji,
+            countryCode: targetCountryCode,
             dayNumber: targetDayNumber,
             schedules: schedulesToMove.map((s) => s.copyWith(
               date: targetDate,
@@ -286,7 +299,14 @@ class TravelDragDropManager {
         dayDataMap: updatedDayDataMap,
       );
       
-      // 7. 여행 정보 업데이트
+      // 업데이트된 국가 정보 로그 출력
+      final updatedSourceDayData = updatedDayDataMap[sourceDateKey];
+      final updatedTargetDayData = updatedDayDataMap[targetDateKey];
+      
+      dev.log('업데이트 완료 - 소스 국가 정보: ${updatedSourceDayData?.countryName ?? "없음"}, 코드: ${updatedSourceDayData?.countryCode ?? "없음"}');
+      dev.log('업데이트 완료 - 타겟 국가 정보: ${updatedTargetDayData?.countryName ?? "없음"}, 코드: ${updatedTargetDayData?.countryCode ?? "없음"}');
+      
+      // 7. 변경사항 저장
       ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
       
       // 8. 변경 사항 즉시 저장
@@ -297,26 +317,8 @@ class TravelDragDropManager {
       dev.log('드래그한 일정 수: ${schedulesToMove.length}개');
       dev.log('타겟 기존 일정 수: ${targetExistingSchedules.length}개');
       
-      // 국가 정보 교환 결과 확인 로그
-      final updatedSourceData = updatedDayDataMap[sourceDateKey];
-      final updatedTargetData = updatedDayDataMap[targetDateKey];
-      
-      dev.log('국가 정보 교환 결과:');
-      dev.log('- 소스 국가 정보: ${updatedSourceData?.countryName ?? "없음"}, ${updatedSourceData?.flagEmoji ?? "없음"}');
-      dev.log('- 타겟 국가 정보: ${updatedTargetData?.countryName ?? "없음"}, ${updatedTargetData?.flagEmoji ?? "없음"}');
-      
-      // 10. 데이터 즉시 반영 및 엄격한 확인
-      Future.delayed(const Duration(milliseconds: 100), () {
-        final currentId = ref.read(currentTravelIdProvider);
-        if (currentId.isNotEmpty) {
-          // 여행 데이터 강제 갱신
-          ref.read(currentTravelIdProvider.notifier).state = "";
-          ref.read(currentTravelIdProvider.notifier).state = currentId;
-          
-          // 교환 결과 확인 로직 호출
-          _verifyDragExchangeResult(travelId, sourceDate, targetDate);
-        }
-      });
+      // 국가 정보 교환 결과 확인 로직 호출
+      _verifyDragExchangeResult(travelId, sourceDate, targetDate);
       
     } catch (e, stackTrace) {
       dev.log('TravelDragDropManager - 드래그 앤 드롭 처리 중 오류 발생: $e');

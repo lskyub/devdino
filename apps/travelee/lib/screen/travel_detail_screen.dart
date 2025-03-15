@@ -359,8 +359,9 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                                           padding: EdgeInsets.zero,
                                           child: FittedBox(
                                             fit: BoxFit.cover,
-                                            child: CountryIcons.getSvgFlag(
-                                                displayDay.countryCode),
+                                            child: displayDay.countryCode.isEmpty
+                                              ? const Icon(Icons.flag, color: Colors.grey) // 국가 코드가 없는 경우 기본 아이콘 표시
+                                              : CountryIcons.getSvgFlag(displayDay.countryCode),
                                           ),
                                         ),
                                         B2bText.medium(
