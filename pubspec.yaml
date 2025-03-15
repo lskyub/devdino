@@ -6,3 +6,5 @@ environment:
 dev_dependencies:
   melos: ^6.3.2
   flutter_lints: ^4.0.0
+dependencies:
+  go_router_builder: ^2.8.2

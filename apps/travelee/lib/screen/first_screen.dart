@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelee/router.dart';
 import 'package:travelee/screen/input/destination_screen.dart';
+import 'package:travelee/screen/saved_travels_screen.dart';
 
 class FirstScreen extends ConsumerWidget {
   static const routeName = 'inital';
@@ -68,16 +69,25 @@ class FirstScreen extends ConsumerWidget {
           left: 0,
           right: 0,
           child: SafeArea(
-            minimum: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-            ),
-            child: B2bButton.medium(
-              type: B2bButtonType.primary,
-              title: '여행 계획 만들기',
-              onTap: () {
-                ref.read(routerProvider).push(DestinationScreen.routePath);
-              },
+            minimum: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                B2bButton.medium(
+                  type: B2bButtonType.primary,
+                  title: '여행 계획 만들기',
+                  onTap: () {
+                    ref.read(routerProvider).push(DestinationScreen.routePath);
+                  },
+                ),
+                const SizedBox(height: 12),
+                B2bButton.medium(
+                  type: B2bButtonType.secondary,
+                  title: '저장된 여행 보기',
+                  onTap: () {
+                    ref.read(routerProvider).push(SavedTravelsScreen.routePath);
+                  },
+                ),
+              ],
             ),
           ),
         )

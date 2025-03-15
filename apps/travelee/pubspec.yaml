@@ -37,6 +37,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  uuid: ^4.3.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

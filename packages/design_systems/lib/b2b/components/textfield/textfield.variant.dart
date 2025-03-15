@@ -29,3 +29,14 @@ class B2bTextFieldSize extends Variant {
   static const medium = B2bTextFieldSize._('b2b.textfield.size.medium');
   static const large = B2bTextFieldSize._('b2b.textfield.size.large');
 }
+
+class B2bTextFieldBoder extends Variant {
+  const B2bTextFieldBoder._(super.name);
+
+  static const values = [
+  ];
+
+  static const none = B2bTextFieldBoder._('b2b.textfield.border.none');
+  static const underline = B2bTextFieldBoder._('b2b.textfield.border.underline');
+  static const box = B2bTextFieldBoder._('b2b.textfield.border.box');
+}

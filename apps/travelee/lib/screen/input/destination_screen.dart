@@ -8,7 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:travelee/router.dart';
 import 'package:travelee/screen/input/date_screen.dart';
-import 'package:travelee/providers/travel_provider.dart';
+import 'package:travelee/providers/unified_travel_provider.dart';
+import 'package:travelee/models/country_info.dart';
+import 'package:travelee/models/travel_model.dart';
 
 final searchTextProvider = StateProvider<String>((ref) => '');
 
@@ -20,7 +22,58 @@ class DestinationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final travelInfo = ref.watch(travelInfoProvider);
+    // 여행 정보 확인
+    final travelInfo = ref.watch(currentTravelProvider);
+    
+    // 여행 정보가 null이면 새 여행 생성 시작
+    if (travelInfo == null) {
+      // 일정 시간 후에 새 여행 생성 (UI 렌더링 후 실행)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // 새 임시 ID 생성
+        final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
+        
+        // 빈 여행 객체 생성
+        final newTravel = TravelModel(
+          id: tempId,
+          title: '새 여행',
+          destination: [],
+          startDate: null,
+          endDate: null,
+          countryInfos: [],
+          schedules: [],
+          dayDataMap: {},
+        );
+        
+        // 새 여행 추가
+        ref.read(travelsProvider.notifier).addTravel(newTravel);
+        
+        // 현재 여행 ID 설정
+        ref.read(currentTravelIdProvider.notifier).state = tempId;
+        
+        // 임시 편집 모드 시작
+        ref.read(travelsProvider.notifier).startTempEditing();
+      });
+      
+      // 로딩 표시
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: $b2bToken.color.primary.resolve(context),
+              ),
+              const SizedBox(height: 16),
+              B2bText.regular(
+                type: B2bTextType.body2, 
+                text: '새 여행 생성 중...',
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -53,14 +106,40 @@ class DestinationScreen extends ConsumerWidget {
                 showPhoneCode: false,
                 exclude: ['KR', 'US'],
                 onSelect: (Country country) {
-                  // ref.read(destinationsProvider.notifier).state = [
-                  //   ...destinations,
-                  //   country.nameLocalized ?? country.name,
-                  // ];
-
-                  ref.read(travelInfoProvider.notifier).setDestination(
-                        country.nameLocalized ?? country.name,
-                      );
+                  // Country 객체 정보와 함께 저장
+                  final countryName = country.nameLocalized ?? country.name;
+                  
+                  // 이미 선택된 국가인지 확인
+                  if (travelInfo.destination.contains(countryName)) {
+                    // 이미 선택된 국가는 추가하지 않고 메시지 표시
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('이미 선택된 국가입니다'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+                  
+                  final countryInfo = CountryInfo(
+                    name: countryName,
+                    countryCode: country.countryCode,
+                    flagEmoji: country.flagEmoji,
+                  );
+                  
+                  // 목적지와 국가 정보 추가
+                  final destinations = List<String>.from(travelInfo.destination);
+                  final countryInfos = List<CountryInfo>.from(travelInfo.countryInfos);
+                  
+                  destinations.add(countryInfo.name);
+                  countryInfos.add(countryInfo);
+                  
+                  final updatedTravel = travelInfo.copyWith(
+                    destination: destinations,
+                    countryInfos: countryInfos,
+                  );
+                  
+                  ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
                 },
                 countryListTheme: CountryListThemeData(
                   backgroundColor: Colors.white,
@@ -120,6 +199,7 @@ class DestinationScreen extends ConsumerWidget {
                   itemCount: travelInfo.destination.length,
                   itemBuilder: (context, index) {
                     final data = travelInfo.destination[index];
+                    final countryInfo = travelInfo.countryInfos[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -128,9 +208,19 @@ class DestinationScreen extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          B2bText.regular(
-                            type: B2bTextType.body4,
-                            text: data,
+                          Row(
+                            children: [
+                              // 국기 이모지 표시
+                              Text(
+                                countryInfo.flagEmoji,
+                                style: const TextStyle(fontSize: 24),
+                              ),
+                              const SizedBox(width: 8),
+                              B2bText.regular(
+                                type: B2bTextType.body4,
+                                text: data,
+                              ),
+                            ],
                           ),
                           IconButton(
                             icon: Icon(
@@ -138,9 +228,24 @@ class DestinationScreen extends ConsumerWidget {
                               color: $b2bToken.color.gray400.resolve(context),
                             ),
                             onPressed: () {
-                              ref
-                                  .read(travelInfoProvider.notifier)
-                                  .setDestination(data);
+                              // 목적지와 국가 정보 제거
+                              final destinations = List<String>.from(travelInfo.destination);
+                              final countryInfos = List<CountryInfo>.from(travelInfo.countryInfos);
+                              
+                              final index = destinations.indexOf(data);
+                              if (index != -1) {
+                                destinations.removeAt(index);
+                                if (index < countryInfos.length) {
+                                  countryInfos.removeAt(index);
+                                }
+                              }
+                              
+                              final updatedTravel = travelInfo.copyWith(
+                                destination: destinations,
+                                countryInfos: countryInfos,
+                              );
+                              
+                              ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
                             },
                           ),
                         ],

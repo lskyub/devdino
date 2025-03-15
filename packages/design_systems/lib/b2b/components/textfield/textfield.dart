@@ -7,6 +7,7 @@ import 'package:mix/mix.dart';
 class B2bTextField extends StatefulWidget {
   final B2bTextFieldStatus status;
   final B2bTextFieldSize size;
+  B2bTextFieldBoder boder;
   final Widget? leading;
   final Widget? trailing;
   final String? Function(String)? onChanged;
@@ -22,6 +23,7 @@ class B2bTextField extends StatefulWidget {
     super.key,
     required this.status,
     required this.size,
+    this.boder = B2bTextFieldBoder.box,
     this.leading,
     this.trailing,
     this.onChanged,
@@ -46,6 +48,7 @@ class _B2bTextFieldState extends State<B2bTextField> {
 
   B2bTextfieldStyle get $style => B2bTextfieldStyle(
       widget.size,
+      widget.boder,
       (_errorText.isNotEmpty && widget.isError)
           ? B2bTextFieldStatus.error
           : _isFocused
@@ -112,7 +115,28 @@ class _B2bTextFieldState extends State<B2bTextField> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
+              enabledBorder: widget.boder == B2bTextFieldBoder.underline
+                  ? UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.defaultColor ?? $b2bToken.color.gray300.resolve(context),
+                        width: 0.7,
+                      ),
+                    )
+                  : InputBorder.none,
+              focusedBorder: widget.boder == B2bTextFieldBoder.underline
+                  ? UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.writeColor ?? $b2bToken.color.pink400.resolve(context),
+                        width: 1.0,
+                      ),
+                    )
+                  : InputBorder.none,
+              contentPadding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 8,
+                bottom: 8,
+              ),
               hintText: widget.hint,
               hintStyle:
                   $b2bToken.textStyle.body2regular.resolve(context).merge(

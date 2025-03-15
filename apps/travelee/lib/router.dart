@@ -4,11 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:travelee/screen/first_screen.dart';
 import 'package:travelee/screen/input/destination_screen.dart';
 import 'package:travelee/screen/input/date_screen.dart';
-import 'package:travelee/screen/input/travel_detail_screen.dart';
+import 'package:travelee/screen/travel_detail_screen.dart';
 import 'package:travelee/screen/input/schedule_detail_screen.dart';
 import 'package:travelee/screen/input/location_search_screen.dart';
-import 'package:travelee/screen/schedule_screen.dart';
-import 'package:travelee/screen/write_screen.dart';
+import 'package:travelee/screen/saved_travels_screen.dart';
 
 GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();
 final routerProvider = Provider<GoRouter>(
@@ -25,16 +24,6 @@ final routerProvider = Provider<GoRouter>(
           builder: (context, state) => const FirstScreen(),
         ),
         GoRoute(
-          name: WriteScreen.routeName,
-          path: WriteScreen.routePath,
-          builder: (context, state) => const WriteScreen(),
-        ),
-        GoRoute(
-          name: ScheduleScreen.routeName,
-          path: ScheduleScreen.routePath,
-          builder: (context, state) => const ScheduleScreen(),
-        ),
-        GoRoute(
           name: DestinationScreen.routeName,
           path: DestinationScreen.routePath,
           builder: (context, state) => const DestinationScreen(),
@@ -48,18 +37,23 @@ final routerProvider = Provider<GoRouter>(
           ),
         ),
         GoRoute(
-          name: TravelDetailScreen.routeName,
           path: TravelDetailScreen.routePath,
-          builder: (context, state) => const TravelDetailScreen(),
+          builder: (context, state) {
+            final travelId = state.pathParameters['id'] ?? '';
+            return TravelDetailScreen(travelId: travelId);
+          },
         ),
         GoRoute(
           name: ScheduleDetailScreen.routeName,
           path: ScheduleDetailScreen.routePath,
           builder: (context, state) {
-            final params = state.extra as List<dynamic>;
+            final Map<String, dynamic> extraData = state.extra as Map<String, dynamic>;
+            final date = extraData['date'] as DateTime;
+            final dayNumber = extraData['dayNumber'] as int;
+            
             return ScheduleDetailScreen(
-              date: params[0] as DateTime,
-              dayNumber: params[1] as int,
+              date: date,
+              dayNumber: dayNumber,
             );
           },
         ),
@@ -72,6 +66,11 @@ final routerProvider = Provider<GoRouter>(
               initialLocation: initialLocation,
             );
           },
+        ),
+        GoRoute(
+          name: SavedTravelsScreen.routeName,
+          path: SavedTravelsScreen.routePath,
+          builder: (context, state) => const SavedTravelsScreen(),
         ),
       ],
     );

@@ -6,22 +6,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:design_systems/b2b/components/buttons/button.variant.dart';
-import 'package:go_router/go_router.dart';
-import 'package:travelee/screen/input/location_search_screen.dart';
+import 'package:travelee/models/schedule.dart';
+import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/screen/input/time_picker_modal.dart';
+import 'package:travelee/screen/input/location_search_screen.dart';
+import 'package:uuid/uuid.dart';
+import 'dart:developer' as dev;
 
 class ScheduleInputModal extends ConsumerStatefulWidget {
   final TimeOfDay initialTime;
   final String initialLocation;
   final String initialMemo;
-  final Function(TimeOfDay time, String location, String memo) onSave;
+  final DateTime date;
+  final int dayNumber;
+  final String? scheduleId;
 
   const ScheduleInputModal({
     super.key,
     required this.initialTime,
     required this.initialLocation,
     required this.initialMemo,
-    required this.onSave,
+    required this.date,
+    required this.dayNumber,
+    this.scheduleId,
   });
 
   @override
@@ -29,17 +36,17 @@ class ScheduleInputModal extends ConsumerStatefulWidget {
 }
 
 class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
-  late TimeOfDay _time;
-  late TextEditingController _locationController;
-  late TextEditingController _memoController;
-  bool _isLocationEnabled = true;
+  final _locationController = TextEditingController();
+  final _memoController = TextEditingController();
+  late TimeOfDay _selectedTime;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    _time = widget.initialTime;
-    _locationController = TextEditingController(text: widget.initialLocation);
-    _memoController = TextEditingController(text: widget.initialMemo);
+    _locationController.text = widget.initialLocation;
+    _memoController.text = widget.initialMemo;
+    _selectedTime = widget.initialTime;
   }
 
   @override
@@ -49,32 +56,87 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
     super.dispose();
   }
 
-  Future<void> _searchLocation() async {
-    final location = await context.push<String>(
-      LocationSearchScreen.routePath,
-      extra: _locationController.text,
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showModalBottomSheet<TimeOfDay>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => TimePickerModal(
+        initialTime: _selectedTime,
+      ),
     );
-    if (location != null) {
+
+    if (pickedTime != null && pickedTime != _selectedTime) {
       setState(() {
-        _locationController.text = location;
+        _selectedTime = pickedTime;
       });
     }
   }
 
-  Future<void> _selectTime() async {
-    final time = await showModalBottomSheet<TimeOfDay>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => TimePickerModal(
-        initialTime: _time,
+  Future<void> _selectLocation(BuildContext context) async {
+    final String? selectedLocation = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (context) => LocationSearchScreen(
+          initialLocation: _locationController.text,
+        ),
       ),
     );
-    if (time != null) {
+
+    if (selectedLocation != null && selectedLocation.isNotEmpty) {
       setState(() {
-        _time = time;
+        _locationController.text = selectedLocation;
       });
     }
+  }
+
+  void _saveSchedule() {
+    if (!_formKey.currentState!.validate()) return;
+
+    // 현재 여행 정보 가져오기
+    final currentTravel = ref.read(currentTravelProvider);
+    if (currentTravel == null) {
+      dev.log('일정 저장 실패: 현재 여행 정보 없음');
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('여행 정보를 찾을 수 없습니다. 다시 시도해주세요.')));
+      return;
+    }
+
+    if (widget.scheduleId != null) {
+      // 기존 일정 수정
+      final updatedSchedule = Schedule(
+        id: widget.scheduleId!,
+        travelId: currentTravel.id,
+        date: widget.date,
+        time: _selectedTime,
+        location: _locationController.text,
+        memo: _memoController.text,
+        dayNumber: widget.dayNumber,
+      );
+
+      ref
+          .read(travelsProvider.notifier)
+          .updateSchedule(currentTravel.id, updatedSchedule);
+
+      dev.log('일정 수정 완료: ${widget.scheduleId}');
+    } else {
+      // 새 일정 추가
+      final newSchedule = Schedule(
+        id: const Uuid().v4(),
+        travelId: currentTravel.id,
+        date: widget.date,
+        time: _selectedTime,
+        location: _locationController.text,
+        memo: _memoController.text,
+        dayNumber: widget.dayNumber,
+      );
+
+      ref
+          .read(travelsProvider.notifier)
+          .addSchedule(currentTravel.id, newSchedule);
+
+      dev.log('새 일정 추가 완료: ${newSchedule.id}');
+    }
+
+    Navigator.pop(context);
   }
 
   @override
@@ -83,173 +145,152 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              B2bText.medium(
-                type: B2bTextType.body1,
-                text: '일정 입력',
-                color: $b2bToken.color.labelNomal.resolve(context),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.close,
-                  color: $b2bToken.color.gray400.resolve(context),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                B2bText.bold(
+                  type: B2bTextType.title3,
+                  text: widget.scheduleId != null ? '일정 수정' : '일정 추가',
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Icons.close,
+                    color: $b2bToken.color.gray400.resolve(context),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            B2bText.medium(
+              type: B2bTextType.body2,
+              text: '시간',
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _selectTime(context),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: $b2bToken.color.gray300.resolve(context),
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
                   children: [
-                    B2bText.medium(
-                      type: B2bTextType.body3,
-                      text: '장소',
-                      color: $b2bToken.color.labelNomal.resolve(context),
+                    B2bText.regular(
+                      type: B2bTextType.body2,
+                      text:
+                          '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
                     ),
-                    GestureDetector(
-                      onTap: _isLocationEnabled ? _searchLocation : null,
-                      child: AbsorbPointer(
-                        absorbing: !_isLocationEnabled,
-                        child: B2bTextField(
-                          hint: '장소를 입력하세요',
-                          status: B2bTextFieldStatus.before,
-                          size: B2bTextFieldSize.medium,
-                          isError: false,
-                        ),
-                      ),
+                    const Spacer(),
+                    Icon(
+                      Icons.access_time,
+                      color: $b2bToken.color.gray400.resolve(context),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  B2bText.medium(
-                    type: B2bTextType.body3,
-                    text: '시간',
-                    color: $b2bToken.color.labelNomal.resolve(context),
-                  ),
-                  GestureDetector(
-                    onTap: _selectTime,
-                    child: Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.black,
-                            width: 0.7,
-                          ),
-                        ),
-                      ),
-                      child: B2bText.medium(
-                        type: B2bTextType.body2,
-                        text:
-                            '${_time.hour.toString().padLeft(2, '0')}:${_time.minute.toString().padLeft(2, '0')}',
-                        color: $b2bToken.color.labelNomal.resolve(context),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  B2bText.medium(
-                    type: B2bTextType.body3,
-                    text: '위치',
-                    color: $b2bToken.color.labelNomal.resolve(context),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      if (_isLocationEnabled) {
-                        context
-                            .push(
-                          LocationSearchScreen.routePath,
-                          extra: _locationController.text,
-                        )
-                            .then((location) {
-                          if (location != null) {
-                            setState(() {
-                              _locationController.text = location as String;
-                            });
-                          }
-                        });
-                      } else {
-                        setState(() {
-                          _isLocationEnabled = true;
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.black,
-                            width: 0.7,
-                          ),
-                        ),
-                      ),
-                      child: B2bText.medium(
-                        type: B2bTextType.body2,
-                        text: _isLocationEnabled ? '수정' : '입력',
-                        color: _isLocationEnabled
-                            ? $b2bToken.color.primary.resolve(context)
-                            : $b2bToken.color.labelNomal.resolve(context),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-          const SizedBox(height: 16),
-          B2bTextField(
-            hint: '메모를 입력하세요',
-            status: B2bTextFieldStatus.before,
-            size: B2bTextFieldSize.large,
-            isError: false,
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: B2bButton.medium(
-              title: '저장',
-              type: B2bButtonType.primary,
-              onTap: () {
-                widget.onSave(
-                  _time,
-                  _locationController.text,
-                  _memoController.text,
-                );
-                Navigator.pop(context);
-              },
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            B2bText.medium(
+              type: B2bTextType.body2,
+              text: '장소',
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _selectLocation(context),
+              child: B2bTextField(
+                status: B2bTextFieldStatus.before,
+                size: B2bTextFieldSize.medium,
+                boder: B2bTextFieldBoder.box,
+                isError: false,
+              ),
+            ),
+            // TextFormField(
+            //   controller: _locationController,
+            //   readOnly: true,
+            //   decoration: InputDecoration(
+            //     hintText: '장소를 선택하세요',
+            //     contentPadding: const EdgeInsets.symmetric(
+            //       horizontal: 16,
+            //       vertical: 12,
+            //     ),
+            //     border: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(8),
+            //     ),
+            //     enabledBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(8),
+            //       borderSide: BorderSide(
+            //         color: $b2bToken.color.gray300.resolve(context),
+            //       ),
+            //     ),
+            //     suffixIcon: Icon(
+            //       Icons.search,
+            //       color: $b2bToken.color.gray400.resolve(context),
+            //     ),
+            //   ),
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return '장소를 선택해주세요';
+            //     }
+            //     return null;
+            //   },
+            // ),
+            // ),
+            const SizedBox(height: 16),
+            B2bText.medium(
+              type: B2bTextType.body2,
+              text: '메모',
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              controller: _memoController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: '메모를 입력하세요',
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: $b2bToken.color.gray300.resolve(context),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: B2bButton.medium(
+                title: widget.scheduleId != null ? '수정 완료' : '추가 완료',
+                type: B2bButtonType.primary,
+                onTap: _saveSchedule,
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
