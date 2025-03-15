@@ -17,6 +17,7 @@ import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'dart:math' as Math;
+import 'dart:developer' as dev;
 
 /**
  * TravelDetailScreen
@@ -37,23 +38,50 @@ class TravelDetailScreen extends ConsumerStatefulWidget {
   ConsumerState<TravelDetailScreen> createState() => _TravelDetailScreenState();
 }
 
-class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> {
+class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with WidgetsBindingObserver {
   // 백업 저장을 위한 변수들
   List<Schedule> _originalScheduleBackup = [];
   List<DayScheduleData> _originalDayScheduleBackup = [];
   dynamic _originalTravelInfoBackup;
   bool _hasChanges = false;
   bool _backupCreated = false;
+  late PageController _pageController;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
+    WidgetsBinding.instance.addObserver(this);
     
     // 페이지 로드 완료 후 백업 생성
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _createBackup();
+      
+      // 목적지 변경 감지 리스너 설정 - 제거 (build 메서드에서만 사용 가능)
+      // _setupDestinationChangeListener();
     });
   }
+  
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // 앱 생명주기 변경 시 처리 (필요한 경우 구현)
+  }
+  
+  // 목적지 변경 감지 리스너 설정 - 제거 (build 메서드에서만 사용해야 함)
+  // void _setupDestinationChangeListener() {
+  //   ref.listen(
+  //     currentTravelProvider.select((travel) => travel?.destination),
+  //     (previous, next) {
+  //       if (previous != next && mounted) {
+  //         dev.log('TravelDetailScreen - 목적지 변경 감지: 강제 UI 갱신');
+  //         setState(() {
+  //           // UI 강제 갱신
+  //         });
+  //       }
+  //     }
+  //   );
+  // }
   
   // 화면 시작 시 데이터 백업 생성
   void _createBackup() {
@@ -935,15 +963,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-    ref.listen(
-      currentTravelProvider.select((travel) => travel?.destination),
-      (previous, next) {
-        if (previous != next) {
-          // 목적지 변경 감지 시 UI 강제 갱신
-          setState(() { /* UI 갱신 */ });
-        }
-      }
-    );
   }
 }
