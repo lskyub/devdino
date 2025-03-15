@@ -17,7 +17,6 @@ import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'dart:math' as Math;
-import 'dart:developer' as dev;
 
 /**
  * TravelDetailScreen
@@ -411,8 +410,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       final dragDropManager = TravelDragDropManager(ref);
       
       // 로딩 화면 표시
-      return Scaffold(
-        backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.white,
         appBar: _buildAppBar(context),
         body: Column(
           children: [
@@ -577,14 +576,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: B2bText.bold(
-        type: B2bTextType.title3,
-        text: '세부 일정',
-        color: $b2bToken.color.labelNomal.resolve(context),
-      ),
-      backgroundColor: Colors.white,
-      elevation: 0,
-      leading: IconButton(
+        title: B2bText.bold(
+          type: B2bTextType.title3,
+          text: '세부 일정',
+          color: $b2bToken.color.labelNomal.resolve(context),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
         onPressed: () async {
           // 여행 정보 확인
           final travelInfo = ref.read(currentTravelProvider);
@@ -631,13 +630,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
             print('TravelDetailScreen - 변경사항 없음, 바로 나가기 (앱바)');
             Navigator.pop(context);
           }
-        },
-        icon: SvgPicture.asset(
-          'assets/icons/back.svg',
-          width: 27,
-          height: 27,
+          },
+          icon: SvgPicture.asset(
+            'assets/icons/back.svg',
+            width: 27,
+            height: 27,
+          ),
         ),
-      ),
       actions: [
         IconButton(
           onPressed: () async {
@@ -724,31 +723,31 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
 
   Widget _buildTravelInfoSection(BuildContext context, dynamic travelInfo) {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 8,
-        bottom: 16,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 8,
+              bottom: 16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           TravelInfoSummary(
             destination: travelInfo.destination.join(', '),
             startDate: travelInfo.startDate,
             endDate: travelInfo.endDate,
             formatDate: TravelDateFormatter.formatDate,
-          ),
-        ],
-      ),
+                          ),
+                        ],
+                      ),
     );
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(
-        color: $b2bToken.color.primary.resolve(context),
-      ),
+                            color: $b2bToken.color.primary.resolve(context),
+                          ),
     );
   }
 
@@ -760,7 +759,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
   ) {
     return ListView.builder(
       itemCount: daySchedules.length,
-      itemBuilder: (context, index) {
+              itemBuilder: (context, index) {
         final daySchedule = daySchedules[index];
         
         // 날짜 키 생성
@@ -781,7 +780,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
           flagEmoji: latestDayData?.flagEmoji ?? daySchedule.flagEmoji,
         );
         
-        return Padding(
+                return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TravelDayCard(
             daySchedule: updatedDaySchedule,
@@ -866,9 +865,9 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
               
               _setModified(); // 드래그 앤 드롭 시 수정 플래그 설정
             },
-          ),
-        );
-      },
+                  ),
+                );
+              },
     );
   }
 
@@ -886,13 +885,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
     print('TravelDetailScreen - 버튼 생성: isNewTravel=$isNewTravel, 버튼 텍스트=$buttonText');
     
     return SafeArea(
-      minimum: const EdgeInsets.all(16),
-      child: SizedBox(
-        width: double.infinity,
-        child: B2bButton.medium(
+            minimum: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: B2bButton.medium(
           title: buttonText,
-          type: B2bButtonType.primary,
-          onTap: () {
+                type: B2bButtonType.primary,
+                onTap: () {
             print('TravelDetailScreen - 수정/저장 버튼 클릭: isNewTravel=$isNewTravel');
             
             if (isNewTravel) {

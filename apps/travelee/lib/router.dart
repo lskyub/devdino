@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travelee/screen/first_screen.dart';
 import 'package:travelee/screen/input/destination_screen.dart';
 import 'package:travelee/screen/input/date_screen.dart';
-import 'package:travelee/screen/travel_detail_screen.dart';
+import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
 import 'package:travelee/screen/input/schedule_detail_screen.dart';
 import 'package:travelee/screen/input/location_search_screen.dart';
 import 'package:travelee/screen/saved_travels_screen.dart';
@@ -40,7 +40,7 @@ final routerProvider = Provider<GoRouter>(
           path: TravelDetailScreen.routePath,
           builder: (context, state) {
             final travelId = state.pathParameters['id'] ?? '';
-            return TravelDetailScreen(travelId: travelId);
+            return const TravelDetailScreen();
           },
         ),
         GoRoute(

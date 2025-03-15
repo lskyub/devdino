@@ -6,16 +6,52 @@ import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
-import 'package:travelee/screen/travel_detail_screen.dart';
 import 'package:travelee/screen/input/destination_screen.dart';
 import 'package:travelee/screen/input/travel_detail_screen.dart' as input_screens;
 import 'dart:math' as Math;
 
-class SavedTravelsScreen extends ConsumerWidget {
+class SavedTravelsScreen extends ConsumerStatefulWidget {
   static const routeName = 'saved_travels';
   static const routePath = '/saved_travels';
 
   const SavedTravelsScreen({super.key});
+
+  @override
+  ConsumerState<SavedTravelsScreen> createState() => _SavedTravelsScreenState();
+}
+
+class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // 화면이 로드된 후 임시 여행 데이터 정리
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cleanupTempTravels();
+    });
+  }
+  
+  /// 임시 여행 데이터 정리 (temp_로 시작하는 ID를 가진 여행 삭제)
+  void _cleanupTempTravels() {
+    final allTravels = ref.read(travelsProvider);
+    
+    // 임시 여행 필터링
+    final tempTravels = allTravels.where((travel) => 
+      travel.id.startsWith('temp_')).toList();
+    
+    // 임시 여행 있으면 로그 출력
+    if (tempTravels.isNotEmpty) {
+      print('SavedTravelsScreen - 임시 여행 데이터 삭제: ${tempTravels.length}개');
+      
+      // 임시 여행 삭제
+      for (final travel in tempTravels) {
+        print('SavedTravelsScreen - 임시 여행 삭제: ID=${travel.id}, 목적지=${travel.destination.join(", ")}');
+        ref.read(travelsProvider.notifier).removeTravel(travel.id);
+      }
+    } else {
+      print('SavedTravelsScreen - 임시 여행 데이터 없음');
+    }
+  }
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
@@ -23,11 +59,16 @@ class SavedTravelsScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final savedTravels = ref.watch(travelsProvider);
+  Widget build(BuildContext context) {
+    // 저장된 여행 불러오기
+    final allTravels = ref.watch(travelsProvider);
+    
+    // 임시 여행 제외한 목록만 필터링
+    final savedTravels = allTravels.where((travel) => 
+      !travel.id.startsWith('temp_')).toList();
     
     // 저장된 여행 목록 로깅 (상세 정보 포함)
-    print('SavedTravelsScreen - 저장된 여행 목록: ${savedTravels.length}개');
+    print('SavedTravelsScreen - 저장된 여행 목록: ${savedTravels.length}개 (전체: ${allTravels.length}개)');
     if (savedTravels.isNotEmpty) {
       print('------- 여행 목록 상세 정보 -------');
       for (int i = 0; i < savedTravels.length; i++) {

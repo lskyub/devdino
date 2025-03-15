@@ -7,6 +7,7 @@ class DayData {
   final DateTime date; // 날짜
   final String countryName; // 국가명
   final String flagEmoji; // 국기 이모지
+  final String countryCode; // 국가 코드
   final int dayNumber; // 여행 몇 일차인지
   final List<Schedule> schedules; // 일정 목록
   
@@ -14,6 +15,7 @@ class DayData {
     required this.date,
     required this.countryName,
     required this.flagEmoji,
+    this.countryCode = '', // 기본값 빈 문자열
     required this.dayNumber,
     required this.schedules,
   });
@@ -23,6 +25,7 @@ class DayData {
     DateTime? date,
     String? countryName,
     String? flagEmoji,
+    String? countryCode,
     int? dayNumber,
     List<Schedule>? schedules,
   }) {
@@ -30,16 +33,18 @@ class DayData {
       date: date ?? this.date,
       countryName: countryName ?? this.countryName,
       flagEmoji: flagEmoji ?? this.flagEmoji,
+      countryCode: countryCode ?? this.countryCode,
       dayNumber: dayNumber ?? this.dayNumber,
       schedules: schedules ?? this.schedules,
     );
   }
   
   // 특정 날짜의 국가 정보 업데이트
-  DayData updateCountry(String country, String emoji) {
+  DayData updateCountry(String country, String emoji, [String code = '']) {
     return copyWith(
       countryName: country,
       flagEmoji: emoji,
+      countryCode: code,
     );
   }
 }
@@ -105,6 +110,7 @@ class TravelModel {
     // 해당 날짜의 국가 정보 가져오기 (기본값은 첫 번째 목적지)
     String countryName = destination.isNotEmpty ? destination.first : '';
     String flagEmoji = '🏳️';
+    String countryCode = '';
     
     // 기존 DayData가 있으면 해당 정보 사용
     if (existingDayData != null) {
@@ -114,11 +120,13 @@ class TravelModel {
       flagEmoji = existingDayData.flagEmoji.isNotEmpty 
           ? existingDayData.flagEmoji 
           : flagEmoji;
+      countryCode = existingDayData.countryCode;
     } else {
       // 국가 정보 찾기
       final countryInfo = getCountryInfo(countryName);
       if (countryInfo != null) {
         flagEmoji = countryInfo.flagEmoji;
+        countryCode = countryInfo.countryCode;
       }
     }
     
@@ -136,6 +144,7 @@ class TravelModel {
       date: schedule.date,
       countryName: countryName,
       flagEmoji: flagEmoji,
+      countryCode: countryCode,
       dayNumber: dayNumber,
       schedules: dateSchedules,
     );
@@ -187,7 +196,7 @@ class TravelModel {
   }
   
   // 날짜의 국가 정보 설정
-  TravelModel setCountryForDate(DateTime date, String country, String flagEmoji) {
+  TravelModel setCountryForDate(DateTime date, String country, String flagEmoji, [String countryCode = '']) {
     final dateKey = _getDateKey(date);
     final existingDayData = dayDataMap[dateKey];
     final dayNumber = _calculateDayNumber(date);
@@ -206,6 +215,7 @@ class TravelModel {
       date: date,
       countryName: country,
       flagEmoji: flagEmoji,
+      countryCode: countryCode,
       dayNumber: dayNumber,
       schedules: dateSchedules,
     );
@@ -264,6 +274,7 @@ class TravelModel {
           date: dayData.date,
           countryName: dayData.countryName,
           flagEmoji: dayData.flagEmoji,
+          countryCode: dayData.countryCode,
           dayNumber: dayData.dayNumber,
           schedules: [], // 일정은 나중에 업데이트
         );
@@ -289,21 +300,25 @@ class TravelModel {
       // 국가 정보 (보존된 데이터 또는 기본값)
       String countryName = destination.isNotEmpty ? destination.first : '';
       String flagEmoji = '🏳️';
+      String countryCode = '';
       
       // 우선 순위: 1) 보존된 국가 정보, 2) 기존 DayDataMap, 3) 기본값
       if (preservedCountryMap.containsKey(dateKey)) {
         countryName = preservedCountryMap[dateKey]!.countryName;
         flagEmoji = preservedCountryMap[dateKey]!.flagEmoji;
+        countryCode = preservedCountryMap[dateKey]!.countryCode;
       } else if (dayDataMap.containsKey(dateKey)) {
         final existingDayData = dayDataMap[dateKey];
         if (existingDayData != null && existingDayData.countryName.isNotEmpty) {
           countryName = existingDayData.countryName;
           flagEmoji = existingDayData.flagEmoji;
+          countryCode = existingDayData.countryCode;
         } else {
           // 국가 정보 찾기
           final countryInfo = getCountryInfo(countryName);
           if (countryInfo != null) {
             flagEmoji = countryInfo.flagEmoji;
+            countryCode = countryInfo.countryCode;
           }
         }
       } else {
@@ -311,6 +326,7 @@ class TravelModel {
         final countryInfo = getCountryInfo(countryName);
         if (countryInfo != null) {
           flagEmoji = countryInfo.flagEmoji;
+          countryCode = countryInfo.countryCode;
         }
       }
       
@@ -319,6 +335,7 @@ class TravelModel {
         date: schedule.date,
         countryName: countryName,
         flagEmoji: flagEmoji,
+        countryCode: countryCode,
         dayNumber: dayNumber,
         schedules: dateSchedules,
       );
@@ -338,21 +355,25 @@ class TravelModel {
         // 국가 정보 (보존된 데이터 또는 기본값)
         String countryName = destination.isNotEmpty ? destination.first : '';
         String flagEmoji = '🏳️';
+        String countryCode = '';
         
         // 우선 순위: 1) 보존된 국가 정보, 2) 기존 DayDataMap, 3) 기본값
         if (preservedCountryMap.containsKey(dateKey)) {
           countryName = preservedCountryMap[dateKey]!.countryName;
           flagEmoji = preservedCountryMap[dateKey]!.flagEmoji;
+          countryCode = preservedCountryMap[dateKey]!.countryCode;
         } else if (dayDataMap.containsKey(dateKey)) {
           final existingDayData = dayDataMap[dateKey];
           if (existingDayData != null && existingDayData.countryName.isNotEmpty) {
             countryName = existingDayData.countryName;
             flagEmoji = existingDayData.flagEmoji;
+            countryCode = existingDayData.countryCode;
           } else {
             // 국가 정보 찾기
             final countryInfo = getCountryInfo(countryName);
             if (countryInfo != null) {
               flagEmoji = countryInfo.flagEmoji;
+              countryCode = countryInfo.countryCode;
             }
           }
         } else {
@@ -360,6 +381,7 @@ class TravelModel {
           final countryInfo = getCountryInfo(countryName);
           if (countryInfo != null) {
             flagEmoji = countryInfo.flagEmoji;
+            countryCode = countryInfo.countryCode;
           }
         }
         
@@ -369,6 +391,7 @@ class TravelModel {
           date: date,
           countryName: countryName,
           flagEmoji: flagEmoji,
+          countryCode: countryCode,
           dayNumber: dayNumber,
           schedules: [],
         );

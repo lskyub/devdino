@@ -69,10 +69,6 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
     super.dispose();
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
-  }
-
   Widget _buildDestinationTab() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

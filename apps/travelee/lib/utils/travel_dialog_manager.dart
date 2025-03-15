@@ -170,10 +170,12 @@ class TravelDialogManager {
             // 날짜별 국가 정보 백업
             Map<int, String> dayNumberToCountry = {};
             Map<int, String> dayNumberToFlagEmoji = {};
+            Map<int, String> dayNumberToCountryCode = {};
             
             for (final dayData in currentTravel.getAllDaysSorted()) {
               dayNumberToCountry[dayData.dayNumber] = dayData.countryName;
               dayNumberToFlagEmoji[dayData.dayNumber] = dayData.flagEmoji;
+              dayNumberToCountryCode[dayData.dayNumber] = dayData.countryCode;
               dev.log('날짜 편집 - 기존 Day ${dayData.dayNumber} 국가 정보 백업: ${dayData.countryName}');
             }
             
@@ -190,6 +192,7 @@ class TravelDialogManager {
                 final dayNumber = oldIndex + 1;
                 final country = dayNumberToCountry[dayNumber];
                 final flagEmoji = dayNumberToFlagEmoji[dayNumber];
+                final countryCode = dayNumberToCountryCode[dayNumber] ?? '';
                 
                 if (country != null && flagEmoji != null) {
                   // 날짜 변경 시 국가 정보도 함께 유지
@@ -198,9 +201,10 @@ class TravelDialogManager {
                     currentTravel.id, 
                     date, 
                     country, 
-                    flagEmoji
+                    flagEmoji,
+                    countryCode
                   );
-                  dev.log('날짜 편집 - Day $dayNumber 국가 정보 유지: $country');
+                  dev.log('날짜 편집 - Day $dayNumber 국가 정보 유지: $country, 코드: $countryCode');
                 }
                 
                 // 새 일정 객체 생성
@@ -249,6 +253,7 @@ class TravelDialogManager {
       final allDates = DateUtil.getAllDates(travel.startDate!, travel.endDate!);
       String defaultCountry = newDestinations.isNotEmpty ? newDestinations.first : '';
       String defaultEmoji = '🏳️';
+      String defaultCountryCode = '';
       
       if (defaultCountry.isNotEmpty) {
         // 기본 국가의 이모지 찾기
@@ -257,6 +262,7 @@ class TravelDialogManager {
           orElse: () => CountryInfo(name: defaultCountry, countryCode: '', flagEmoji: '🏳️'),
         );
         defaultEmoji = countryInfo.flagEmoji;
+        defaultCountryCode = countryInfo.countryCode;
       }
       
       // 모든 날짜에 대해 초기 국가 정보 설정
@@ -264,13 +270,14 @@ class TravelDialogManager {
         final date = allDates[i];
         final dayNumber = i + 1;
         
-        dev.log('날짜 $date (Day $dayNumber)에 대해 기본 국가 정보 설정: $defaultCountry $defaultEmoji');
+        dev.log('날짜 $date (Day $dayNumber)에 대해 기본 국가 정보 설정: $defaultCountry $defaultEmoji $defaultCountryCode');
         
         ref.read(travelsProvider.notifier).setCountryForDate(
           travel.id, 
           date, 
           defaultCountry, 
-          defaultEmoji
+          defaultEmoji,
+          defaultCountryCode
         );
       }
       
@@ -294,6 +301,7 @@ class TravelDialogManager {
         // 새 국가 정보 설정 (기본값은 첫 번째 목적지 또는 빈 값)
         String newCountryName = newDestinations.isNotEmpty ? newDestinations.first : '';
         String newFlagEmoji = '🏳️';
+        String newCountryCode = '';
         
         // 새 국가에 해당하는 국기 이모지 찾기
         if (newCountryName.isNotEmpty) {
@@ -302,16 +310,18 @@ class TravelDialogManager {
             orElse: () => CountryInfo(name: newCountryName, countryCode: '', flagEmoji: '🏳️'),
           );
           newFlagEmoji = countryInfo.flagEmoji;
-          dev.log('새 국가 정보의 이모지 확인: $newCountryName -> $newFlagEmoji');
+          newCountryCode = countryInfo.countryCode;
+          dev.log('새 국가 정보의 이모지 확인: $newCountryName -> $newFlagEmoji, 코드: $newCountryCode');
         }
         
         // 해당 날짜의 DayData 업데이트 (국가 정보만 변경)
         updatedDayDataMap[dateKey] = dayData.copyWith(
           countryName: newCountryName,
           flagEmoji: newFlagEmoji,
+          countryCode: newCountryCode,
         );
         
-        dev.log('국가 초기화 - 날짜 $dateKey의 국가 정보 변경: $newCountryName $newFlagEmoji');
+        dev.log('국가 초기화 - 날짜 $dateKey의 국가 정보 변경: $newCountryName $newFlagEmoji $newCountryCode');
         hasChanges = true;
       }
     });

@@ -194,88 +194,58 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
   }
   
   // 특정 날짜의 국가 정보 설정
-  void setCountryForDate(String travelId, DateTime date, String countryName, String flagEmoji) {
+  void setCountryForDate(String travelId, DateTime date, String countryName, String flagEmoji, [String countryCode = '']) {
     final travel = getTravel(travelId);
     if (travel == null) {
       dev.log('TravelNotifier - setCountryForDate 실패: 여행을 찾을 수 없음 ($travelId)');
       return;
     }
     
-    dev.log('TravelNotifier - setCountryForDate 호출: $countryName, $flagEmoji, 날짜: ${date.toString()}');
+    dev.log('TravelNotifier - setCountryForDate 호출: $countryName, $flagEmoji, 국가코드: $countryCode, 날짜: ${date.toString()}');
     
     // 임시 편집 모드 시작
     startTempEditing();
     
     final dateKey = TravelDateFormatter.formatDate(date);
     
-    // 기존 dayDataMap 깊은 복사
-    final dayDataMap = Map<String, DayData>.from(travel.dayDataMap);
+    // 기존 DayData 확인
+    final existingDayData = travel.dayDataMap[dateKey];
+    bool isDifferent = true;
     
-    // 업데이트 전 현재 상태 확인
-    final currentDayData = dayDataMap[dateKey];
-    dev.log('현재 DayData 상태: ${currentDayData?.countryName ?? '없음'}, ${currentDayData?.flagEmoji ?? '없음'}');
-    
-    // 새로운 DayData 생성 또는 업데이트
-    final dayData = dayDataMap[dateKey];
-    if (dayData != null) {
-      // 기존 DayData가 있는 경우 국가 정보 업데이트
-      dayDataMap[dateKey] = dayData.copyWith(
-        countryName: countryName,
-        flagEmoji: flagEmoji,
+    // 변경사항이 있는지 확인
+    if (existingDayData != null) {
+      isDifferent = _isDayDataDifferent(
+        existingDayData.countryName, 
+        existingDayData.flagEmoji,
+        existingDayData.countryCode,
+        countryName, 
+        flagEmoji,
+        countryCode
       );
-      
-      dev.log('TravelNotifier - 기존 DayData 업데이트: $dateKey');
-    } else {
-      // 기존 DayData가 없는 경우 새로 생성
-      final dayNumber = _calculateDayNumber(travel.startDate!, date);
-      dayDataMap[dateKey] = DayData(
-        date: date,
-        countryName: countryName,
-        flagEmoji: flagEmoji,
-        dayNumber: dayNumber,
-        schedules: [],
-      );
-      
-      dev.log('TravelNotifier - 새로운 DayData 생성: $dateKey (Day $dayNumber)');
     }
     
-    // 업데이트 후 상태 확인
-    final updatedDayData = dayDataMap[dateKey];
-    if (updatedDayData != null) {
-      dev.log('새 DayData 상태: ${updatedDayData.countryName}, ${updatedDayData.flagEmoji}');
-    } else {
-      dev.log('업데이트 후에도 DayData가 null입니다');
+    // 변경사항이 없으면 스킵
+    if (!isDifferent) {
+      dev.log('TravelNotifier - 국가 정보 업데이트 스킵 (변경 없음): $countryName, $flagEmoji, $countryCode');
+      return;
     }
     
-    // 여행 정보 업데이트 (완전히 새로운 객체 생성)
-    final updatedTravel = travel.copyWith(
-      dayDataMap: Map<String, DayData>.from(dayDataMap),
-    );
-    
-    // 상태 업데이트 - 이전 상태와 비교하여 다른 경우에만 업데이트
-    if (_isDayDataDifferent(travel.dayDataMap[dateKey], updatedTravel.dayDataMap[dateKey])) {
-      dev.log('TravelNotifier - 상태 변경 감지됨, 업데이트 진행');
-      updateTravel(updatedTravel);
-      
-      // 변경사항 즉시 저장 및 상태 갱신 강제화
-      commitChanges();
-      
-      // 명시적으로 상태 변경을 알림 (상태 강제 갱신)
-      state = List<TravelModel>.from(state);
-      
-      dev.log('TravelNotifier - 국가 정보 설정 완료: $countryName, $flagEmoji');
-    } else {
-      dev.log('TravelNotifier - 변경사항 없음, 업데이트 스킵');
-    }
+    // 국가 정보 업데이트
+    final updatedTravel = travel.setCountryForDate(date, countryName, flagEmoji, countryCode);
+    updateTravel(updatedTravel);
+    dev.log('TravelNotifier - 국가 정보 업데이트 완료: $countryName, $flagEmoji, $countryCode (날짜: $dateKey)');
   }
   
-  // DayData 객체가 다른지 비교
-  bool _isDayDataDifferent(DayData? a, DayData? b) {
-    if (a == null && b == null) return false;
-    if (a == null || b == null) return true;
-    
-    return a.countryName != b.countryName || 
-           a.flagEmoji != b.flagEmoji;
+  // DayData 변경 여부 확인
+  bool _isDayDataDifferent(
+    String oldCountry, 
+    String oldFlag,
+    String oldCode,
+    String newCountry, 
+    String newFlag,
+    String newCode
+  ) {
+    return oldCountry != newCountry || oldFlag != newFlag || oldCode != newCode;
   }
   
   // 날짜가 몇 번째 날인지 계산하는 헬퍼 메서드

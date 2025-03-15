@@ -150,8 +150,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
           topRight: Radius.circular(16),
         ),
       ),
-      child: SafeArea(
-          child: Form(
+      child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -163,7 +162,6 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                 B2bText.bold(
                   type: B2bTextType.title3,
                   text: widget.scheduleId != null ? '일정 수정' : '일정 추가',
-                  color: $b2bToken.color.labelNomal.resolve(context),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -175,99 +173,44 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      B2bText.medium(
-                        type: B2bTextType.body2,
-                        text: '시간',
-                        color: $b2bToken.color.labelNomal.resolve(context),
-                      ),
-                      GestureDetector(
-                        onTap: () => _selectTime(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: $b2bToken.color.gray300.resolve(context),
-                              width: 0.7,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              B2bText.regular(
-                                type: B2bTextType.body2,
-                                text:
-                                    '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
-                              ),
-                              const Spacer(),
-                              Icon(
-                                Icons.access_time,
-                                color: $b2bToken.color.gray400.resolve(context),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            B2bText.medium(
+              type: B2bTextType.body2,
+              text: '시간',
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _selectTime(context),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      B2bText.medium(
-                        type: B2bTextType.body2,
-                        text: '위치',
-                        color: $b2bToken.color.labelNomal.resolve(context),
-                      ),
-                      GestureDetector(
-                        onTap: () => _selectTime(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: $b2bToken.color.gray300.resolve(context),
-                              width: 0.7,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              B2bText.regular(
-                                type: B2bTextType.body2,
-                                text: '장소',
-                              ),
-                              const Spacer(),
-                              Icon(
-                                Icons.location_on,
-                                color: $b2bToken.color.gray400.resolve(context),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: $b2bToken.color.gray300.resolve(context),
                   ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
+                child: Row(
+                  children: [
+                    B2bText.regular(
+                      type: B2bTextType.body2,
+                      text:
+                          '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.access_time,
+                      color: $b2bToken.color.gray400.resolve(context),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             B2bText.medium(
               type: B2bTextType.body2,
-              text: '장소, 할일',
-              color: $b2bToken.color.labelNomal.resolve(context),
+              text: '장소',
             ),
             const SizedBox(height: 8),
             GestureDetector(
@@ -279,23 +222,62 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                 isError: false,
               ),
             ),
+            // TextFormField(
+            //   controller: _locationController,
+            //   readOnly: true,
+            //   decoration: InputDecoration(
+            //     hintText: '장소를 선택하세요',
+            //     contentPadding: const EdgeInsets.symmetric(
+            //       horizontal: 16,
+            //       vertical: 12,
+            //     ),
+            //     border: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(8),
+            //     ),
+            //     enabledBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(8),
+            //       borderSide: BorderSide(
+            //         color: $b2bToken.color.gray300.resolve(context),
+            //       ),
+            //     ),
+            //     suffixIcon: Icon(
+            //       Icons.search,
+            //       color: $b2bToken.color.gray400.resolve(context),
+            //     ),
+            //   ),
+            //   validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return '장소를 선택해주세요';
+            //     }
+            //     return null;
+            //   },
+            // ),
+            // ),
             const SizedBox(height: 16),
             B2bText.medium(
               type: B2bTextType.body2,
               text: '메모',
-              color: $b2bToken.color.labelNomal.resolve(context),
             ),
             const SizedBox(height: 8),
-            B2bTextField(
-              status: B2bTextFieldStatus.before,
-              size: B2bTextFieldSize.large,
-              boder: B2bTextFieldBoder.box,
-              isError: false,
-              hint: '메모를 입력하세요',
-              onChanged: (value) {
-                _memoController.text = value;
-                return value;
-              },
+            TextFormField(
+              controller: _memoController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: '메모를 입력하세요',
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: $b2bToken.color.gray300.resolve(context),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -309,7 +291,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
             const SizedBox(height: 8),
           ],
         ),
-      )),
+      ),
     );
   }
 }

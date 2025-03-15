@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/country_info.dart';
