@@ -4,15 +4,15 @@ import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:design_systems/b2b/b2b.dart';
-import 'package:travelee/providers/unified_travel_provider.dart';
-import 'package:go_router/go_router.dart';
-import 'package:travelee/screen/travel_detail_screen.dart';
+import 'package:travelee/providers/unified_travel_provider.dart' as travel_providers;
 import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
-import 'package:travelee/screen/input/travel_detail_screen.dart' as input_screens;
+import 'package:travelee/data/managers/change_manager.dart';
+import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
+import 'dart:developer' as dev;
 
 class DateScreen extends ConsumerWidget {
   static const routeName = 'date';
@@ -28,7 +28,7 @@ class DateScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 여행 정보 확인
-    final travelInfo = ref.watch(currentTravelProvider);
+    final travelInfo = ref.watch(travel_providers.currentTravelProvider);
     
     // 여행 정보가 null이면 새 여행 생성 시작
     if (travelInfo == null) {
@@ -50,13 +50,17 @@ class DateScreen extends ConsumerWidget {
         );
         
         // 새 여행 추가
-        ref.read(travelsProvider.notifier).addTravel(newTravel);
+        ref.read(travel_providers.travelsProvider.notifier).addTravel(newTravel);
         
         // 현재 여행 ID 설정
-        ref.read(currentTravelIdProvider.notifier).state = tempId;
+        ref.read(travel_providers.currentTravelIdProvider.notifier).state = tempId;
         
         // 임시 편집 모드 시작
-        ref.read(travelsProvider.notifier).startTempEditing();
+        ref.read(travel_providers.travelsProvider.notifier).startTempEditing();
+        
+        // 백업 생성
+        ref.read(travel_providers.changeManagerProvider).createBackup(newTravel);
+        ref.read(travel_providers.travelBackupProvider.notifier).state = newTravel;
       });
       
       // 로딩 표시
@@ -117,7 +121,7 @@ class DateScreen extends ConsumerWidget {
                     startDate: args.value.startDate,
                     endDate: args.value.endDate,
                   );
-                  ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
+                  ref.read(travel_providers.travelsProvider.notifier).updateTravel(updatedTravel);
                 }
               },
               selectionMode: DateRangePickerSelectionMode.range,
@@ -199,7 +203,7 @@ class DateScreen extends ConsumerWidget {
                   }
                   
                   // 편집 중인 여행인지 확인
-                  final isNewTravel = travelInfo.id.isEmpty || travelInfo.id.startsWith('temp_');
+                  final isNewTravel = travelInfo.id.startsWith('temp_');
                   
                   // 선택한 날짜 범위에 대해 dayDataMap 초기화
                   final start = travelInfo.startDate!;
@@ -242,19 +246,35 @@ class DateScreen extends ConsumerWidget {
                   final updatedTravel = travelInfo.copyWith(
                     dayDataMap: initialDayDataMap,
                   );
-                  ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
+                  
+                  // 여행 정보 업데이트
+                  ref.read(travel_providers.travelsProvider.notifier).updateTravel(updatedTravel);
+                  
+                  // 변경사항 즉시 저장
+                  ref.read(travel_providers.travelsProvider.notifier).commitChanges();
+                  
+                  // 백업 갱신
+                  ref.read(travel_providers.changeManagerProvider).createBackup(updatedTravel);
+                  ref.read(travel_providers.travelBackupProvider.notifier).state = updatedTravel;
+                  
+                  dev.log('DateScreen - 여행 상세 화면으로 이동: id=${travelInfo.id}, isNewTravel=$isNewTravel');
                   
                   if (isNewTravel) {
-                    // 세부 일정 화면으로 Navigator를 사용해 직접 이동 (라우터 우회)
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => input_screens.TravelDetailScreen(key: UniqueKey())
-                      )
-                    );
-                  } else {
-                    // 기존 여행인 경우 정상 라우팅 사용
+                    // 신규 생성 모드인 경우 이동 방식 변경
+                    // 1. Provider 무효화하여 최신 데이터 표시 보장
+                    ref.invalidate(travel_providers.currentTravelProvider);
+                    
+                    // 2. 신규 여행은 새로운 프레젠테이션 구조 사용
                     final travelId = travelInfo.id;
-                    context.push('${TravelDetailScreen.routePath}/$travelId');
+                    context.push('/travel_detail/$travelId');
+                    
+                    // 로그 출력
+                    dev.log('DateScreen - 신규 여행 페이지로 이동: /travel_detail/$travelId');
+                  } else {
+                    // 기존 여행 수정인 경우
+                    final travelId = travelInfo.id;
+                    context.push('/travel_detail/$travelId');
+                    dev.log('DateScreen - 기존 여행 페이지로 이동: /travel_detail/$travelId');
                   }
                 },
               ),

@@ -7,7 +7,7 @@ import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/screen/input/destination_screen.dart';
-import 'package:travelee/screen/input/travel_detail_screen.dart' as input_screens;
+import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
 import 'dart:math' as Math;
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
@@ -151,7 +151,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                           ref.read(currentTravelIdProvider.notifier).state = travel.id;
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => input_screens.TravelDetailScreen(key: UniqueKey()),
+                              builder: (context) => TravelDetailScreen(key: UniqueKey()),
                             ),
                           );
                         },

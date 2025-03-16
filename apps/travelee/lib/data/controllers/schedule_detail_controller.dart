@@ -214,41 +214,39 @@ class ScheduleDetailController {
     _hasChanges = true;
   }
   
-  /// 국가 정보 업데이트
-  void updateCountryInfo(DateTime date, String countryName, String flagEmoji, String countryCode) {
+  /// 현재 여행 ID 가져오기
+  String _getTravelId() {
     final travel = currentTravel;
-    if (travel == null) return;
+    if (travel == null) {
+      dev.log('ScheduleDetailController - 여행 정보가 없음');
+      return '';
+    }
+    return travel.id;
+  }
+  
+  /// 국가 정보 업데이트
+  void updateCountryInfo(DateTime date, String countryName, String flagEmoji, [String countryCode = '']) {
+    final travelId = _getTravelId();
+    if (travelId.isEmpty) {
+      dev.log('ScheduleDetailController - updateCountryInfo 실패: 여행 ID를 찾을 수 없음');
+      return;
+    }
     
-    // 날짜 키 생성
-    final standardDate = DateTime(date.year, date.month, date.day);
-    final dateKey = TravelDateFormatter.formatDate(standardDate);
-    
-    // 시작일 확인 (null인 경우 현재 날짜 사용)
-    final startDate = travel.startDate ?? DateTime.now();
-    
-    // dayDataMap 업데이트
-    Map<String, DayData> updatedMap = Map.from(travel.dayDataMap);
-    final existingData = updatedMap[dateKey] ?? DayData(
-      date: standardDate,
-      dayNumber: _getDayNumber(standardDate, startDate),
-      countryName: '',
-      flagEmoji: '',
-      countryCode: '',
-      schedules: [],
-    );
-    
-    updatedMap[dateKey] = existingData.copyWith(
-      countryName: countryName,
-      flagEmoji: flagEmoji, 
-      countryCode: countryCode
-    );
-    
-    // 여행 정보 업데이트
-    ref.read(travelsProvider.notifier).updateTravel(
-      travel.copyWith(dayDataMap: updatedMap)
-    );
-    
-    hasChanges = true;
+    try {
+      dev.log('ScheduleDetailController - 국가 정보 업데이트: $countryName, $flagEmoji, $countryCode');
+      
+      // 국가 정보 업데이트
+      ref.read(travelsProvider.notifier)
+          .setCountryForDate(travelId, date, countryName, flagEmoji, countryCode);
+      
+      // 변경 플래그 설정
+      hasChanges = true;
+      
+      dev.log('ScheduleDetailController - 국가 정보 업데이트 성공');
+    } catch (e) {
+      dev.log('ScheduleDetailController - 국가 정보 업데이트 실패: $e');
+      throw Exception('국가 정보 업데이트 실패: $e');
+    }
   }
   
   /// 날짜의 차이를 계산하여 몇 번째 날인지 반환

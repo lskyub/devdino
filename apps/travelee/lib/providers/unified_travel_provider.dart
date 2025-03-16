@@ -4,6 +4,7 @@ import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/country_info.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/data/managers/change_manager.dart';
 
 // 현재 선택된 여행 ID
 final currentTravelIdProvider = StateProvider<String>((ref) => '');
@@ -312,80 +313,52 @@ final travelsProvider = StateNotifierProvider<TravelNotifier, List<TravelModel>>
 
 // 현재 선택된 여행 Provider
 final currentTravelProvider = Provider<TravelModel?>((ref) {
-  final travelId = ref.watch(currentTravelIdProvider);
+  final currentId = ref.watch(currentTravelIdProvider);
+  if (currentId.isEmpty) return null;
+  
   final travels = ref.watch(travelsProvider);
   
-  if (travelId.isEmpty) return null;
-  
   try {
-    return travels.firstWhere((travel) => travel.id == travelId);
+    return travels.firstWhere((travel) => travel.id == currentId);
   } catch (_) {
-    dev.log('currentTravelProvider - 현재 여행을 찾을 수 없음: $travelId');
+    dev.log('currentTravelProvider - 현재 여행을 찾을 수 없음: $currentId');
     return null;
   }
 });
 
 // 날짜별 일정 Provider
 final dateSchedulesProvider = Provider.family<List<Schedule>, DateTime>((ref, date) {
-  final currentTravel = ref.watch(currentTravelProvider);
-  if (currentTravel == null) return [];
+  final travel = ref.watch(currentTravelProvider);
+  if (travel == null) return [];
   
-  return currentTravel.schedules.where((schedule) =>
-    schedule.date.year == date.year &&
-    schedule.date.month == date.month &&
-    schedule.date.day == date.day
+  final standardDate = DateTime(date.year, date.month, date.day);
+  return travel.schedules.where((s) => 
+    s.date.year == standardDate.year && 
+    s.date.month == standardDate.month && 
+    s.date.day == standardDate.day
   ).toList();
 });
 
 // 특정 날짜의 DayData Provider
 final dayDataProvider = Provider.family<DayData?, DateTime>((ref, date) {
-  final currentTravel = ref.watch(currentTravelProvider);
-  if (currentTravel == null) return null;
+  final travel = ref.watch(currentTravelProvider);
+  if (travel == null) return null;
   
-  // 날짜 키 생성 - 시간 정보를 제거하고 표준화된 형식으로 변환
   final standardDate = DateTime(date.year, date.month, date.day);
-  final dateKey = TravelDateFormatter.formatDate(standardDate);
+  final dateKey = '${standardDate.year}-${standardDate.month.toString().padLeft(2, '0')}-${standardDate.day.toString().padLeft(2, '0')}';
   
-  // 날짜 데이터 가져오기
-  final dayData = currentTravel.dayDataMap[dateKey];
+  dev.log('dayDataProvider - 날짜 키: $dateKey, 존재 여부: ${travel.dayDataMap.containsKey(dateKey)}');
   
-  // dayData가 있고 국가 정보가 설정되어 있는 경우
-  if (dayData != null && dayData.countryName.isNotEmpty) {
-    // 해당 국가가 여행 목적지에 존재하는지 확인
-    final isValidCountry = currentTravel.destination.contains(dayData.countryName);
-    
-    if (!isValidCountry) {
-      dev.log('dayDataProvider - 삭제된 국가 감지: ${dayData.countryName}, 자동 필터링 적용');
-      
-      // 삭제된 국가 정보 대신 기본 국가 정보 반환 (복제본 생성)
-      String newCountryName = currentTravel.destination.isNotEmpty ? currentTravel.destination.first : '';
-      String newFlagEmoji = '🏳️';
-      String newCountryCode = '';
-      
-      // 새 국가의 이모지와 코드 찾기
-      if (newCountryName.isNotEmpty) {
-        final countryInfo = currentTravel.countryInfos.firstWhere(
-          (info) => info.name == newCountryName,
-          orElse: () => CountryInfo(name: newCountryName, countryCode: '', flagEmoji: '🏳️'),
-        );
-        newFlagEmoji = countryInfo.flagEmoji;
-        newCountryCode = countryInfo.countryCode;
-      }
-      
-      // 수정된 DayData 반환 (원본은 그대로 두고 필터링된 결과만 반환)
-      return dayData.copyWith(
-        countryName: newCountryName,
-        flagEmoji: newFlagEmoji,
-        countryCode: newCountryCode,
-      );
-    }
-    
-    dev.log('dayDataProvider - 데이터 반환: ${dateKey}, 국가: ${dayData.countryName}, 플래그: ${dayData.flagEmoji}, 코드: ${dayData.countryCode}');
-  } else {
-    dev.log('dayDataProvider - ${dateKey}에 대한 데이터 없음');
+  // dayDataMap에서 데이터 찾기
+  if (travel.dayDataMap.containsKey(dateKey)) {
+    final data = travel.dayDataMap[dateKey];
+    dev.log('dayDataProvider - 찾은 데이터: ${data?.countryName}, ${data?.flagEmoji}');
+    return data;
   }
   
-  return dayData;
+  // 데이터가 없으면 기본 값 반환
+  dev.log('dayDataProvider - 데이터 없음: $dateKey');
+  return null;
 });
 
 // 날짜별 선택된 국가 Provider (기존 selectedCountryProvider 대체)
@@ -422,4 +395,21 @@ final selectedCountryProvider = Provider.family<String?, String>((ref, dateKey) 
     dev.log('selectedCountryProvider 오류: 잘못된 dateKey 형식 - $dateKey');
     return null;
   }
-}); 
+});
+
+// 변경사항 감지 Provider - 백업과 현재 상태 비교
+final travelChangesProvider = Provider<bool>((ref) {
+  final currentTravel = ref.watch(currentTravelProvider);
+  final backupTravel = ref.watch(travelBackupProvider);
+  
+  if (currentTravel == null || backupTravel == null) return false;
+  
+  // 단순 비교 (실제로는 더 복잡한 비교 로직 필요)
+  return currentTravel != backupTravel;
+});
+
+// 여행 백업 Provider
+final travelBackupProvider = StateProvider<TravelModel?>((ref) => null);
+
+// 변경 관리자 Provider
+final changeManagerProvider = Provider((ref) => ChangeManager()); 

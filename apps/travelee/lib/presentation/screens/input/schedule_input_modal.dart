@@ -19,7 +19,7 @@ class ScheduleInputModal extends ConsumerStatefulWidget {
   final String initialMemo;
   final DateTime date;
   final int dayNumber;
-  final String? scheduleId;
+  final String? scheduleId; // null이면 신규 일정, 값이 있으면 기존 일정 수정
 
   const ScheduleInputModal({
     super.key,
@@ -40,6 +40,9 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
   final _memoController = TextEditingController();
   late TimeOfDay _selectedTime;
   final _formKey = GlobalKey<FormState>();
+  
+  // 신규 일정인지 수정 모드인지 확인
+  bool get isEditMode => widget.scheduleId != null;
 
   @override
   void initState() {
@@ -100,22 +103,41 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
       return;
     }
 
-    // 기존 일정 수정
-    final updatedSchedule = Schedule(
-      id: widget.scheduleId!,
-      travelId: currentTravel.id,
-      date: widget.date,
-      time: _selectedTime,
-      location: _locationController.text,
-      memo: _memoController.text,
-      dayNumber: widget.dayNumber,
-    );
+    if (isEditMode) {
+      // 기존 일정 수정
+      final updatedSchedule = Schedule(
+        id: widget.scheduleId!,
+        travelId: currentTravel.id,
+        date: widget.date,
+        time: _selectedTime,
+        location: _locationController.text,
+        memo: _memoController.text,
+        dayNumber: widget.dayNumber,
+      );
 
-    ref
-        .read(travelsProvider.notifier)
-        .updateSchedule(currentTravel.id, updatedSchedule);
+      ref
+          .read(travelsProvider.notifier)
+          .updateSchedule(currentTravel.id, updatedSchedule);
 
-    dev.log('일정 수정 완료: ${widget.scheduleId}');
+      dev.log('일정 수정 완료: ${widget.scheduleId}');
+    } else {
+      // 신규 일정 추가
+      final newSchedule = Schedule(
+        id: const Uuid().v4(), // 새로운 ID 생성
+        travelId: currentTravel.id,
+        date: widget.date,
+        time: _selectedTime,
+        location: _locationController.text,
+        memo: _memoController.text,
+        dayNumber: widget.dayNumber,
+      );
+
+      ref
+          .read(travelsProvider.notifier)
+          .addSchedule(currentTravel.id, newSchedule);
+
+      dev.log('신규 일정 추가 완료');
+    }
 
     Navigator.pop(context);
   }
@@ -142,7 +164,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
               children: [
                 B2bText.bold(
                   type: B2bTextType.title3,
-                  text: '일정 수정',
+                  text: isEditMode ? '일정 수정' : '일정 추가',
                   color: $b2bToken.color.labelNomal.resolve(context),
                 ),
                 IconButton(
@@ -210,7 +232,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                         color: $b2bToken.color.labelNomal.resolve(context),
                       ),
                       GestureDetector(
-                        onTap: () => _selectTime(context),
+                        onTap: () => _selectLocation(context),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -285,7 +307,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
             SizedBox(
               width: double.infinity,
               child: B2bButton.medium(
-                title: '수정 완료',
+                title: isEditMode ? '수정 완료' : '추가 완료',
                 type: B2bButtonType.primary,
                 onTap: _saveSchedule,
               ),

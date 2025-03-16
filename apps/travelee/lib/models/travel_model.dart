@@ -218,6 +218,10 @@ class TravelModel {
     final existingDayData = dayDataMap[dateKey];
     final dayNumber = _calculateDayNumber(date);
     
+    // 디버깅 로그 추가
+    print('TravelModel.setCountryForDate - dateKey: $dateKey, existingDayData: $existingDayData, country: $country');
+    print('TravelModel.setCountryForDate - dayDataMap 기존 키: ${dayDataMap.keys.join(', ')}');
+    
     // 해당 날짜의 일정 목록
     final dateSchedules = schedules
         .where((s) => 
@@ -240,6 +244,9 @@ class TravelModel {
     // dayDataMap 업데이트
     final newDayDataMap = Map<String, DayData>.from(dayDataMap);
     newDayDataMap[dateKey] = newDayData;
+    
+    print('TravelModel.setCountryForDate - dayDataMap 업데이트 후 키: ${newDayDataMap.keys.join(', ')}');
+    print('TravelModel.setCountryForDate - 업데이트된 DayData: ${newDayData.countryName}, ${newDayData.flagEmoji}');
     
     // 새 TravelModel 반환
     return copyWith(
@@ -265,7 +272,7 @@ class TravelModel {
   
   // 날짜 키 생성 (yyyy-MM-dd 형식)
   String _getDateKey(DateTime date) {
-    return '${date.year}-${date.month}-${date.day}';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
   
   // 여행 시작일 기준 일차 계산

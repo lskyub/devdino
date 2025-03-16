@@ -3,14 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
-import 'package:travelee/providers/unified_travel_provider.dart';
+import 'package:travelee/providers/unified_travel_provider.dart' as travel_providers;
 import 'package:travelee/utils/travel_date_formatter.dart';
-import 'package:travelee/data/controllers/travel_detail_controller.dart';
 import 'package:travelee/presentation/widgets/travel_detail/travel_detail_app_bar.dart';
 import 'package:travelee/presentation/widgets/travel_detail/travel_info_section.dart';
 import 'package:travelee/presentation/widgets/travel_detail/travel_action_button.dart';
 import 'package:travelee/presentation/widgets/travel_detail/day_schedules_list.dart';
+import 'package:travelee/data/managers/change_manager.dart';
+import 'package:travelee/utils/result_types.dart';
+import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
+import 'package:travelee/data/controllers/unified_controller.dart';
 import 'dart:developer' as dev;
 
 /// 여행 세부 일정 화면
@@ -45,30 +47,43 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       final router = GoRouter.of(context);
       final params = router.routeInformationProvider.value.uri.pathSegments;
       
-      if (params.length > 2) {
-        final travelId = params[2]; // travel_detail/:id에서 id 추출
+      if (params.length > 1) {
+        final travelId = params[1]; // travel_detail/:id에서 id 추출
         dev.log('TravelDetailScreen - 경로에서 여행 ID 추출: $travelId');
-        ref.read(currentTravelIdProvider.notifier).state = travelId;
+        ref.read(travel_providers.currentTravelIdProvider.notifier).state = travelId;
       }
       
-      // 백업 생성
-      ref.read(travelDetailControllerProvider).createBackup();
+      // 통합 컨트롤러를 사용하여 백업 생성
+      final controller = ref.read(unifiedControllerProvider);
+      controller.createBackup();
     });
   }
   
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // 앱 생명주기 변경 시 처리 (필요한 경우 구현)
+    if (state == AppLifecycleState.resumed) {
+      // 앱이 포그라운드로 돌아왔을 때 데이터 새로고침
+      final travel = ref.read(travel_providers.currentTravelProvider);
+      if (travel != null && travel.startDate != null) {
+        _refreshAllData();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // 통합 컨트롤러 가져오기
+    final controller = ref.watch(unifiedControllerProvider);
+    
     // Provider를 통해 여행 정보 가져오기
-    final travelInfo = ref.watch(currentTravelProvider);
+    final travelInfo = ref.watch(travel_providers.currentTravelProvider);
     
     // 변경 사항 감지
-    ref.listen(travelChangesProvider, (previous, hasChanges) {
+    ref.listen(travel_providers.travelChangesProvider, (previous, hasChanges) {
       dev.log('TravelDetailScreen - 변경 감지: $previous -> $hasChanges');
+      if (hasChanges) {
+        controller.hasChanges = true;
+      }
     });
     
     // 여행 정보가 null이면 로딩 표시
@@ -94,6 +109,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         backgroundColor: Colors.white,
         appBar: TravelDetailAppBar(
           onBackPressed: () => _handleBackNavigation(context),
+          onRefresh: () => _refreshAllData(),
         ),
         body: Column(
           children: [
@@ -104,6 +120,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
                   : DaySchedulesList(
                       travelInfo: travelInfo,
                       daySchedules: daySchedules,
+                      onScheduleTap: _navigateToSchedule,
                     ),
             ),
             const TravelActionButton(),
@@ -115,7 +132,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
   
   /// 날짜 목록에서 DayScheduleData 목록 생성
   List<DayScheduleData> _buildDaySchedulesFromDates(TravelModel travelInfo, List<DateTime> dates) {
-    final controller = ref.read(travelDetailControllerProvider);
+    final controller = ref.read(unifiedControllerProvider);
     final daySchedules = <DayScheduleData>[];
     
     for (final date in dates) {
@@ -129,12 +146,32 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       // 해당 날짜가 며칠째인지 계산
       final dayNumber = controller.getDayNumber(travelInfo.startDate!, date);
       
+      // 날짜 키 생성 (yyyy-MM-dd 형식)
+      final dateKey = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      
+      // 국가 및 국기 정보 (기본값)
+      String countryName = travelInfo.destination.isNotEmpty ? travelInfo.destination.first : '';
+      String flagEmoji = travelInfo.countryInfos.isNotEmpty ? travelInfo.countryInfos.first.flagEmoji : '';
+      String countryCode = travelInfo.countryInfos.isNotEmpty ? travelInfo.countryInfos.first.countryCode : '';
+      
+      // dayDataMap에서 해당 날짜의 국가 정보가 있으면 사용
+      if (travelInfo.dayDataMap.containsKey(dateKey)) {
+        final savedDayData = travelInfo.dayDataMap[dateKey];
+        if (savedDayData != null && savedDayData.countryName.isNotEmpty) {
+          countryName = savedDayData.countryName;
+          flagEmoji = savedDayData.flagEmoji.isNotEmpty ? savedDayData.flagEmoji : flagEmoji;
+          countryCode = savedDayData.countryCode.isNotEmpty ? savedDayData.countryCode : countryCode;
+          
+          dev.log('날짜($dateKey)에 저장된 국가 정보 사용: $countryName, $flagEmoji, $countryCode');
+        }
+      }
+      
       // DayScheduleData 객체 생성 후 추가
       final dayData = DayScheduleData(
         date: date,
-        countryName: travelInfo.destination.isNotEmpty ? travelInfo.destination.first : '',
-        flagEmoji: travelInfo.countryInfos.isNotEmpty ? travelInfo.countryInfos.first.flagEmoji : '',
-        countryCode: travelInfo.countryInfos.isNotEmpty ? travelInfo.countryInfos.first.countryCode : '',
+        countryName: countryName,
+        flagEmoji: flagEmoji,
+        countryCode: countryCode,
         dayNumber: dayNumber,
         schedules: schedulesForDay,
       );
@@ -157,13 +194,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
     );
     
     // 업데이트된 여행 정보 저장
-    ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
+    ref.read(travel_providers.travelsProvider.notifier).updateTravel(updatedTravel);
     
     // 로딩 화면 표시
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: TravelDetailAppBar(
         onBackPressed: () => _handleBackNavigation(context),
+        onRefresh: () => _refreshAllData(),
       ),
       body: Column(
         children: [
@@ -196,7 +234,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
   
   /// 뒤로가기 처리
   Future<void> _handleBackNavigation(BuildContext context) async {
-    final controller = ref.read(travelDetailControllerProvider);
+    final controller = ref.read(unifiedControllerProvider);
     final travelInfo = controller.currentTravel;
     
     if (travelInfo == null) {
@@ -204,10 +242,10 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       return;
     }
     
+    // 변경 관리자를 통해 변경사항 감지
+    final hasChanges = controller.detectChanges();
     final isNewTravel = controller.isNewTravel();
     
-    // 변경 사항이 있는지 확인
-    final hasChanges = controller.detectChanges();
     dev.log('TravelDetailScreen - 뒤로가기 감지: hasChanges=$hasChanges, isNewTravel=$isNewTravel');
     
     if (hasChanges) {
@@ -220,23 +258,25 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       }
       
       // 변경 사항이 있으면 확인 다이얼로그 표시
-      final shouldSave = await _showExitConfirmDialog(context, isNewTravel);
+      final saveResult = await _showExitConfirmDialog(context, isNewTravel);
       
-      if (shouldSave == true) {
+      if (saveResult == SaveResult.save) {
         // 변경 사항 저장
         dev.log('TravelDetailScreen - 변경사항 저장 후 나가기');
-        ref.read(travelsProvider.notifier).commitChanges();
+        ref.read(travel_providers.travelsProvider.notifier).commitChanges();
         if (!mounted) return;
         Navigator.of(context).pop(); // 화면 나가기
-      } else if (shouldSave == false) {
+      } else if (saveResult == SaveResult.discard) {
         // 변경 사항 취소 - 백업 데이터로 복원
         dev.log('TravelDetailScreen - 변경사항 취소 후 나가기');
+        
+        // 백업 복원
         await controller.restoreFromBackup();
-        ref.read(travelsProvider.notifier).rollbackChanges();
+        
         if (!mounted) return;
         Navigator.of(context).pop(); // 화면 나가기
       }
-      // shouldSave가 null이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
+      // SaveResult.cancel이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
     } else {
       // 변경 사항이 없으면 바로 이전 화면으로 이동
       dev.log('TravelDetailScreen - 변경사항 없음, 바로 나가기');
@@ -244,9 +284,15 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       Navigator.of(context).pop();
     }
   }
+  
+  /// 새로 생성 중인 여행인지 확인
+  bool _isNewTravel(TravelModel travel) {
+    // 예: 여행 ID가 일시적으로 생성된 것인지, 제목이 기본값인지, 일정이 없는지 등으로 판단
+    return travel.schedules.isEmpty && travel.title.contains('새 여행');
+  }
 
   /// 나가기 전 변경 사항 저장 여부 확인 다이얼로그
-  Future<bool?> _showExitConfirmDialog(BuildContext context, bool isNewTravel) {
+  Future<SaveResult> _showExitConfirmDialog(BuildContext context, bool isNewTravel) async {
     // 다이얼로그 제목과 내용 설정
     final title = isNewTravel ? '여행 저장' : '변경 사항 저장';
     final content = isNewTravel 
@@ -254,7 +300,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         : '변경된 내용이 있습니다.\n저장하시겠습니까?';
     
     dev.log('TravelDetailScreen - 변경 사항 저장 다이얼로그 표시: isNewTravel=$isNewTravel');
-    return showDialog<bool>(
+    final result = await showDialog<SaveResult>(
       context: context,
       barrierDismissible: false, // 바깥 영역 터치로 닫기 방지
       builder: (context) => AlertDialog(
@@ -264,30 +310,35 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
           TextButton(
             onPressed: () {
               dev.log('다이얼로그 - [저장 안 함] 선택');
-              Navigator.pop(context, false);
+              Navigator.pop(context, SaveResult.discard);
             },
             child: const Text('저장 안 함', style: TextStyle(color: Colors.red)),
           ),
           TextButton(
             onPressed: () {
               dev.log('다이얼로그 - [취소] 선택');
-              Navigator.pop(context, null);
+              Navigator.pop(context, SaveResult.cancel);
             },
             child: const Text('취소'),
           ),
           ElevatedButton(
             onPressed: () {
               dev.log('다이얼로그 - [저장] 선택');
-              Navigator.pop(context, true);
+              Navigator.pop(context, SaveResult.save);
             },
             child: const Text('저장'),
           ),
         ],
       ),
     );
+    // 결과가 null인 경우 기본값으로 취소 반환
+    return result ?? SaveResult.cancel;
   }
 
   void _navigateToSchedule(DateTime date, int dayNumber) async {
+    // 로그 추가
+    dev.log('TravelDetailScreen - 일정 화면으로 이동: Day $dayNumber, 날짜: ${date.toString()}');
+    
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (context) => ScheduleDetailScreen(
@@ -296,27 +347,61 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         ),
       ),
     );
+    
     if (result == true) {
-      dev.log('일정 화면에서 변경사항 있음 - 데이터 새로고침');
+      dev.log('TravelDetailScreen - 일정 화면에서 변경사항 있음 - 데이터 새로고침');
       
-      // 전체 여행 정보 Provider 명시적 무효화
-      ref.invalidate(currentTravelProvider);
-      
-      // 날짜별 데이터 Provider 무효화
-      ref.invalidate(dayDataProvider(date));
-      ref.invalidate(dateSchedulesProvider(date));
-      
-      // 현재 여행 ID 재설정으로 강제 새로고침
-      final currentId = ref.read(currentTravelIdProvider);
+      // 화면 전체 갱신을 위해 여행 ID를 재설정
+      final currentId = ref.read(travel_providers.currentTravelIdProvider);
       if (currentId.isNotEmpty) {
-        ref.read(currentTravelIdProvider.notifier).state = "";
-        ref.read(currentTravelIdProvider.notifier).state = currentId;
+        // Provider 캐시 초기화
+        ref.invalidate(travel_providers.dayDataProvider(date));
+        
+        // 통합 컨트롤러를 통한 데이터 새로고침
+        final controller = ref.read(unifiedControllerProvider);
+        controller.refreshData(date);
+        
+        // UI 갱신
+        if (mounted) {
+          setState(() {
+            dev.log('TravelDetailScreen - 날짜 데이터 새로고침 후 UI 갱신 ($currentId)');
+          });
+        }
+      }
+    } else {
+      dev.log('TravelDetailScreen - 일정 화면에서 변경사항 없음 또는 취소됨');
+    }
+  }
+  
+  // 모든 데이터 새로고침
+  void _refreshAllData() {
+    final travel = ref.read(travel_providers.currentTravelProvider);
+    if (travel == null || travel.startDate == null) return;
+    
+    // 현재 여행 ID 가져오기
+    final currentId = ref.read(travel_providers.currentTravelIdProvider);
+    if (currentId.isEmpty) return;
+    
+    try {
+      // 통합 컨트롤러를 통한 데이터 새로고침
+      final controller = ref.read(unifiedControllerProvider);
+      
+      // 시작일부터 종료일까지 모든 날짜 데이터 새로고침
+      if (travel.startDate != null && travel.endDate != null) {
+        final dates = TravelDateFormatter.getDateRange(travel.startDate!, travel.endDate!);
+        for (final date in dates) {
+          controller.refreshData(date);
+        }
       }
       
-      // UI 강제 갱신을 위한 setState 호출
+      // UI 갱신
       if (mounted) {
-        setState(() {});
+        setState(() {
+          dev.log('TravelDetailScreen - 모든 데이터 새로고침 완료');
+        });
       }
+    } catch (e) {
+      dev.log('TravelDetailScreen - 데이터 새로고침 중 오류: $e');
     }
   }
 

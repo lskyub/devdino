@@ -10,10 +10,12 @@ import 'package:travelee/data/controllers/travel_detail_controller.dart';
 /// 여행 상세 화면의 앱바 위젯
 class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final Function() onBackPressed;
+  final VoidCallback? onRefresh;
   
   const TravelDetailAppBar({
     Key? key,
     required this.onBackPressed,
+    this.onRefresh,
   }) : super(key: key);
   
   @override
@@ -40,6 +42,11 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
+        if (onRefresh != null)
+          IconButton(
+            onPressed: onRefresh,
+            icon: const Icon(Icons.refresh),
+          ),
         IconButton(
           onPressed: () async {
             await TravelDialogManager.showEditTravelDialog(context, ref);

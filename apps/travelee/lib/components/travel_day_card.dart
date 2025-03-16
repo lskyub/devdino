@@ -5,7 +5,7 @@ import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/schedule.dart';
-import 'package:travelee/screen/input/schedule_detail_screen.dart';
+import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:country_icons/country_icons.dart';
 

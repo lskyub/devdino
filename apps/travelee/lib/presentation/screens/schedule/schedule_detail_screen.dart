@@ -1,3 +1,4 @@
+import 'package:country_icons/country_icons.dart';
 import 'package:design_systems/b2b/b2b.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -181,6 +182,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
 
     dev.log('현재 선택된 국가: $currentCountryName, 플래그: $currentFlag');
 
+    // 국가 선택 모달 표시
     final result = await showModalBottomSheet<Map<String, String>>(
       context: context,
       isScrollControlled: true,
@@ -194,7 +196,16 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       final countryName = result['name'] ?? '';
       final flagEmoji = result['flag'] ?? '';
       final countryCode = result['code'] ?? '';
+
       if (countryName.isNotEmpty) {
+        // 로딩 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('국가 정보 업데이트 중...'),
+            duration: Duration(milliseconds: 500),
+          ),
+        );
+
         try {
           // 국가 정보 업데이트
           ref
@@ -204,31 +215,35 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
           // 즉시 변경사항 커밋 (저장)
           ref.read(travelsProvider.notifier).commitChanges();
 
-          // Provider 캐시 초기화 및 상태 갱신
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              final currentId = travel.id;
-              ref.invalidate(dayDataProvider(date));
-              ref.read(currentTravelIdProvider.notifier).state = "";
-              ref.read(currentTravelIdProvider.notifier).state = currentId;
+          // 상태 갱신 - 더 효율적인 방식으로 개선
+          if (mounted) {
+            // 캐시 초기화
+            ref.invalidate(dayDataProvider(date));
 
-              ref.read(scheduleDetailControllerProvider).hasChanges = true;
+            // 변경사항 플래그 설정
+            ref.read(scheduleDetailControllerProvider).hasChanges = true;
 
-              // 성공 알림
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$countryName 국가로 설정되었습니다'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
-          });
+            // UI 갱신 트리거
+            setState(() {
+              dev.log('국가 정보 변경 후 UI 갱신: $countryName ($countryCode)');
+            });
+
+            // 성공 알림
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$countryName 국가로 설정되었습니다'),
+                duration: const Duration(seconds: 2),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
         } catch (e) {
           dev.log('국가 정보 설정 중 오류 발생: $e');
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('국가 정보 변경 중 오류가 발생했습니다.'),
+            SnackBar(
+              content: Text('국가 정보 변경 실패: ${e.toString()}'),
               backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -279,8 +294,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       return _buildErrorScreen(context);
     }
 
-    // 현재 날짜의 DayData 가져오기 (새로고침 보장을 위해 watch 사용)
-    ref.invalidate(dayDataProvider(date));
+    // 현재 날짜의 DayData 가져오기 (Provider 상태 사용)
     final dayData = ref.watch(dayDataProvider(date));
 
     // 국가 및 국기 정보
@@ -290,13 +304,19 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     String flagEmoji = currentTravel.countryInfos.isNotEmpty
         ? currentTravel.countryInfos.first.flagEmoji
         : "🏳️";
-
+    String selectedCountryCode = currentTravel.countryInfos.isNotEmpty
+        ? currentTravel.countryInfos.first.countryCode
+        : "";
+    dev.log('1 dayData: $dayData');
     // DayData가 있으면 해당 정보 사용
     if (dayData != null && dayData.countryName.isNotEmpty) {
       selectedCountryName = dayData.countryName;
       flagEmoji = dayData.flagEmoji.isNotEmpty ? dayData.flagEmoji : flagEmoji;
+      selectedCountryCode = dayData.countryCode.isNotEmpty
+          ? dayData.countryCode
+          : selectedCountryCode;
     }
-
+dev.log('2 currentTravel: $currentTravel');
     return WillPopScope(
       onWillPop: () async {
         // 변경 사항이 있으면 확인 대화상자 표시
@@ -322,7 +342,8 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: _buildAppBar(context, flagEmoji, selectedCountryName),
+        appBar: _buildAppBar(
+            context, flagEmoji, selectedCountryName, selectedCountryCode),
         body: Column(
           children: [
             const SizedBox(height: 8),
@@ -376,8 +397,9 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
   }
 
   /// 앱바 빌드
-  PreferredSizeWidget _buildAppBar(
-      BuildContext context, String flagEmoji, String selectedCountryName) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, String flagEmoji,
+      String selectedCountryName, String selectedCountryCode) {
+    dev.log('selectedCountryCode: $selectedCountryCode');
     return AppBar(
       title: Row(
         children: [
@@ -385,30 +407,6 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
             type: B2bTextType.title3,
             text: 'Day ${widget.dayNumber}',
             color: $b2bToken.color.labelNomal.resolve(context),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: $b2bToken.color.primary.resolve(context).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  flagEmoji,
-                  style: const TextStyle(fontSize: 22),
-                ),
-                if (selectedCountryName.isNotEmpty) ...[
-                  const SizedBox(width: 4),
-                  B2bText.medium(
-                    type: B2bTextType.body3,
-                    text: selectedCountryName,
-                    color: $b2bToken.color.primary.resolve(context),
-                  ),
-                ],
-              ],
-            ),
           ),
         ],
       ),
@@ -445,27 +443,33 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
         ),
       ),
       actions: [
-        TextButton.icon(
-          onPressed: _selectCountry,
-          icon: Icon(
-            Icons.flag,
-            color: $b2bToken.color.primary.resolve(context),
-          ),
-          label: B2bText.regular(
-            type: B2bTextType.body2,
-            text: '국가 변경',
-            color: $b2bToken.color.primary.resolve(context),
-          ),
-          style: TextButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+        GestureDetector(
+          onTap: () => _selectCountry(),
+          child: Container(
+            width: 30,
+            height: 30,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: $b2bToken.color.gray100.resolve(context),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: $b2bToken.color.gray100.resolve(context),
+                width: 0.5,
+              ),
             ),
-            backgroundColor:
-                $b2bToken.color.primary.resolve(context).withOpacity(0.1),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Padding(
+              padding: EdgeInsets.zero,
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: selectedCountryCode.isEmpty
+                    ? const Icon(Icons.flag,
+                        color: Colors.grey) // 국가 코드가 없는 경우 기본 아이콘 표시
+                    : CountryIcons.getSvgFlag(selectedCountryCode),
+              ),
+            ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 16)
       ],
     );
   }
