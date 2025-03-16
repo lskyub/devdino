@@ -243,10 +243,12 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
     }
     
     // 변경 관리자를 통해 변경사항 감지
-    final hasChanges = controller.detectChanges();
+    final isControllerHasChanges = controller.hasChanges;
+    final isChangeManagerHasChanges = controller.detectChanges();
+    final hasChanges = isControllerHasChanges || isChangeManagerHasChanges;
     final isNewTravel = controller.isNewTravel();
     
-    dev.log('TravelDetailScreen - 뒤로가기 감지: hasChanges=$hasChanges, isNewTravel=$isNewTravel');
+    dev.log('TravelDetailScreen - 뒤로가기 감지: controller.hasChanges=$isControllerHasChanges, changeManager.hasChanges=$isChangeManagerHasChanges, isNewTravel=$isNewTravel');
     
     if (hasChanges) {
       // 신규 생성 모드인 경우, 바로 나가기 (백업 복원 없이)
@@ -257,26 +259,32 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         return;
       }
       
+      // 실제 변경사항 있는지 마지막 확인
+      final backupTravel = ref.read(travel_providers.travelBackupProvider);
+      
+      // 백업이 없으면 변경사항 있는 것으로 간주
+      if (backupTravel == null) {
+        dev.log('TravelDetailScreen - 백업이 없어 변경사항 있는 것으로 간주');
+        // 변경 사항이 있으면 확인 다이얼로그 표시
+        final saveResult = await _showExitConfirmDialog(context, isNewTravel);
+        await _handleSaveResult(saveResult);
+        return;
+      }
+      
+      // 실제 변경 여부 확인 (백업과 현재 데이터 비교)
+      final hasActualChanges = _hasActualTravelChanges(backupTravel, travelInfo);
+      dev.log('TravelDetailScreen - 실제 변경사항 확인: $hasActualChanges');
+      
+      if (!hasActualChanges) {
+        dev.log('TravelDetailScreen - 실제 변경사항 없음: 확인 다이얼로그 없이 나가기');
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        return;
+      }
+      
       // 변경 사항이 있으면 확인 다이얼로그 표시
       final saveResult = await _showExitConfirmDialog(context, isNewTravel);
-      
-      if (saveResult == SaveResult.save) {
-        // 변경 사항 저장
-        dev.log('TravelDetailScreen - 변경사항 저장 후 나가기');
-        ref.read(travel_providers.travelsProvider.notifier).commitChanges();
-        if (!mounted) return;
-        Navigator.of(context).pop(); // 화면 나가기
-      } else if (saveResult == SaveResult.discard) {
-        // 변경 사항 취소 - 백업 데이터로 복원
-        dev.log('TravelDetailScreen - 변경사항 취소 후 나가기');
-        
-        // 백업 복원
-        await controller.restoreFromBackup();
-        
-        if (!mounted) return;
-        Navigator.of(context).pop(); // 화면 나가기
-      }
-      // SaveResult.cancel이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
+      await _handleSaveResult(saveResult);
     } else {
       // 변경 사항이 없으면 바로 이전 화면으로 이동
       dev.log('TravelDetailScreen - 변경사항 없음, 바로 나가기');
@@ -285,6 +293,98 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
     }
   }
   
+  // 저장 결과 처리 helper 메서드
+  Future<void> _handleSaveResult(SaveResult? saveResult) async {
+    final controller = ref.read(unifiedControllerProvider);
+    
+    if (saveResult == SaveResult.save) {
+      // 변경 사항 저장
+      dev.log('TravelDetailScreen - 변경사항 저장 후 나가기');
+      ref.read(travel_providers.travelsProvider.notifier).commitChanges();
+      
+      // 저장 후 변경사항 플래그 초기화
+      controller.hasChanges = false;
+      ref.read(travel_providers.travelChangesProvider.notifier).state = false;
+      
+      if (!mounted) return;
+      Navigator.of(context).pop(); // 화면 나가기
+    } else if (saveResult == SaveResult.discard) {
+      // 변경 사항 취소 - 백업 데이터로 복원
+      dev.log('TravelDetailScreen - 변경사항 취소 후 나가기');
+      
+      // 백업 복원
+      await controller.restoreFromBackup();
+      
+      if (!mounted) return;
+      Navigator.of(context).pop(); // 화면 나가기
+    }
+    // SaveResult.cancel이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
+  }
+
+  // 실제 여행 데이터 변경 확인 메서드
+  bool _hasActualTravelChanges(TravelModel backup, TravelModel current) {
+    // 기본 정보 변경 확인
+    if (backup.title != current.title || 
+        !_areDatesEqual(backup.startDate, current.startDate) ||
+        !_areDatesEqual(backup.endDate, current.endDate)) {
+      return true;
+    }
+    
+    // 목적지 변경 확인
+    if (backup.destination.length != current.destination.length) {
+      return true;
+    }
+    
+    for (int i = 0; i < backup.destination.length; i++) {
+      if (i >= current.destination.length || backup.destination[i] != current.destination[i]) {
+        return true;
+      }
+    }
+    
+    // 일정 수 변경 확인
+    if (backup.schedules.length != current.schedules.length) {
+      return true;
+    }
+    
+    // dayDataMap 비교 (국가 정보만)
+    if (backup.dayDataMap.length != current.dayDataMap.length) {
+      return true;
+    }
+    
+    for (final entry in backup.dayDataMap.entries) {
+      final dateKey = entry.key;
+      final backupDayData = entry.value;
+      
+      if (!current.dayDataMap.containsKey(dateKey)) {
+        return true;
+      }
+      
+      final currentDayData = current.dayDataMap[dateKey];
+      if (currentDayData == null) {
+        return true;
+      }
+      
+      // 국가 정보만 비교
+      if (backupDayData.countryName != currentDayData.countryName ||
+          backupDayData.flagEmoji != currentDayData.flagEmoji ||
+          backupDayData.countryCode != currentDayData.countryCode) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  // 날짜 동등 비교 헬퍼
+  bool _areDatesEqual(DateTime? date1, DateTime? date2) {
+    if (date1 == null && date2 == null) return true;
+    if (date1 == null || date2 == null) return false;
+    
+    return date1.year == date2.year && 
+           date1.month == date2.month && 
+           date1.day == date2.day;
+  }
+
   /// 새로 생성 중인 여행인지 확인
   bool _isNewTravel(TravelModel travel) {
     // 예: 여행 ID가 일시적으로 생성된 것인지, 제목이 기본값인지, 일정이 없는지 등으로 판단
@@ -339,6 +439,17 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
     // 로그 추가
     dev.log('TravelDetailScreen - 일정 화면으로 이동: Day $dayNumber, 날짜: ${date.toString()}');
     
+    // 통합 컨트롤러 가져오기
+    final controller = ref.read(unifiedControllerProvider);
+    
+    // 이동 전 상태 저장 - 기존 백업 유지 (새 백업 생성하지 않음)
+    final beforeTravel = ref.read(travel_providers.currentTravelProvider);
+    final beforeDayData = beforeTravel?.dayDataMap[_formatDateKey(date)];
+    
+    // 현재 백업 상태 저장 (이후 비교용)
+    final originalBackup = ref.read(travel_providers.travelBackupProvider);
+    dev.log('TravelDetailScreen - 일정 화면 이동 전 백업 상태: ${originalBackup?.id}, 현재 여행: ${beforeTravel?.id}');
+    
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (context) => ScheduleDetailScreen(
@@ -358,8 +469,33 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         ref.invalidate(travel_providers.dayDataProvider(date));
         
         // 통합 컨트롤러를 통한 데이터 새로고침
-        final controller = ref.read(unifiedControllerProvider);
         controller.refreshData(date);
+        
+        // 변경사항 여부 확인
+        final afterTravel = ref.read(travel_providers.currentTravelProvider);
+        final afterDayData = afterTravel?.dayDataMap[_formatDateKey(date)];
+        
+        // 실제 변경사항이 있는지 비교
+        final hasRealChanges = _detectActualChanges(beforeDayData, afterDayData);
+        
+        // 변경사항 로그
+        dev.log('TravelDetailScreen - 일정 화면 복귀 후: 실제 변경사항=${hasRealChanges}');
+        
+        // 실제 변경사항이 있을 때만 hasChanges 플래그 설정
+        if (hasRealChanges) {
+          // 원래 백업을 유지하여 비교 기준 유지
+          if (originalBackup != null) {
+            dev.log('TravelDetailScreen - 원래 백업 유지: ${originalBackup.id}');
+            ref.read(travel_providers.travelBackupProvider.notifier).state = originalBackup;
+          }
+          
+          // 변경사항 플래그 설정
+          controller.hasChanges = true;
+          ref.read(travel_providers.travelChangesProvider.notifier).state = true;
+          dev.log('TravelDetailScreen - 실제 변경사항 감지됨, 다이얼로그 표시 가능');
+        } else {
+          dev.log('TravelDetailScreen - 실제 변경사항 없음');
+        }
         
         // UI 갱신
         if (mounted) {
@@ -370,7 +506,59 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
       }
     } else {
       dev.log('TravelDetailScreen - 일정 화면에서 변경사항 없음 또는 취소됨');
+      // 변경 없음으로 표시
+      controller.hasChanges = false;
     }
+  }
+  
+  // 날짜 키 포맷 메서드
+  String _formatDateKey(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+  
+  // 실제 변경사항 감지 메서드
+  bool _detectActualChanges(DayData? before, DayData? after) {
+    if (before == null && after == null) return false;
+    if (before == null || after == null) return true;
+    
+    // 국가 정보 변경 확인
+    if (before.countryName != after.countryName || 
+        before.flagEmoji != after.flagEmoji ||
+        before.countryCode != after.countryCode) {
+      return true;
+    }
+    
+    // 일정 개수 변경 확인
+    if (before.schedules.length != after.schedules.length) {
+      return true;
+    }
+    
+    // 일정 내용 변경 확인 (일정 개수가 같은 경우)
+    for (int i = 0; i < before.schedules.length; i++) {
+      // 안전하게 인덱스 체크
+      if (i >= after.schedules.length) return true;
+      
+      final beforeSchedule = before.schedules[i];
+      final afterSchedule = after.schedules[i];
+      
+      // ID가 다르면 변경된 것으로 간주
+      if (beforeSchedule.id != afterSchedule.id) return true;
+      
+      // 내용 비교
+      if (beforeSchedule.location != afterSchedule.location ||
+          beforeSchedule.memo != afterSchedule.memo ||
+          _timeToMinutes(beforeSchedule.time) != _timeToMinutes(afterSchedule.time)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  // TimeOfDay를 분 단위로 변환 (비교용)
+  int _timeToMinutes(TimeOfDay? time) {
+    if (time == null) return -1;
+    return time.hour * 60 + time.minute;
   }
   
   // 모든 데이터 새로고침

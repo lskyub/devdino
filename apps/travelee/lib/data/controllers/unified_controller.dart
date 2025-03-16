@@ -32,9 +32,20 @@ class UnifiedController {
       return;
     }
     
+    // 기존 백업이 있는지 확인
+    final existingBackup = _ref.read(travel_providers.travelBackupProvider);
+    if (existingBackup != null && existingBackup.id == travel.id) {
+      dev.log('UnifiedController - 백업 생성 건너뜀: 이미 백업이 존재함 (${travel.id})');
+      return;
+    }
+    
     changeManager.createBackup(travel);
     _ref.read(travel_providers.travelBackupProvider.notifier).state = travel;
     dev.log('UnifiedController - 백업 생성 완료: ${travel.id}');
+    
+    // 변경 사항 없음으로 초기화
+    hasChanges = false;
+    _ref.read(travel_providers.travelChangesProvider.notifier).state = false;
   }
   
   /// 변경사항을 감지합니다.
@@ -49,15 +60,57 @@ class UnifiedController {
   
   /// 백업에서 복원합니다.
   Future<void> restoreFromBackup() async {
-    final restoredTravel = changeManager.restoreFromBackup();
-    _ref.read(travel_providers.travelsProvider.notifier).updateTravel(restoredTravel);
-    dev.log('UnifiedController - 백업에서 복원 완료: ${restoredTravel.id}');
-    hasChanges = false;
+    try {
+      final restoredTravel = changeManager.restoreFromBackup();
+      _ref.read(travel_providers.travelsProvider.notifier).updateTravel(restoredTravel);
+      dev.log('UnifiedController - 백업에서 복원 완료: ${restoredTravel.id}');
+      
+      // 변경 사항 없음으로 초기화
+      hasChanges = false;
+      _ref.read(travel_providers.travelChangesProvider.notifier).state = false;
+      
+      // 백업 후 Provider 캐시 무효화
+      _invalidateProviders(restoredTravel);
+    } catch (e) {
+      dev.log('UnifiedController - 백업에서 복원 실패: $e');
+    }
+  }
+  
+  /// 관련 Provider를 무효화합니다.
+  void _invalidateProviders(TravelModel travel) {
+    if (travel.startDate != null && travel.endDate != null) {
+      final dates = travel.startDate!.isBefore(travel.endDate!)
+          ? _getDateRange(travel.startDate!, travel.endDate!)
+          : [travel.startDate!];
+          
+      for (final date in dates) {
+        final standardDate = DateTime(date.year, date.month, date.day);
+        _ref.invalidate(travel_providers.dayDataProvider(standardDate));
+        _ref.invalidate(travel_providers.dateSchedulesProvider(standardDate));
+      }
+    }
+    
+    _ref.invalidate(travel_providers.currentTravelProvider);
+    dev.log('UnifiedController - Provider 무효화 완료');
+  }
+  
+  /// 날짜 범위를 생성합니다.
+  List<DateTime> _getDateRange(DateTime start, DateTime end) {
+    final List<DateTime> dates = [];
+    for (DateTime date = start; 
+         !date.isAfter(end); 
+         date = date.add(const Duration(days: 1))) {
+      dates.add(date);
+    }
+    return dates;
   }
   
   /// 모든 관련 Provider를 갱신합니다.
   void refreshData(DateTime date) {
     final standardDate = DateTime(date.year, date.month, date.day);
+    final dateKey = '${standardDate.year}-${standardDate.month.toString().padLeft(2, '0')}-${standardDate.day.toString().padLeft(2, '0')}';
+    
+    dev.log('UnifiedController - Provider 무효화 시작: $dateKey');
     
     // 1. 날짜별 Provider 무효화 
     _ref.invalidate(travel_providers.dayDataProvider(standardDate));

@@ -11,7 +11,8 @@ final currentTravelIdProvider = StateProvider<String>((ref) => '');
 
 // 여행 데이터 관리 Notifier
 class TravelNotifier extends StateNotifier<List<TravelModel>> {
-  TravelNotifier() : super([]);
+  TravelNotifier(this.ref) : super([]);
+  final Ref ref;
   
   // 임시 편집 상태 관리
   List<TravelModel> _originalState = [];
@@ -131,12 +132,20 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
   // 여행 정보 업데이트
   void updateTravel(TravelModel updatedTravel) {
     state = state.map((travel) {
-      if (travel.id == updatedTravel.id) {
-        return updatedTravel;
-      }
-      return travel;
+      return travel.id == updatedTravel.id ? updatedTravel : travel;
     }).toList();
+    
+    // 로깅 추가
     dev.log('TravelNotifier - 여행 정보 업데이트: ${updatedTravel.id}');
+    
+    // 현재 여행 ID가 업데이트된 여행 ID와 같으면 변경 플래그 설정
+    final currentTravelId = ref.read(currentTravelIdProvider);
+    if (currentTravelId == updatedTravel.id) {
+      ref.read(travelChangesProvider.notifier).state = true;
+      
+      // ChangeManager에 변경 기록
+      ref.read(changeManagerProvider).recordChange();
+    }
   }
   
   // 여행 삭제
@@ -308,7 +317,7 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
 
 // 여행 목록 Provider
 final travelsProvider = StateNotifierProvider<TravelNotifier, List<TravelModel>>((ref) {
-  return TravelNotifier();
+  return TravelNotifier(ref);
 });
 
 // 현재 선택된 여행 Provider
@@ -397,15 +406,9 @@ final selectedCountryProvider = Provider.family<String?, String>((ref, dateKey) 
   }
 });
 
-// 변경사항 감지 Provider - 백업과 현재 상태 비교
-final travelChangesProvider = Provider<bool>((ref) {
-  final currentTravel = ref.watch(currentTravelProvider);
-  final backupTravel = ref.watch(travelBackupProvider);
-  
-  if (currentTravel == null || backupTravel == null) return false;
-  
-  // 단순 비교 (실제로는 더 복잡한 비교 로직 필요)
-  return currentTravel != backupTravel;
+// 여행 데이터 변경 여부 감지 Provider
+final travelChangesProvider = StateProvider<bool>((ref) {
+  return false;
 });
 
 // 여행 백업 Provider

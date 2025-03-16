@@ -89,14 +89,14 @@ class ScheduleDetailController {
   }
   
   /// 백업에서 복원
-  bool restoreFromBackup(DateTime date) {
+  void restoreFromBackup(DateTime date) {
     dev.log('ScheduleDetailController - 백업 데이터로 복원 시작');
     
     // 현재 여행 정보 가져오기
     final currentTravel = ref.read(currentTravelProvider);
     if (currentTravel == null) {
       dev.log('ScheduleDetailController - 복원 실패: 현재 여행 정보 없음');
-      return false;
+      return;
     }
     
     dev.log('일정 백업에서 복원 시작 (${_localBackupSchedules.length}개 일정)');
@@ -126,12 +126,11 @@ class ScheduleDetailController {
       }
       
       dev.log('ScheduleDetailController - 백업에서 복원 완료');
-      _hasChanges = false;
       
-      return true;
+      // 변경사항 플래그 초기화
+      _hasChanges = false;
     } catch (e) {
       dev.log('ScheduleDetailController - 복원 중 오류: $e');
-      return false;
     }
   }
   

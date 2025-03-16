@@ -307,7 +307,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     String selectedCountryCode = currentTravel.countryInfos.isNotEmpty
         ? currentTravel.countryInfos.first.countryCode
         : "";
-    dev.log('1 dayData: $dayData');
+    
     // DayData가 있으면 해당 정보 사용
     if (dayData != null && dayData.countryName.isNotEmpty) {
       selectedCountryName = dayData.countryName;
@@ -316,7 +316,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
           ? dayData.countryCode
           : selectedCountryCode;
     }
-dev.log('2 currentTravel: $currentTravel');
+
     return WillPopScope(
       onWillPop: () async {
         // 변경 사항이 있으면 확인 대화상자 표시
@@ -331,13 +331,26 @@ dev.log('2 currentTravel: $currentTravel');
           if (!shouldSaveChanges) {
             // 저장 안 함 - 백업에서 복원
             ref.read(scheduleDetailControllerProvider).restoreFromBackup(date);
+            
+            // 변경사항 없음으로 표시하고 화면 닫기
+            Navigator.pop(context, false);
             return true;
           }
 
-          // 저장 - 그냥 나감
+          // 저장 - 변경사항 있음으로 표시하고 화면 닫기
           ref.read(travelsProvider.notifier).commitChanges();
+          
+          // 로그 추가
+          dev.log('ScheduleDetailScreen - 변경사항 저장 후 화면 닫기');
+          
+          // 명시적으로 변경사항 있음(true) 전달
+          Navigator.pop(context, true);
           return true;
         }
+        
+        // 변경사항이 없을 때는 false 반환 (변경 없음)
+        dev.log('ScheduleDetailScreen - 변경사항 없이 뒤로가기');
+        Navigator.pop(context, false);
         return true;
       },
       child: Scaffold(
