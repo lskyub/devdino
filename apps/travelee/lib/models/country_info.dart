@@ -11,19 +11,34 @@ class CountryInfo {
     required this.flagEmoji,
   });
 
+  CountryInfo copyWith({
+    String? name,
+    String? countryCode,
+    String? flagEmoji,
+  }) {
+    return CountryInfo(
+      name: name ?? this.name,
+      countryCode: countryCode ?? this.countryCode,
+      flagEmoji: flagEmoji ?? this.flagEmoji,
+    );
+  }
+
+  @override
+  String toString() => 'CountryInfo(name: $name, countryCode: $countryCode, flagEmoji: $flagEmoji)';
+
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'countryCode': countryCode,
-      'flagEmoji': flagEmoji,
+      'country_code': countryCode,
+      'flag_emoji': flagEmoji,
     };
   }
 
   factory CountryInfo.fromJson(Map<String, dynamic> json) {
     return CountryInfo(
       name: json['name'] as String,
-      countryCode: json['countryCode'] as String,
-      flagEmoji: json['flagEmoji'] as String,
+      countryCode: json['country_code'] as String,
+      flagEmoji: json['flag_emoji'] as String,
     );
   }
 

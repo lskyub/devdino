@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/country_info.dart';
 
@@ -15,10 +14,13 @@ class DayData {
     required this.date,
     required this.countryName,
     required this.flagEmoji,
-    this.countryCode = '', // 기본값 빈 문자열
+    required this.countryCode, // 기본값 빈 문자열
     required this.dayNumber,
     required this.schedules,
   });
+
+  @override
+  String toString() => 'DayData(date: $date, countryName: $countryName, flagEmoji: $flagEmoji, countryCode: $countryCode, dayNumber: $dayNumber, schedules: $schedules)';
   
   // 복사본 생성
   DayData copyWith({
@@ -40,7 +42,7 @@ class DayData {
   }
   
   // 특정 날짜의 국가 정보 업데이트
-  DayData updateCountry(String country, String emoji, [String code = '']) {
+  DayData updateCountry(String country, String emoji, String code) {
     return copyWith(
       countryName: country,
       flagEmoji: emoji,
@@ -59,6 +61,8 @@ class TravelModel {
   final DateTime? endDate;
   final List<Schedule> schedules;
   final Map<String, DayData> dayDataMap; // 날짜별 데이터 (키: 'yyyy-MM-dd')
+  final DateTime createdAt; // 생성 시간
+  final DateTime updatedAt; // 업데이트 시간
   
   TravelModel({
     required this.id,
@@ -69,7 +73,10 @@ class TravelModel {
     this.endDate,
     required this.schedules,
     required this.dayDataMap,
-  });
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) : this.createdAt = createdAt ?? DateTime.now(),
+       this.updatedAt = updatedAt ?? DateTime.now();
   
   // 복사본 생성
   TravelModel copyWith({
@@ -81,6 +88,8 @@ class TravelModel {
     DateTime? endDate,
     List<Schedule>? schedules,
     Map<String, DayData>? dayDataMap,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return TravelModel(
       id: id ?? this.id,
@@ -91,8 +100,13 @@ class TravelModel {
       endDate: endDate ?? this.endDate,
       schedules: schedules ?? this.schedules,
       dayDataMap: dayDataMap ?? this.dayDataMap,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+  
+  @override
+  String toString() => 'TravelModel(id: $id, title: $title, destination: $destination, countryInfos: $countryInfos, startDate: $startDate, endDate: $endDate, schedules: $schedules, dayDataMap: $dayDataMap, createdAt: $createdAt, updatedAt: $updatedAt)';
   
   // 일정 추가
   TravelModel addSchedule(Schedule schedule) {
@@ -157,6 +171,7 @@ class TravelModel {
     return copyWith(
       schedules: newSchedules,
       dayDataMap: newDayDataMap,
+      updatedAt: DateTime.now(),
     );
   }
   
@@ -177,6 +192,7 @@ class TravelModel {
     return copyWith(
       schedules: newSchedules,
       dayDataMap: newDayDataMap,
+      updatedAt: DateTime.now(),
     );
   }
   
@@ -192,11 +208,12 @@ class TravelModel {
     return copyWith(
       schedules: newSchedules,
       dayDataMap: newDayDataMap,
+      updatedAt: DateTime.now(),
     );
   }
   
   // 날짜의 국가 정보 설정
-  TravelModel setCountryForDate(DateTime date, String country, String flagEmoji, [String countryCode = '']) {
+  TravelModel setCountryForDate(DateTime date, String country, String flagEmoji, String countryCode) {
     final dateKey = _getDateKey(date);
     final existingDayData = dayDataMap[dateKey];
     final dayNumber = _calculateDayNumber(date);
@@ -227,6 +244,7 @@ class TravelModel {
     // 새 TravelModel 반환
     return copyWith(
       dayDataMap: newDayDataMap,
+      updatedAt: DateTime.now(),
     );
   }
   
@@ -412,6 +430,8 @@ class TravelModel {
       countryInfos: [],
       schedules: [],
       dayDataMap: {},
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
   }
 

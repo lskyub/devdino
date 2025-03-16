@@ -51,10 +51,11 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
   }
   
   void _selectCountry(CountryInfo country) {
-    dev.log('국가 선택: ${country.name} ${country.flagEmoji}');
+    dev.log('국가 선택: ${country.name} ${country.flagEmoji} ${country.countryCode}');
     Navigator.pop(context, {
       'name': country.name,
       'flag': country.flagEmoji,
+      'code': country.countryCode,
     });
   }
 
@@ -62,6 +63,9 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height * 0.3,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -90,24 +94,6 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
             ],
           ),
           const SizedBox(height: 16),
-          // 검색창
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: '국가명 검색',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // 현재 선택된 국가 표시
           if (widget.currentCountryName != null && widget.currentCountryName!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -127,72 +113,59 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                 ],
               ),
             ),
-          
-          // 국가 목록
-          widget.countryInfos.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: B2bText.medium(
-                  type: B2bTextType.body2,
-                  text: '이 여행에 추가된 국가가 없습니다',
-                  color: $b2bToken.color.gray400.resolve(context),
-                ),
-              ),
-            )
-          : _filteredCountries.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: B2bText.medium(
-                    type: B2bTextType.body2,
-                    text: '검색 결과가 없습니다',
-                    color: $b2bToken.color.gray400.resolve(context),
+          Flexible(
+            child: widget.countryInfos.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: B2bText.medium(
+                      type: B2bTextType.body2,
+                      text: '이 여행에 추가된 국가가 없습니다',
+                      color: $b2bToken.color.gray400.resolve(context),
+                    ),
                   ),
-                ),
-              )
-            : SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: ListView.builder(
-                itemCount: _filteredCountries.length,
-                itemBuilder: (context, index) {
-                  final country = _filteredCountries[index];
-                  final isSelected = country.name == widget.currentCountryName;
-                  
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: isSelected 
-                        ? $b2bToken.color.primary.resolve(context).withOpacity(0.1)
-                        : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 2),
-                    child: ListTile(
-                      leading: Text(
-                        country.flagEmoji,
-                        style: const TextStyle(fontSize: 24),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.countryInfos.length,
+                  itemBuilder: (context, index) {
+                    final country = widget.countryInfos[index];
+                    final isSelected = country.name == widget.currentCountryName;
+                    
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isSelected 
+                          ? $b2bToken.color.primary.resolve(context).withOpacity(0.1)
+                          : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      title: Text(
-                        country.name,
-                        style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected 
-                            ? $b2bToken.color.primary.resolve(context)
-                            : null,
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      child: ListTile(
+                        leading: Text(
+                          country.flagEmoji,
+                          style: const TextStyle(fontSize: 24),
                         ),
+                        title: Text(
+                          country.name,
+                          style: TextStyle(
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected 
+                              ? $b2bToken.color.primary.resolve(context)
+                              : null,
+                          ),
+                        ),
+                        trailing: isSelected
+                          ? Icon(
+                              Icons.check_circle,
+                              color: $b2bToken.color.primary.resolve(context),
+                            )
+                          : null,
+                        onTap: () => _selectCountry(country),
                       ),
-                      trailing: isSelected
-                        ? Icon(
-                            Icons.check_circle,
-                            color: $b2bToken.color.primary.resolve(context),
-                          )
-                        : null,
-                      onTap: () => _selectCountry(country),
-                    ),
-                  );
-                },
-              ),
-            ),
+                    );
+                  },
+                ),
+          ),
         ],
       ),
     );

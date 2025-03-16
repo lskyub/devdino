@@ -74,14 +74,15 @@ class DaySchedulesList extends ConsumerWidget {
         // 국가 정보 백업
         String? deletedCountryName;
         String? deletedFlagEmoji;
-        
+        String? deletedCountryCode;
         // 삭제할 날짜의 국가 정보 백업
         if (travelInfo.dayDataMap.containsKey(dateKey)) {
           final dayData = travelInfo.dayDataMap[dateKey];
           if (dayData != null) {
             deletedCountryName = dayData.countryName;
             deletedFlagEmoji = dayData.flagEmoji;
-            dev.log('DaySchedulesList - 삭제 전 국가 정보 백업: $deletedCountryName $deletedFlagEmoji');
+            deletedCountryCode = dayData.countryCode;
+            dev.log('DaySchedulesList - 삭제 전 국가 정보 백업: $deletedCountryName $deletedFlagEmoji $deletedCountryCode');
           }
         }
         
@@ -101,11 +102,12 @@ class DaySchedulesList extends ConsumerWidget {
           final updatedDayDataMap = Map<String, DayData>.from(currentTravel.dayDataMap);
           
           // 해당 날짜의 DayData를 삭제하지 않고 빈 일정으로 유지 (국가 정보 보존)
-          if (deletedCountryName != null && deletedFlagEmoji != null) {
+          if (deletedCountryName != null && deletedFlagEmoji != null && deletedCountryCode != null) {
             updatedDayDataMap[dateKey] = DayData(
               date: date,
               countryName: deletedCountryName,
               flagEmoji: deletedFlagEmoji,
+              countryCode: deletedCountryCode,
               dayNumber: daySchedule.dayNumber,
               schedules: [], // 빈 일정
             );

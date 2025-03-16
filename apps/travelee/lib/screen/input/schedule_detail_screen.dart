@@ -13,7 +13,7 @@ import 'package:travelee/presentation/screens/input/schedule_input_modal.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/screen/input/time_picker_modal.dart';
 import 'package:travelee/screen/input/location_search_screen.dart';
-import 'package:travelee/screen/input/country_select_modal.dart';
+import 'package:travelee/presentation/screens/input/country_select_modal.dart';
 import 'package:travelee/presentation/widgets/schedule/schedule_item.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as dev;
@@ -175,7 +175,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     ).then((_) {
       // 변경사항 즉시 저장
       ref.read(travelsProvider.notifier).commitChanges();
-      
+
       // 화면 갱신
       if (mounted) {
         setState(() {
@@ -312,9 +312,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     if (currentTravel == null) {
       return _buildErrorScreen(context);
     }
-
-    // 현재 날짜의 DayData 가져오기 (새로고침 보장을 위해 watch 사용)
-    ref.invalidate(dayDataProvider(date));
+    // 현재 날짜의 DayData 가져오기
     final dayData = ref.watch(dayDataProvider(date));
 
     // 국가 및 국기 정보
@@ -335,7 +333,6 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
           ? dayData.countryCode
           : selectedCountryCode;
     }
-
     return WillPopScope(
       onWillPop: () async {
         // 변경 사항이 있으면 확인 대화상자 표시
@@ -448,14 +445,14 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
 
           // 변경된 정보가 즉시 반영되도록 프로바이더 갱신
           // 작업이 비동기적으로 처리되도록 조금 딜레이를 줌
-          Future.delayed(const Duration(milliseconds: 50), () {
-            // 현재 여행 정보가 메인 화면에 반영되도록 ID 재설정
-            if (travelId.isNotEmpty) {
-              dev.log('ScheduleDetailScreen - 부모 화면 갱신을 위한 상태 업데이트');
-              ref.read(currentTravelIdProvider.notifier).state = "";
-              ref.read(currentTravelIdProvider.notifier).state = travelId;
-            }
-          });
+          // Future.delayed(const Duration(milliseconds: 50), () {
+          // 현재 여행 정보가 메인 화면에 반영되도록 ID 재설정
+          if (travelId.isNotEmpty) {
+            dev.log('ScheduleDetailScreen - 부모 화면 갱신을 위한 상태 업데이트');
+            ref.read(currentTravelIdProvider.notifier).state = "";
+            ref.read(currentTravelIdProvider.notifier).state = travelId;
+          }
+          // });
         },
         icon: SvgPicture.asset(
           'assets/icons/back.svg',
@@ -483,8 +480,9 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               child: FittedBox(
                 fit: BoxFit.cover,
                 child: selectedCountryCode.isEmpty
-                  ? const Icon(Icons.flag, color: Colors.grey) // 국가 코드가 없는 경우 기본 아이콘 표시
-                  : CountryIcons.getSvgFlag(selectedCountryCode),
+                    ? const Icon(Icons.flag,
+                        color: Colors.grey) // 국가 코드가 없는 경우 기본 아이콘 표시
+                    : CountryIcons.getSvgFlag(selectedCountryCode),
               ),
             ),
           ),
@@ -688,7 +686,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     final currentCode = dayData?.countryCode ?? '';
 
     dev.log(
-        '현재 선택된 국가: $currentCountryName, 플래그: $currentFlag, 코드: $currentCode');
+        '_selectCountry 현재 선택된 국가 정보: 국가명=$currentCountryName, 플래그=$currentFlag, 코드=$currentCode');
 
     final result = await showModalBottomSheet<Map<String, String>>(
       context: context,
@@ -703,9 +701,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       final countryName = result['name'] ?? '';
       final flagEmoji = result['flag'] ?? '';
       final countryCode = result['code'] ?? '';
-      
-      dev.log('선택된 국가 정보: $countryName, 플래그: $flagEmoji, 코드: $countryCode');
-      
+
+      dev.log(
+          '_selectCountry 선택된 국가 정보: 국가명=$countryName, 플래그=$flagEmoji, 코드=$countryCode');
+
       if (countryName.isNotEmpty) {
         try {
           // 국가 정보 업데이트
@@ -718,14 +717,25 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
           // Provider 캐시 초기화 및 상태 갱신
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
-              final currentId = travel.id;
-              ref.invalidate(dayDataProvider(date));
-              ref.read(currentTravelIdProvider.notifier).state = "";
-              ref.read(currentTravelIdProvider.notifier).state = currentId;
+              // 표준 날짜 형식으로 변환하여 캐시 키 일관성 유지
+              final standardDate = DateTime(date.year, date.month, date.day);
 
+              // 명시적으로 모든 관련 Provider 캐시 초기화
+              ref.invalidate(dayDataProvider(standardDate));
+              ref.invalidate(dateSchedulesProvider(standardDate));
+              
+              // 전체 여행 정보도 갱신
+              ref.invalidate(currentTravelProvider);
+
+              // ID를 비우지 않고 setState로 UI 갱신
               setState(() {
                 controller.hasChanges = true;
               });
+
+              // 디버그 로그
+              final updatedDayData = ref.read(dayDataProvider(standardDate));
+              dev.log(
+                  '국가 선택 후 업데이트된 데이터: ${updatedDayData?.countryName}, ${updatedDayData?.flagEmoji}, ${updatedDayData?.countryCode}');
 
               // 성공 알림
               ScaffoldMessenger.of(context).showSnackBar(

@@ -9,7 +9,7 @@ import 'package:travelee/data/controllers/schedule_detail_controller.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/presentation/screens/input/schedule_input_modal.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
-import 'package:travelee/screen/input/country_select_modal.dart';
+import 'package:travelee/presentation/screens/input/country_select_modal.dart';
 import 'package:travelee/presentation/widgets/schedule/schedule_item.dart';
 import 'dart:developer' as dev;
 
@@ -27,9 +27,10 @@ class ScheduleDetailScreen extends ConsumerStatefulWidget {
     required this.date,
     required this.dayNumber,
   });
-  
+
   @override
-  ConsumerState<ScheduleDetailScreen> createState() => _ScheduleDetailScreenState();
+  ConsumerState<ScheduleDetailScreen> createState() =>
+      _ScheduleDetailScreenState();
 }
 
 class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
@@ -40,13 +41,13 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
   void initState() {
     super.initState();
     date = widget.date;
-    
+
     // 백업 생성
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(scheduleDetailControllerProvider).createBackup(date);
     });
   }
-  
+
   // 나가기 전 변경 사항 저장 여부 확인 다이얼로그
   Future<bool?> _showExitConfirmDialog(BuildContext context) {
     return showDialog<bool>(
@@ -108,11 +109,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     final currentTravel = ref.watch(currentTravelProvider);
     if (currentTravel == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('여행 정보를 찾을 수 없습니다. 다시 시도해주세요.'))
-      );
+          const SnackBar(content: Text('여행 정보를 찾을 수 없습니다. 다시 시도해주세요.')));
       return;
     }
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -140,8 +140,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     final currentTravel = ref.watch(currentTravelProvider);
     if (currentTravel == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('여행 정보를 찾을 수 없습니다. 다시 시도해주세요.'))
-      );
+          const SnackBar(content: Text('여행 정보를 찾을 수 없습니다. 다시 시도해주세요.')));
       return;
     }
 
@@ -175,13 +174,13 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       dev.log('국가 선택 실패: 현재 여행 정보 없음');
       return;
     }
-    
+
     final dayData = ref.watch(dayDataProvider(date));
     final currentCountryName = dayData?.countryName ?? '';
     final currentFlag = dayData?.flagEmoji ?? '';
-    
+
     dev.log('현재 선택된 국가: $currentCountryName, 플래그: $currentFlag');
-    
+
     final result = await showModalBottomSheet<Map<String, String>>(
       context: context,
       isScrollControlled: true,
@@ -194,15 +193,17 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     if (result != null && mounted) {
       final countryName = result['name'] ?? '';
       final flagEmoji = result['flag'] ?? '';
-      
+      final countryCode = result['code'] ?? '';
       if (countryName.isNotEmpty) {
         try {
           // 국가 정보 업데이트
-          ref.read(scheduleDetailControllerProvider).updateCountryInfo(date, countryName, flagEmoji);
-          
+          ref
+              .read(scheduleDetailControllerProvider)
+              .updateCountryInfo(date, countryName, flagEmoji, countryCode);
+
           // 즉시 변경사항 커밋 (저장)
           ref.read(travelsProvider.notifier).commitChanges();
-          
+
           // Provider 캐시 초기화 및 상태 갱신
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
@@ -210,9 +211,9 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               ref.invalidate(dayDataProvider(date));
               ref.read(currentTravelIdProvider.notifier).state = "";
               ref.read(currentTravelIdProvider.notifier).state = currentId;
-            
+
               ref.read(scheduleDetailControllerProvider).hasChanges = true;
-            
+
               // 성공 알림
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -250,12 +251,14 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              
-              ref.read(scheduleDetailControllerProvider).removeSchedule(schedule.id);
-              
+
+              ref
+                  .read(scheduleDetailControllerProvider)
+                  .removeSchedule(schedule.id);
+
               // 변경사항 즉시 저장
               ref.read(travelsProvider.notifier).commitChanges();
-              
+
               // 화면 갱신
               if (mounted) {
                 ref.read(scheduleDetailControllerProvider).hasChanges = true;
@@ -275,42 +278,42 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     if (currentTravel == null) {
       return _buildErrorScreen(context);
     }
-    
+
     // 현재 날짜의 DayData 가져오기 (새로고침 보장을 위해 watch 사용)
     ref.invalidate(dayDataProvider(date));
     final dayData = ref.watch(dayDataProvider(date));
-    
+
     // 국가 및 국기 정보
-    String selectedCountryName = currentTravel.destination.isNotEmpty 
-        ? currentTravel.destination.first 
+    String selectedCountryName = currentTravel.destination.isNotEmpty
+        ? currentTravel.destination.first
         : '';
-    String flagEmoji = currentTravel.countryInfos.isNotEmpty 
-        ? currentTravel.countryInfos.first.flagEmoji 
+    String flagEmoji = currentTravel.countryInfos.isNotEmpty
+        ? currentTravel.countryInfos.first.flagEmoji
         : "🏳️";
-    
+
     // DayData가 있으면 해당 정보 사용
     if (dayData != null && dayData.countryName.isNotEmpty) {
       selectedCountryName = dayData.countryName;
       flagEmoji = dayData.flagEmoji.isNotEmpty ? dayData.flagEmoji : flagEmoji;
     }
-    
+
     return WillPopScope(
       onWillPop: () async {
         // 변경 사항이 있으면 확인 대화상자 표시
         if (ref.read(scheduleDetailControllerProvider).hasChanges) {
           final shouldSaveChanges = await _showExitConfirmDialog(context);
-          
+
           if (shouldSaveChanges == null) {
             // 취소 - 화면에 계속 머무름
             return false;
           }
-          
+
           if (!shouldSaveChanges) {
             // 저장 안 함 - 백업에서 복원
             ref.read(scheduleDetailControllerProvider).restoreFromBackup(date);
             return true;
           }
-          
+
           // 저장 - 그냥 나감
           ref.read(travelsProvider.notifier).commitChanges();
           return true;
@@ -342,7 +345,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       ),
     );
   }
-  
+
   /// 에러 화면 빌드
   Widget _buildErrorScreen(BuildContext context) {
     return Scaffold(
@@ -371,9 +374,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       ),
     );
   }
-  
+
   /// 앱바 빌드
-  PreferredSizeWidget _buildAppBar(BuildContext context, String flagEmoji, String selectedCountryName) {
+  PreferredSizeWidget _buildAppBar(
+      BuildContext context, String flagEmoji, String selectedCountryName) {
     return AppBar(
       title: Row(
         children: [
@@ -413,26 +417,26 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       leading: IconButton(
         onPressed: () {
           dev.log('ScheduleDetailScreen - 뒤로가기 버튼 클릭');
-          
+
           // 변경사항 저장
           ref.read(travelsProvider.notifier).commitChanges();
-          
+
           // 현재 여행 ID 가져오기
           final travelId = ref.read(currentTravelIdProvider);
-          
+
           // 뒤로 가기
           Navigator.pop(context, true);
-          
+
           // 변경된 정보가 즉시 반영되도록 프로바이더 갱신
           // 작업이 비동기적으로 처리되도록 조금 딜레이를 줌
-          Future.delayed(const Duration(milliseconds: 50), () {
-            // 현재 여행 정보가 메인 화면에 반영되도록 ID 재설정
-            if (travelId.isNotEmpty) {
-              dev.log('ScheduleDetailScreen - 부모 화면 갱신을 위한 상태 업데이트');
-              ref.read(currentTravelIdProvider.notifier).state = "";
-              ref.read(currentTravelIdProvider.notifier).state = travelId;
-            }
-          });
+          // Future.delayed(const Duration(milliseconds: 50), () {
+          // 현재 여행 정보가 메인 화면에 반영되도록 ID 재설정
+          if (travelId.isNotEmpty) {
+            dev.log('ScheduleDetailScreen - 부모 화면 갱신을 위한 상태 업데이트');
+            ref.read(currentTravelIdProvider.notifier).state = "";
+            ref.read(currentTravelIdProvider.notifier).state = travelId;
+          }
+          // });
         },
         icon: SvgPicture.asset(
           'assets/icons/back.svg',
@@ -456,7 +460,8 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            backgroundColor: $b2bToken.color.primary.resolve(context).withOpacity(0.1),
+            backgroundColor:
+                $b2bToken.color.primary.resolve(context).withOpacity(0.1),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
         ),
@@ -464,15 +469,17 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       ],
     );
   }
-  
+
   /// 일정 목록 빌드
   Widget _buildScheduleList(BuildContext context) {
     // 현재 날짜의 일정 목록
     final schedules = ref.watch(dateSchedulesProvider(date));
-    
+
     // 일정을 시간순으로 정렬
-    final sortedSchedules = ref.read(scheduleDetailControllerProvider).sortSchedulesByTime(schedules);
-    
+    final sortedSchedules = ref
+        .read(scheduleDetailControllerProvider)
+        .sortSchedulesByTime(schedules);
+
     if (sortedSchedules.isEmpty) {
       return Center(
         child: Column(
@@ -510,6 +517,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
 }
 
 /// ScheduleDetailController를 제공하는 Provider
-final scheduleDetailControllerProvider = Provider.autoDispose<ScheduleDetailController>((ref) {
+final scheduleDetailControllerProvider =
+    Provider.autoDispose<ScheduleDetailController>((ref) {
   return ScheduleDetailController(ref);
-}); 
+});

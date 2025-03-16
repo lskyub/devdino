@@ -10,6 +10,8 @@ import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/screen/travel_detail_screen.dart';
 import 'package:travelee/models/travel_model.dart';
+import 'package:travelee/models/day_schedule_data.dart';
+import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:travelee/screen/input/travel_detail_screen.dart' as input_screens;
 
 class DateScreen extends ConsumerWidget {
@@ -198,6 +200,49 @@ class DateScreen extends ConsumerWidget {
                   
                   // 편집 중인 여행인지 확인
                   final isNewTravel = travelInfo.id.isEmpty || travelInfo.id.startsWith('temp_');
+                  
+                  // 선택한 날짜 범위에 대해 dayDataMap 초기화
+                  final start = travelInfo.startDate!;
+                  final end = travelInfo.endDate!;
+                  
+                  // 날짜 범위 내의 모든 날짜 생성
+                  final dayDifference = end.difference(start).inDays;
+                  Map<String, DayData> initialDayDataMap = {};
+                  
+                  // 기본 국가 정보 (첫 번째 국가 사용)
+                  String defaultCountryName = '';
+                  String defaultFlagEmoji = '🏳️';
+                  String defaultCountryCode = '';
+                  
+                  if (travelInfo.countryInfos.isNotEmpty) {
+                    defaultCountryName = travelInfo.countryInfos.first.name;
+                    defaultFlagEmoji = travelInfo.countryInfos.first.flagEmoji;
+                    defaultCountryCode = travelInfo.countryInfos.first.countryCode;
+                  } else if (travelInfo.destination.isNotEmpty) {
+                    defaultCountryName = travelInfo.destination.first;
+                  }
+                  
+                  // 각 날짜에 대한 DayData 생성
+                  for (int i = 0; i <= dayDifference; i++) {
+                    final currentDate = start.add(Duration(days: i));
+                    final dateKey = TravelDateFormatter.formatDate(currentDate);
+                    
+                    // 비어있는 DayData 생성
+                    initialDayDataMap[dateKey] = DayData(
+                      date: currentDate,
+                      dayNumber: i + 1,
+                      countryName: defaultCountryName,
+                      flagEmoji: defaultFlagEmoji,
+                      countryCode: defaultCountryCode,
+                      schedules: [],
+                    );
+                  }
+                  
+                  // 업데이트된 여행 정보 저장
+                  final updatedTravel = travelInfo.copyWith(
+                    dayDataMap: initialDayDataMap,
+                  );
+                  ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
                   
                   if (isNewTravel) {
                     // 세부 일정 화면으로 Navigator를 사용해 직접 이동 (라우터 우회)

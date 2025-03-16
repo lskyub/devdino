@@ -342,8 +342,9 @@ final dayDataProvider = Provider.family<DayData?, DateTime>((ref, date) {
   final currentTravel = ref.watch(currentTravelProvider);
   if (currentTravel == null) return null;
   
-  // 날짜 키 생성
-  final dateKey = TravelDateFormatter.formatDate(date);
+  // 날짜 키 생성 - 시간 정보를 제거하고 표준화된 형식으로 변환
+  final standardDate = DateTime(date.year, date.month, date.day);
+  final dateKey = TravelDateFormatter.formatDate(standardDate);
   
   // 날짜 데이터 가져오기
   final dayData = currentTravel.dayDataMap[dateKey];
@@ -359,24 +360,27 @@ final dayDataProvider = Provider.family<DayData?, DateTime>((ref, date) {
       // 삭제된 국가 정보 대신 기본 국가 정보 반환 (복제본 생성)
       String newCountryName = currentTravel.destination.isNotEmpty ? currentTravel.destination.first : '';
       String newFlagEmoji = '🏳️';
+      String newCountryCode = '';
       
-      // 새 국가의 이모지 찾기
+      // 새 국가의 이모지와 코드 찾기
       if (newCountryName.isNotEmpty) {
         final countryInfo = currentTravel.countryInfos.firstWhere(
           (info) => info.name == newCountryName,
           orElse: () => CountryInfo(name: newCountryName, countryCode: '', flagEmoji: '🏳️'),
         );
         newFlagEmoji = countryInfo.flagEmoji;
+        newCountryCode = countryInfo.countryCode;
       }
       
       // 수정된 DayData 반환 (원본은 그대로 두고 필터링된 결과만 반환)
       return dayData.copyWith(
         countryName: newCountryName,
         flagEmoji: newFlagEmoji,
+        countryCode: newCountryCode,
       );
     }
     
-    dev.log('dayDataProvider - 데이터 반환: ${dateKey}, 국가: ${dayData.countryName}, 플래그: ${dayData.flagEmoji}');
+    dev.log('dayDataProvider - 데이터 반환: ${dateKey}, 국가: ${dayData.countryName}, 플래그: ${dayData.flagEmoji}, 코드: ${dayData.countryCode}');
   } else {
     dev.log('dayDataProvider - ${dateKey}에 대한 데이터 없음');
   }

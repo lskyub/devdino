@@ -49,6 +49,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
   late PageController _pageController;
   late FocusNode _focusNode;
 
+  // 계산된 daySchedules를 캐시하기 위한 변수
+  List<DayScheduleData> _cachedDaySchedules = [];
+  String _lastTravelId = '';
+  DateTime? _lastStartDate;
+  DateTime? _lastEndDate;
+  bool _needsScheduleRecalculation = true;
+
   @override
   void initState() {
     super.initState();
@@ -58,9 +65,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     // 페이지 로드 완료 후 백업 생성
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _createBackup();
-
-      // 목적지 변경 감지 리스너 설정 - 제거 (build 메서드에서만 사용 가능)
-      // _setupDestinationChangeListener();
     });
   }
 
@@ -207,6 +211,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     print('TravelDetailScreen - 수정 플래그 설정');
     setState(() {
       _hasChanges = true;
+      _invalidateScheduleCache(); // 캐시 무효화
     });
   }
 
@@ -280,6 +285,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           date: dayScheduleData.date,
           countryName: dayScheduleData.countryName,
           flagEmoji: dayScheduleData.flagEmoji,
+          countryCode: dayScheduleData.countryCode,
           dayNumber: dayScheduleData.dayNumber,
           schedules: dayScheduleData.schedules
               .map((s) => Schedule(
@@ -323,9 +329,19 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
       // 4. 강제로 현재 여행 ID 재설정하여 화면 갱신
       final currentId = ref.read(currentTravelIdProvider);
-      ref.read(currentTravelIdProvider.notifier).state = '';
-      await Future.delayed(Duration(milliseconds: 50));
-      ref.read(currentTravelIdProvider.notifier).state = currentId;
+
+      // 상태 업데이트는 순차적으로 처리
+      Future.microtask(() {
+        if (mounted) {
+          ref.read(currentTravelIdProvider.notifier).state = '';
+
+          Future.delayed(Duration(milliseconds: 50), () {
+            if (mounted) {
+              ref.read(currentTravelIdProvider.notifier).state = currentId;
+            }
+          });
+        }
+      });
 
       print('TravelDetailScreen - 복원 작업 완료');
       print(
@@ -355,32 +371,25 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     // Provider를 통해 여행 정보 가져오기
     final travelInfo = ref.watch(currentTravelProvider);
 
-    // Provider 상태 변경 감지 및 수정 플래그 업데이트
+    // Provider 상태 변경 감지 및 수정 플래그 업데이트 - 최적화
+    // 매 빌드마다 실행되는 코드이므로 상태 업데이트와 재빌드 유발을 최소화
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 백업이 생성된 후에만 변경 사항 감지 실행
       if (_backupCreated && mounted) {
-        final hasActualChanges = _detectChanges();
-        if (hasActualChanges != _hasChanges) {
-          print('TravelDetailScreen - 변경 사항 감지 상태 업데이트: $hasActualChanges');
+        // 지역 변수로 현재 변경 상태 캡처
+        final currentHasChanges = _hasChanges;
+
+        // 실제 변경 사항 확인
+        final hasActualChanges =
+            ref.read(travelsProvider.notifier).hasChanges();
+
+        // 상태가 실제로 변경되었을 때만 setState 호출
+        if (hasActualChanges != currentHasChanges) {
+          print(
+              'TravelDetailScreen - 변경 사항 감지 상태 변경됨: $currentHasChanges -> $hasActualChanges');
           setState(() {
             _hasChanges = hasActualChanges;
           });
-        }
-
-        // 적극적으로 변경 여부 확인 및 저장
-        if (travelInfo != null && _originalTravelInfoBackup != null) {
-          // ID가 비어있지 않고 temp_로 시작하지 않는지 확인 (기존 여행)
-          final isExistingTravel =
-              travelInfo.id.isNotEmpty && !travelInfo.id.startsWith('temp_');
-
-          // travelsProvider의 hasChanges가 true인데 _hasChanges가 false인 경우 강제로 true로 설정
-          if (isExistingTravel &&
-              ref.read(travelsProvider.notifier).hasChanges() &&
-              !_hasChanges) {
-            print('TravelDetailScreen - Provider에 변경 사항이 있어 강제로 변경 플래그 설정');
-            setState(() {
-              _hasChanges = true;
-            });
-          }
         }
       }
     });
@@ -419,8 +428,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         endDate: tomorrow,
       );
 
-      // 업데이트된 여행 정보 저장
-      ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
+      // 업데이트된 여행 정보 저장 - 빌드 후에 실행
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
+          // 캐시 무효화
+          _invalidateScheduleCache();
+        }
+      });
 
       // 빈 daySchedules 리스트 반환
       final daySchedules = <DayScheduleData>[];
@@ -431,8 +446,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       final isNewTravel =
           travelInfo.id.isEmpty || travelInfo.id.startsWith('temp_');
       // 로딩 화면 표시
-    return Scaffold(
-      backgroundColor: Colors.white,
+      return Scaffold(
+        backgroundColor: Colors.white,
         appBar: _buildAppBar(context),
         body: Column(
           children: [
@@ -446,41 +461,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       );
     }
 
-    final dates = TravelDateFormatter.getDateRange(
-        travelInfo.startDate!, travelInfo.endDate!);
-
-    // 날짜별 데이터는 travelInfo에서 직접 계산
-    final daySchedules = <DayScheduleData>[];
-    for (final date in dates) {
-      // 해당 날짜의 일정만 필터링
-      final schedulesForDay = travelInfo.schedules
-          .where((s) =>
-              s.date.year == date.year &&
-              s.date.month == date.month &&
-              s.date.day == date.day)
-          .toList();
-
-      // 해당 날짜가 며칠째인지 계산
-      final dayNumber = _getDayNumber(travelInfo.startDate!, date);
-
-      // DayScheduleData 객체 생성 후 추가
-      final dayData = DayScheduleData(
-        date: date,
-        countryName: travelInfo.destination.isNotEmpty
-            ? travelInfo.destination.first
-            : '',
-        flagEmoji: travelInfo.countryInfos.isNotEmpty
-            ? travelInfo.countryInfos.first.flagEmoji
-            : '',
-        countryCode: travelInfo.countryInfos.isNotEmpty
-            ? travelInfo.countryInfos.first.countryCode
-            : '',
-        dayNumber: dayNumber,
-        schedules: schedulesForDay,
-      );
-
-      daySchedules.add(dayData);
-    }
+    // 캐시된 또는 새로 계산된 일정 목록 가져오기
+    final daySchedules = _calculateDaySchedules(travelInfo);
 
     // 드래그 앤 드롭 관리자 인스턴스
     final dragDropManager = TravelDragDropManager(ref);
@@ -589,9 +571,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
       // 업데이트된 여행 정보로 변경
       final updatedTravel = travelInfo.copyWith(dayDataMap: updatedDayDataMap);
-      ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
 
-      _setModified(); // 데이터 초기화 시 수정 플래그 설정
+      // 이미 WidgetsBinding.instance.addPostFrameCallback 내부에 있지만
+      // 추가적인 안전장치로 mounted 체크 추가
+      if (mounted) {
+        ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
+        _setModified(); // 데이터 초기화 시 수정 플래그 설정
+      }
     });
   }
 
@@ -610,10 +596,20 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
         // 현재 상태 갱신
         final currentId = ref.read(currentTravelIdProvider);
-        ref.read(currentTravelIdProvider.notifier).state = '';
-        ref.read(currentTravelIdProvider.notifier).state = currentId;
 
-        _setModified(); // 데이터 초기화 시 수정 플래그 설정
+        // 상태 업데이트는 순차적으로 처리
+        Future.microtask(() {
+          if (mounted) {
+            ref.read(currentTravelIdProvider.notifier).state = '';
+
+            Future.delayed(Duration(milliseconds: 50), () {
+              if (mounted) {
+                ref.read(currentTravelIdProvider.notifier).state = currentId;
+                _setModified(); // 데이터 초기화 시 수정 플래그 설정
+              }
+            });
+          }
+        });
       });
     } else {
       print('TravelDetailScreen - 날짜별 데이터 정상: ${daySchedules.length}개');
@@ -622,14 +618,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-        title: B2bText.bold(
-          type: B2bTextType.title3,
-          text: '세부 일정',
-          color: $b2bToken.color.labelNomal.resolve(context),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
+      title: B2bText.bold(
+        type: B2bTextType.title3,
+        text: '세부 일정',
+        color: $b2bToken.color.labelNomal.resolve(context),
+      ),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
         onPressed: () async {
           // 여행 정보 확인
           final travelInfo = ref.read(currentTravelProvider);
@@ -646,15 +642,12 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           final hasChanges = _detectChanges();
           print(
               'TravelDetailScreen - 앱바 뒤로가기 버튼 클릭: hasChanges=$hasChanges, isNewTravel=$isNewTravel');
-
+          if (isNewTravel) {
+            print('TravelDetailScreen - 신규 여행 생성 취소: 저장 안함 (앱바)');
+            context.go(SavedTravelsScreen.routePath);
+            return;
+          }
           if (hasChanges) {
-            // 신규 생성 모드인 경우, 바로 나가기 (백업 복원 없이)
-            if (isNewTravel) {
-              print('TravelDetailScreen - 신규 여행 생성 취소: 저장 안함 (앱바)');
-              Navigator.pop(context);
-              return;
-            }
-
             // 변경 사항이 있으면 확인 다이얼로그 표시
             final shouldSave = await _showExitConfirmDialog(context);
             print('TravelDetailScreen - 다이얼로그 응답: shouldSave=$shouldSave');
@@ -663,7 +656,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               // 변경 사항 저장
               print('TravelDetailScreen - 변경사항 저장 후 나가기 (앱바)');
               ref.read(travelsProvider.notifier).commitChanges();
-              Navigator.pop(context);
             } else if (shouldSave == false) {
               // 변경 사항 취소 - 백업 데이터로 복원
               print('TravelDetailScreen - 변경사항 취소 후 나가기 (앱바)');
@@ -671,21 +663,17 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               ref.read(currentTravelIdProvider.notifier).state = '';
               ref.read(currentTravelIdProvider.notifier).state =
                   ref.read(currentTravelIdProvider);
-              Navigator.pop(context);
+              // shouldSave가 null이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
             }
-            // shouldSave가 null이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
-          } else {
-            // 변경 사항이 없으면 바로 이전 화면으로 이동
-            print('TravelDetailScreen - 변경사항 없음, 바로 나가기 (앱바)');
-            Navigator.pop(context);
           }
-          },
-          icon: SvgPicture.asset(
-            'assets/icons/back.svg',
-            width: 27,
-            height: 27,
-          ),
+          return Navigator.pop(context);
+        },
+        icon: SvgPicture.asset(
+          'assets/icons/back.svg',
+          width: 27,
+          height: 27,
         ),
+      ),
       actions: [
         IconButton(
           onPressed: () async {
@@ -773,31 +761,31 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
   Widget _buildTravelInfoSection(BuildContext context, dynamic travelInfo) {
     return Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 8,
-              bottom: 16,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 8,
+        bottom: 16,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           TravelInfoSummary(
             destination: travelInfo.destination.join(', '),
             startDate: travelInfo.startDate,
             endDate: travelInfo.endDate,
             formatDate: TravelDateFormatter.formatDate,
-                          ),
-                        ],
-                      ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(
-                            color: $b2bToken.color.primary.resolve(context),
-                          ),
+        color: $b2bToken.color.primary.resolve(context),
+      ),
     );
   }
 
@@ -806,32 +794,76 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       dynamic travelInfo,
       List<DayScheduleData> daySchedules,
       TravelDragDropManager dragDropManager) {
+    // 예상되는 총 실행 횟수를 로그로 남겨 디버깅
+    print(
+        'TravelDetailScreen - _buildDaySchedulesList 함수 호출: ${daySchedules.length}일정');
+
+    // 한 번만 로그를 출력하도록 로직 수정
+    if (daySchedules.isNotEmpty) {
+      // 첫날과 마지막날의 데이터만 확인
+      final firstDay = daySchedules.first;
+      final lastDay = daySchedules.last;
+
+      final firstDateKey = TravelDateFormatter.formatDate(
+          DateTime(firstDay.date.year, firstDay.date.month, firstDay.date.day));
+      final lastDateKey = TravelDateFormatter.formatDate(
+          DateTime(lastDay.date.year, lastDay.date.month, lastDay.date.day));
+
+      // 데이터 없는 날짜 수 확인
+      int noDataCount = 0;
+      for (final daySchedule in daySchedules) {
+        final dateKey = TravelDateFormatter.formatDate(DateTime(
+            daySchedule.date.year,
+            daySchedule.date.month,
+            daySchedule.date.day));
+        if (!travelInfo.dayDataMap.containsKey(dateKey)) {
+          noDataCount++;
+        }
+      }
+
+      // 요약 정보만 로그로 출력
+      if (noDataCount > 0) {
+        print(
+            'TravelDetailScreen - _buildDaySchedulesList: 총 ${daySchedules.length}일 중 $noDataCount일의 데이터가 없습니다');
+      }
+
+      // 첫날과 마지막날 데이터만 로그로 출력
+      if (travelInfo.dayDataMap.containsKey(firstDateKey)) {
+        final firstDayData = travelInfo.dayDataMap[firstDateKey];
+        print(
+            'TravelDetailScreen - 첫날($firstDateKey) 데이터: 국가=${firstDayData?.countryName ?? "없음"}, 코드=${firstDayData?.countryCode ?? "없음"}');
+      }
+
+      if (travelInfo.dayDataMap.containsKey(lastDateKey) &&
+          firstDateKey != lastDateKey) {
+        final lastDayData = travelInfo.dayDataMap[lastDateKey];
+        print(
+            'TravelDetailScreen - 마지막날($lastDateKey) 데이터: 국가=${lastDayData?.countryName ?? "없음"}, 코드=${lastDayData?.countryCode ?? "없음"}');
+      }
+    }
+
     return ListView.builder(
       itemCount: daySchedules.length,
-              itemBuilder: (context, index) {
+      itemBuilder: (context, index) {
         final daySchedule = daySchedules[index];
+        // 표준화된 날짜 생성 (시간 정보 제거)
+        final standardDate = DateTime(daySchedule.date.year,
+            daySchedule.date.month, daySchedule.date.day);
+        final dateKey = TravelDateFormatter.formatDate(standardDate);
 
-        // 날짜 키 생성
-        final dateKey = TravelDateFormatter.formatDate(daySchedule.date);
+        // 현재 날짜의 최신 데이터 가져오기
+        DayData? latestDayData = travelInfo.dayDataMap[dateKey];
 
-        // 새로운 방식: dayDataMap에서 직접 최신 데이터 가져오기
-        DayData? latestDayData;
-        if (travelInfo.dayDataMap.containsKey(dateKey)) {
-          latestDayData = travelInfo.dayDataMap[dateKey];
-          print(
-              'TravelDetailScreen - _buildDaySchedulesList: 날짜 $dateKey의 최신 데이터 국가=${latestDayData?.countryName ?? "없음"}, 국기=${latestDayData?.flagEmoji ?? "없음"}');
-        } else {
-          print(
-              'TravelDetailScreen - _buildDaySchedulesList: 날짜 $dateKey의 데이터 없음, 기본값 사용');
-        }
+        // 최신 정보로 업데이트된 일정
+        final updatedDaySchedule = latestDayData != null
+            ? daySchedule.copyWith(
+                countryName: latestDayData.countryName,
+                flagEmoji: latestDayData.flagEmoji,
+                countryCode: latestDayData.countryCode,
+              )
+            : daySchedule;
 
-        // 최신 국가 정보 업데이트
-        final updatedDaySchedule = daySchedule.copyWith(
-          countryName: latestDayData?.countryName ?? daySchedule.countryName,
-          flagEmoji: latestDayData?.flagEmoji ?? daySchedule.flagEmoji,
-        );
-
-                return Padding(
+        return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TravelDayCard(
             daySchedule: updatedDaySchedule,
@@ -845,6 +877,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                   // 국가 정보 백업
                   String? deletedCountryName;
                   String? deletedFlagEmoji;
+                  String? deletedCountryCode;
 
                   // 삭제할 날짜의 국가 정보 백업
                   if (travelInfo.dayDataMap.containsKey(dateKey)) {
@@ -852,8 +885,9 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                     if (dayData != null) {
                       deletedCountryName = dayData.countryName;
                       deletedFlagEmoji = dayData.flagEmoji;
+                      deletedCountryCode = dayData.countryCode;
                       print(
-                          'TravelDetailScreen - 삭제 전 국가 정보 백업: $deletedCountryName $deletedFlagEmoji');
+                          'TravelDetailScreen - 삭제 전 국가 정보 백업: $deletedCountryName $deletedFlagEmoji $deletedCountryCode');
                     }
                   }
 
@@ -861,7 +895,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                   final currentTravel = ref.read(currentTravelProvider);
                   if (currentTravel != null) {
                     // 해당 날짜의 일정을 제외한 모든 일정 가져오기
-                    final date = daySchedule.date;
+                    final date = updatedDaySchedule.date;
                     final updatedSchedules = currentTravel.schedules
                         .where((schedule) =>
                             schedule.date.year != date.year ||
@@ -875,12 +909,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
                     // 해당 날짜의 DayData를 삭제하지 않고 빈 일정으로 유지 (국가 정보 보존)
                     if (deletedCountryName != null &&
-                        deletedFlagEmoji != null) {
+                        deletedFlagEmoji != null &&
+                        deletedCountryCode != null) {
                       updatedDayDataMap[dateKey] = DayData(
                         date: date,
                         countryName: deletedCountryName,
                         flagEmoji: deletedFlagEmoji,
-                        dayNumber: daySchedule.dayNumber,
+                        countryCode: deletedCountryCode,
+                        dayNumber: updatedDaySchedule.dayNumber,
                         schedules: [], // 빈 일정
                       );
                       print(
@@ -895,12 +931,18 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
                     print(
                         'TravelDetailScreen - 업데이트된 여행 정보: 일정=${updatedSchedules.length}개, 날짜 데이터=${updatedDayDataMap.length}개');
-                    ref
-                        .read(travelsProvider.notifier)
-                        .updateTravel(updatedTravel);
-                  }
 
-                  _setModified(); // 날짜 삭제 시 수정 플래그 설정
+                    // 상태 업데이트는 빌드 후에 실행
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        ref
+                            .read(travelsProvider.notifier)
+                            .updateTravel(updatedTravel);
+                        _invalidateScheduleCache(); // 캐시 무효화
+                        _setModified(); // 날짜 삭제 시 수정 플래그 설정
+                      }
+                    });
+                  }
                 } catch (e) {
                   print('TravelDetailScreen - 날짜 삭제 중 오류 발생: $e');
                 }
@@ -911,12 +953,12 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               final sourceDate = data['date'] as DateTime;
               final sourceDayNumber = data['dayNumber'] as int;
               final sourceCountry = data['country'] as String;
-              
+
               // 항상 countryCode 키를 우선 확인
-              final String sourceCountryCode = data.containsKey('countryCode') 
+              final String sourceCountryCode = data.containsKey('countryCode')
                   ? (data['countryCode'] as String? ?? '') // null이면 빈 문자열로
                   : ''; // 키가 없으면 빈 문자열로
-              
+
               // 로그 추가
               dev.log('드래그 데이터 수신: 국가=$sourceCountry, 코드=$sourceCountryCode');
 
@@ -930,11 +972,12 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                 sourceCountryFlag: sourceCountryCode, // countryCode 값 전달
               );
 
+              _invalidateScheduleCache(); // 캐시 무효화
               _setModified(); // 드래그 앤 드롭 시 수정 플래그 설정
             },
-                  ),
-                );
-              },
+          ),
+        );
+      },
     );
   }
 
@@ -955,13 +998,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         'TravelDetailScreen - 버튼 생성: isNewTravel=$isNewTravel, 버튼 텍스트=$buttonText');
 
     return SafeArea(
-            minimum: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: B2bButton.medium(
+      minimum: const EdgeInsets.all(16),
+      child: SizedBox(
+        width: double.infinity,
+        child: B2bButton.medium(
           title: buttonText,
-                type: B2bButtonType.primary,
-                onTap: () {
+          type: B2bButtonType.primary,
+          onTap: () {
             print('TravelDetailScreen - 수정/저장 버튼 클릭: isNewTravel=$isNewTravel');
 
             if (isNewTravel) {
@@ -1032,6 +1075,68 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
     // Day 1부터 시작
     return difference + 1;
+  }
+
+  // 일정 목록 데이터 계산 - 필요할 때만 실행
+  List<DayScheduleData> _calculateDaySchedules(dynamic travelInfo) {
+    // 이미 계산된 값이 있고, 여행 정보가 변경되지 않았다면 캐시된 값 반환
+    if (!_needsScheduleRecalculation &&
+        _lastTravelId == travelInfo.id &&
+        _lastStartDate == travelInfo.startDate &&
+        _lastEndDate == travelInfo.endDate) {
+      return _cachedDaySchedules;
+    }
+
+    print('TravelDetailScreen - 일정 목록 새로 계산');
+    final dates = TravelDateFormatter.getDateRange(
+        travelInfo.startDate!, travelInfo.endDate!);
+
+    // 날짜별 데이터는 travelInfo에서 직접 계산
+    final daySchedules = <DayScheduleData>[];
+    for (final date in dates) {
+      // 해당 날짜의 일정만 필터링
+      final schedulesForDay = travelInfo.schedules
+          .where((s) =>
+              s.date.year == date.year &&
+              s.date.month == date.month &&
+              s.date.day == date.day)
+          .toList();
+
+      // 해당 날짜가 며칠째인지 계산
+      final dayNumber = _getDayNumber(travelInfo.startDate!, date);
+
+      // DayScheduleData 객체 생성 후 추가
+      final dayData = DayScheduleData(
+        date: date,
+        countryName: travelInfo.destination.isNotEmpty
+            ? travelInfo.destination.first
+            : '',
+        flagEmoji: travelInfo.countryInfos.isNotEmpty
+            ? travelInfo.countryInfos.first.flagEmoji
+            : '',
+        countryCode: travelInfo.countryInfos.isNotEmpty
+            ? travelInfo.countryInfos.first.countryCode
+            : '',
+        dayNumber: dayNumber,
+        schedules: schedulesForDay,
+      );
+
+      daySchedules.add(dayData);
+    }
+
+    // 계산 결과 캐싱
+    _cachedDaySchedules = daySchedules;
+    _lastTravelId = travelInfo.id;
+    _lastStartDate = travelInfo.startDate;
+    _lastEndDate = travelInfo.endDate;
+    _needsScheduleRecalculation = false;
+
+    return daySchedules;
+  }
+
+  // 캐시 무효화 메서드 - 일정 변경 시 호출
+  void _invalidateScheduleCache() {
+    _needsScheduleRecalculation = true;
   }
 
   @override

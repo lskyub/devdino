@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
+import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:travelee/data/controllers/travel_detail_controller.dart';
@@ -284,6 +285,39 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen> with Wi
         ],
       ),
     );
+  }
+
+  void _navigateToSchedule(DateTime date, int dayNumber) async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => ScheduleDetailScreen(
+          date: date,
+          dayNumber: dayNumber,
+        ),
+      ),
+    );
+    if (result == true) {
+      dev.log('일정 화면에서 변경사항 있음 - 데이터 새로고침');
+      
+      // 전체 여행 정보 Provider 명시적 무효화
+      ref.invalidate(currentTravelProvider);
+      
+      // 날짜별 데이터 Provider 무효화
+      ref.invalidate(dayDataProvider(date));
+      ref.invalidate(dateSchedulesProvider(date));
+      
+      // 현재 여행 ID 재설정으로 강제 새로고침
+      final currentId = ref.read(currentTravelIdProvider);
+      if (currentId.isNotEmpty) {
+        ref.read(currentTravelIdProvider.notifier).state = "";
+        ref.read(currentTravelIdProvider.notifier).state = currentId;
+      }
+      
+      // UI 강제 갱신을 위한 setState 호출
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override

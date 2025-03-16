@@ -4,6 +4,9 @@ import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/utils/date_util.dart';
+import 'package:travelee/models/day_schedule_data.dart';
+import 'package:travelee/utils/travel_date_formatter.dart';
 
 /// ScheduleDetailController를 제공하는 Provider
 final scheduleDetailControllerProvider = Provider.autoDispose<ScheduleDetailController>((ref) {
@@ -212,34 +215,45 @@ class ScheduleDetailController {
   }
   
   /// 국가 정보 업데이트
-  void updateCountryInfo(DateTime date, String countryName, String flagEmoji, [String countryCode = '']) {
-    dev.log('ScheduleDetailController - 국가 정보 업데이트: $date, $countryName, $flagEmoji, 국가코드: $countryCode');
+  void updateCountryInfo(DateTime date, String countryName, String flagEmoji, String countryCode) {
+    final travel = currentTravel;
+    if (travel == null) return;
     
-    final currentTravel = ref.read(currentTravelProvider);
-    if (currentTravel == null) {
-      dev.log('ScheduleDetailController - 국가 정보 업데이트 실패: 현재 여행 정보 없음');
-      return;
-    }
+    // 날짜 키 생성
+    final standardDate = DateTime(date.year, date.month, date.day);
+    final dateKey = TravelDateFormatter.formatDate(standardDate);
     
-    ref.read(travelsProvider.notifier).setCountryForDate(
-      currentTravel.id,
-      date,
-      countryName,
-      flagEmoji,
-      countryCode
+    // 시작일 확인 (null인 경우 현재 날짜 사용)
+    final startDate = travel.startDate ?? DateTime.now();
+    
+    // dayDataMap 업데이트
+    Map<String, DayData> updatedMap = Map.from(travel.dayDataMap);
+    final existingData = updatedMap[dateKey] ?? DayData(
+      date: standardDate,
+      dayNumber: _getDayNumber(standardDate, startDate),
+      countryName: '',
+      flagEmoji: '',
+      countryCode: '',
+      schedules: [],
     );
     
-    _hasChanges = true;
+    updatedMap[dateKey] = existingData.copyWith(
+      countryName: countryName,
+      flagEmoji: flagEmoji, 
+      countryCode: countryCode
+    );
+    
+    // 여행 정보 업데이트
+    ref.read(travelsProvider.notifier).updateTravel(
+      travel.copyWith(dayDataMap: updatedMap)
+    );
+    
+    hasChanges = true;
   }
   
-  /// 날짜가 여행의 몇 번째 날인지 계산
-  int _getDayNumber(DateTime startDate, DateTime date) {
-    final difference = DateTime(date.year, date.month, date.day)
-        .difference(DateTime(startDate.year, startDate.month, startDate.day))
-        .inDays;
-    
-    // Day 1부터 시작
-    return difference + 1;
+  /// 날짜의 차이를 계산하여 몇 번째 날인지 반환
+  int _getDayNumber(DateTime date, DateTime startDate) {
+    return date.difference(startDate).inDays + 1;
   }
   
   /// 일정 시간순 정렬
