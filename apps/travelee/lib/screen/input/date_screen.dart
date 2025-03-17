@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:design_systems/b2b/b2b.dart';
 import 'package:travelee/data/controllers/travel_detail_controller.dart';
-import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
 import 'package:travelee/providers/unified_travel_provider.dart'
     as travel_providers;
 import 'package:travelee/models/travel_model.dart';
@@ -470,18 +469,18 @@ class DateScreen extends ConsumerWidget {
                       .read(travel_providers.travelsProvider.notifier)
                       .updateTravel(updatedTravel);
 
-                  // 변경사항 즉시 저장
-                  ref
-                      .read(travel_providers.travelsProvider.notifier)
-                      .commitChanges();
+                  // // 변경사항 즉시 저장
+                  // ref
+                  //     .read(travel_providers.travelsProvider.notifier)
+                  //     .commitChanges();
 
-                  // 백업 갱신
-                  ref
-                      .read(travel_providers.changeManagerProvider)
-                      .createBackup(updatedTravel);
-                  ref
-                      .read(travel_providers.travelBackupProvider.notifier)
-                      .state = updatedTravel;
+                  // // 백업 갱신
+                  // ref
+                  //     .read(travel_providers.changeManagerProvider)
+                  //     .createBackup(updatedTravel);
+                  // ref
+                  //     .read(travel_providers.travelBackupProvider.notifier)
+                  //     .state = updatedTravel;
 
                   // 임시 ID로 된 여행을 영구 저장
                   final travelId = travelInfo.id;
@@ -489,6 +488,7 @@ class DateScreen extends ConsumerWidget {
                   final newId = controller.saveTempTravel(travelId);
 
                   if (newId != null) {
+                    // 데이터베이스에 저장
                     dev.log('DateScreen - 임시 여행 ID 변경됨: $travelId -> $newId');
 
                     // 현재 ID 업데이트

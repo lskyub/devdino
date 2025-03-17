@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/models/schedule.dart';
 import 'package:travelee/models/db/travel_db_model.dart';
 import 'package:travelee/models/db/schedule_db_model.dart';
 import 'dart:developer' as dev;
@@ -50,8 +48,8 @@ class DatabaseHelper {
         destination TEXT NOT NULL,
         start_date TEXT,
         end_date TEXT,
-        country_infos TEXT NOT NULL,
-        day_data_map TEXT NOT NULL,
+        country_infos,
+        day_data_map,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )

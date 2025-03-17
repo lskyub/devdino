@@ -5,12 +5,11 @@ import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/providers/unified_travel_provider.dart'
     as travel_providers;
+import 'package:travelee/services/database_helper.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:travelee/presentation/widgets/travel_detail/travel_detail_app_bar.dart';
 import 'package:travelee/presentation/widgets/travel_detail/travel_info_section.dart';
-import 'package:travelee/presentation/widgets/travel_detail/travel_action_button.dart';
 import 'package:travelee/presentation/widgets/travel_detail/day_schedules_list.dart';
-import 'package:travelee/data/managers/change_manager.dart';
 import 'package:travelee/utils/result_types.dart';
 import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
 import 'package:travelee/data/controllers/unified_controller.dart';
@@ -127,7 +126,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                       onScheduleTap: _navigateToSchedule,
                     ),
             ),
-            const TravelActionButton(),
           ],
         ),
       ),
@@ -229,7 +227,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           Expanded(
             child: _buildLoadingIndicator(context),
           ),
-          const TravelActionButton(),
         ],
       ),
     );
@@ -318,6 +315,11 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       // 저장 후 변경사항 플래그 초기화
       controller.hasChanges = false;
       ref.read(travel_providers.travelChangesProvider.notifier).state = false;
+
+      final currentTravel = ref.read(travel_providers.currentTravelProvider);
+      if (currentTravel != null) {
+        ref.read(databaseHelperProvider).saveTravel(currentTravel);
+      }
 
       if (!mounted) return;
       Navigator.of(context).pop(); // 화면 나가기

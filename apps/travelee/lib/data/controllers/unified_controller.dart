@@ -207,13 +207,13 @@ class UnifiedController {
     return sorted;
   }
   
-  /// 신규 여행인지 확인합니다.
-  bool isNewTravel() {
-    final travel = currentTravel;
-    if (travel == null) return false;
+  // /// 신규 여행인지 확인합니다.
+  // bool isNewTravel() {
+  //   final travel = currentTravel;
+  //   if (travel == null) return false;
     
-    return travel.id.startsWith('temp_') || travel.schedules.isEmpty;
-  }
+  //   return travel.id.startsWith('temp_') || travel.schedules.isEmpty;
+  // }
 }
 
 /// UnifiedController Provider
