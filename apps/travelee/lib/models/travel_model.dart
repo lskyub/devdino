@@ -9,7 +9,7 @@ class DayData {
   final String countryCode; // 국가 코드
   final int dayNumber; // 여행 몇 일차인지
   final List<Schedule> schedules; // 일정 목록
-  
+
   DayData({
     required this.date,
     required this.countryName,
@@ -20,8 +20,9 @@ class DayData {
   });
 
   @override
-  String toString() => 'DayData(date: $date, countryName: $countryName, flagEmoji: $flagEmoji, countryCode: $countryCode, dayNumber: $dayNumber, schedules: $schedules)';
-  
+  String toString() =>
+      'DayData(date: $date, countryName: $countryName, flagEmoji: $flagEmoji, countryCode: $countryCode, dayNumber: $dayNumber, schedules: $schedules)';
+
   // 복사본 생성
   DayData copyWith({
     DateTime? date,
@@ -40,7 +41,7 @@ class DayData {
       schedules: schedules ?? this.schedules,
     );
   }
-  
+
   // 특정 날짜의 국가 정보 업데이트
   DayData updateCountry(String country, String emoji, String code) {
     return copyWith(
@@ -63,7 +64,7 @@ class TravelModel {
   final Map<String, DayData> dayDataMap; // 날짜별 데이터 (키: 'yyyy-MM-dd')
   final DateTime createdAt; // 생성 시간
   final DateTime updatedAt; // 업데이트 시간
-  
+
   TravelModel({
     required this.id,
     required this.title,
@@ -75,9 +76,9 @@ class TravelModel {
     required this.dayDataMap,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) : this.createdAt = createdAt ?? DateTime.now(),
-       this.updatedAt = updatedAt ?? DateTime.now();
-  
+  })  : createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? DateTime.now();
+
   // 복사본 생성
   TravelModel copyWith({
     String? id,
@@ -104,35 +105,36 @@ class TravelModel {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-  
+
   @override
-  String toString() => 'TravelModel(id: $id, title: $title, destination: $destination, countryInfos: $countryInfos, startDate: $startDate, endDate: $endDate, schedules: $schedules, dayDataMap: $dayDataMap, createdAt: $createdAt, updatedAt: $updatedAt)';
-  
+  String toString() =>
+      'TravelModel(id: $id, title: $title, destination: $destination, countryInfos: $countryInfos, startDate: $startDate, endDate: $endDate, schedules: $schedules, dayDataMap: $dayDataMap, createdAt: $createdAt, updatedAt: $updatedAt)';
+
   // 일정 추가
   TravelModel addSchedule(Schedule schedule) {
     // 기존 일정 복사
     final newSchedules = List<Schedule>.from(schedules);
     newSchedules.add(schedule);
-    
+
     // 날짜 키 생성
     final dateKey = _getDateKey(schedule.date);
-    
+
     // 해당 날짜의 DayData 가져오기
     final existingDayData = dayDataMap[dateKey];
     final dayNumber = _calculateDayNumber(schedule.date);
-    
+
     // 해당 날짜의 국가 정보 가져오기 (기본값은 첫 번째 목적지)
     String countryName = destination.isNotEmpty ? destination.first : '';
     String flagEmoji = '🏳️';
     String countryCode = '';
-    
+
     // 기존 DayData가 있으면 해당 정보 사용
     if (existingDayData != null) {
-      countryName = existingDayData.countryName.isNotEmpty 
-          ? existingDayData.countryName 
+      countryName = existingDayData.countryName.isNotEmpty
+          ? existingDayData.countryName
           : countryName;
-      flagEmoji = existingDayData.flagEmoji.isNotEmpty 
-          ? existingDayData.flagEmoji 
+      flagEmoji = existingDayData.flagEmoji.isNotEmpty
+          ? existingDayData.flagEmoji
           : flagEmoji;
       countryCode = existingDayData.countryCode;
     } else {
@@ -143,16 +145,16 @@ class TravelModel {
         countryCode = countryInfo.countryCode;
       }
     }
-    
+
     // 해당 날짜의 일정 목록 업데이트
     final dateSchedules = newSchedules
-        .where((s) => 
-            s.travelId == id && 
-            s.date.year == schedule.date.year && 
-            s.date.month == schedule.date.month && 
+        .where((s) =>
+            s.travelId == id &&
+            s.date.year == schedule.date.year &&
+            s.date.month == schedule.date.month &&
             s.date.day == schedule.date.day)
         .toList();
-    
+
     // 새 DayData 생성
     final newDayData = DayData(
       date: schedule.date,
@@ -162,11 +164,11 @@ class TravelModel {
       dayNumber: dayNumber,
       schedules: dateSchedules,
     );
-    
+
     // dayDataMap 업데이트
     final newDayDataMap = Map<String, DayData>.from(dayDataMap);
     newDayDataMap[dateKey] = newDayData;
-    
+
     // 새 TravelModel 반환
     return copyWith(
       schedules: newSchedules,
@@ -174,7 +176,7 @@ class TravelModel {
       updatedAt: DateTime.now(),
     );
   }
-  
+
   // 일정 수정
   TravelModel updateSchedule(Schedule updatedSchedule) {
     // 기존 일정 중 해당 ID를 가진 일정 찾아 업데이트
@@ -184,10 +186,10 @@ class TravelModel {
       }
       return schedule;
     }).toList();
-    
+
     // dayDataMap 업데이트 (날짜가 변경될 수 있으므로 모든 데이터 재구성)
     final newDayDataMap = _rebuildDayDataMap(newSchedules);
-    
+
     // 새 TravelModel 반환
     return copyWith(
       schedules: newSchedules,
@@ -195,15 +197,16 @@ class TravelModel {
       updatedAt: DateTime.now(),
     );
   }
-  
+
   // 일정 삭제
   TravelModel removeSchedule(String scheduleId) {
     // 해당 ID를 가진 일정 제외
-    final newSchedules = schedules.where((schedule) => schedule.id != scheduleId).toList();
-    
+    final newSchedules =
+        schedules.where((schedule) => schedule.id != scheduleId).toList();
+
     // dayDataMap 업데이트
     final newDayDataMap = _rebuildDayDataMap(newSchedules);
-    
+
     // 새 TravelModel 반환
     return copyWith(
       schedules: newSchedules,
@@ -211,26 +214,29 @@ class TravelModel {
       updatedAt: DateTime.now(),
     );
   }
-  
+
   // 날짜의 국가 정보 설정
-  TravelModel setCountryForDate(DateTime date, String country, String flagEmoji, String countryCode) {
+  TravelModel setCountryForDate(
+      DateTime date, String country, String flagEmoji, String countryCode) {
     final dateKey = _getDateKey(date);
     final existingDayData = dayDataMap[dateKey];
     final dayNumber = _calculateDayNumber(date);
-    
+
     // 디버깅 로그 추가
-    print('TravelModel.setCountryForDate - dateKey: $dateKey, existingDayData: $existingDayData, country: $country');
-    print('TravelModel.setCountryForDate - dayDataMap 기존 키: ${dayDataMap.keys.join(', ')}');
-    
+    print(
+        'TravelModel.setCountryForDate - dateKey: $dateKey, existingDayData: $existingDayData, country: $country');
+    print(
+        'TravelModel.setCountryForDate - dayDataMap 기존 키: ${dayDataMap.keys.join(', ')}');
+
     // 해당 날짜의 일정 목록
     final dateSchedules = schedules
-        .where((s) => 
-            s.travelId == id && 
-            s.date.year == date.year && 
-            s.date.month == date.month && 
+        .where((s) =>
+            s.travelId == id &&
+            s.date.year == date.year &&
+            s.date.month == date.month &&
             s.date.day == date.day)
         .toList();
-    
+
     // 새 DayData 생성
     final newDayData = DayData(
       date: date,
@@ -240,21 +246,23 @@ class TravelModel {
       dayNumber: dayNumber,
       schedules: dateSchedules,
     );
-    
+
     // dayDataMap 업데이트
     final newDayDataMap = Map<String, DayData>.from(dayDataMap);
     newDayDataMap[dateKey] = newDayData;
-    
-    print('TravelModel.setCountryForDate - dayDataMap 업데이트 후 키: ${newDayDataMap.keys.join(', ')}');
-    print('TravelModel.setCountryForDate - 업데이트된 DayData: ${newDayData.countryName}, ${newDayData.flagEmoji}');
-    
+
+    print(
+        'TravelModel.setCountryForDate - dayDataMap 업데이트 후 키: ${newDayDataMap.keys.join(', ')}');
+    print(
+        'TravelModel.setCountryForDate - 업데이트된 DayData: ${newDayData.countryName}, ${newDayData.flagEmoji}');
+
     // 새 TravelModel 반환
     return copyWith(
       dayDataMap: newDayDataMap,
       updatedAt: DateTime.now(),
     );
   }
-  
+
   // 국가 정보 가져오기
   CountryInfo? getCountryInfo(String countryName) {
     try {
@@ -263,36 +271,36 @@ class TravelModel {
       return null;
     }
   }
-  
+
   // 날짜에 해당하는 DayData 가져오기
   DayData? getDayData(DateTime date) {
     final dateKey = _getDateKey(date);
     return dayDataMap[dateKey];
   }
-  
+
   // 날짜 키 생성 (yyyy-MM-dd 형식)
   String _getDateKey(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
-  
+
   // 여행 시작일 기준 일차 계산
   int _calculateDayNumber(DateTime date) {
     if (startDate == null) return 1;
-    
+
     // 시작일과의 차이 계산 (일 단위)
     return date.difference(startDate!).inDays + 1;
   }
-  
+
   // 모든 날짜에 대한 DayData 재구성
   Map<String, DayData> _rebuildDayDataMap(List<Schedule> scheduleList) {
     final Map<String, DayData> newMap = {};
-    
+
     // 1. 먼저 기존 dayDataMap을 복사하여 국가 정보를 보존
     final Map<String, DayData> preservedCountryMap = {};
     for (final entry in dayDataMap.entries) {
       final dateKey = entry.key;
       final dayData = entry.value;
-      
+
       // 국가 정보가 있는 경우에만 보존
       if (dayData.countryName.isNotEmpty) {
         preservedCountryMap[dateKey] = DayData(
@@ -305,28 +313,28 @@ class TravelModel {
         );
       }
     }
-    
+
     // 2. 모든 일정의 날짜에 대해 DayData 생성
     for (final schedule in scheduleList) {
       if (schedule.travelId != id) continue; // 다른 여행의 일정은 제외
-      
+
       final dateKey = _getDateKey(schedule.date);
       final dayNumber = _calculateDayNumber(schedule.date);
-      
+
       // 해당 날짜의 모든 일정
       final dateSchedules = scheduleList
-          .where((s) => 
-              s.travelId == id && 
-              s.date.year == schedule.date.year && 
-              s.date.month == schedule.date.month && 
+          .where((s) =>
+              s.travelId == id &&
+              s.date.year == schedule.date.year &&
+              s.date.month == schedule.date.month &&
               s.date.day == schedule.date.day)
           .toList();
-      
+
       // 국가 정보 (보존된 데이터 또는 기본값)
       String countryName = destination.isNotEmpty ? destination.first : '';
       String flagEmoji = '🏳️';
       String countryCode = '';
-      
+
       // 우선 순위: 1) 보존된 국가 정보, 2) 기존 DayDataMap, 3) 기본값
       if (preservedCountryMap.containsKey(dateKey)) {
         countryName = preservedCountryMap[dateKey]!.countryName;
@@ -354,7 +362,7 @@ class TravelModel {
           countryCode = countryInfo.countryCode;
         }
       }
-      
+
       // 새 DayData 생성
       final newDayData = DayData(
         date: schedule.date,
@@ -364,24 +372,24 @@ class TravelModel {
         dayNumber: dayNumber,
         schedules: dateSchedules,
       );
-      
+
       newMap[dateKey] = newDayData;
     }
-    
+
     // 3. 일정이 없는 날짜 데이터도 보존 (여행 기간 내)
     if (startDate != null && endDate != null) {
       for (var day = 0; day <= endDate!.difference(startDate!).inDays; day++) {
         final date = startDate!.add(Duration(days: day));
         final dateKey = _getDateKey(date);
-        
+
         // 이미 추가된 날짜는 스킵
         if (newMap.containsKey(dateKey)) continue;
-        
+
         // 국가 정보 (보존된 데이터 또는 기본값)
         String countryName = destination.isNotEmpty ? destination.first : '';
         String flagEmoji = '🏳️';
         String countryCode = '';
-        
+
         // 우선 순위: 1) 보존된 국가 정보, 2) 기존 DayDataMap, 3) 기본값
         if (preservedCountryMap.containsKey(dateKey)) {
           countryName = preservedCountryMap[dateKey]!.countryName;
@@ -389,7 +397,8 @@ class TravelModel {
           countryCode = preservedCountryMap[dateKey]!.countryCode;
         } else if (dayDataMap.containsKey(dateKey)) {
           final existingDayData = dayDataMap[dateKey];
-          if (existingDayData != null && existingDayData.countryName.isNotEmpty) {
+          if (existingDayData != null &&
+              existingDayData.countryName.isNotEmpty) {
             countryName = existingDayData.countryName;
             flagEmoji = existingDayData.flagEmoji;
             countryCode = existingDayData.countryCode;
@@ -409,7 +418,7 @@ class TravelModel {
             countryCode = countryInfo.countryCode;
           }
         }
-        
+
         // 새 DayData 생성 (빈 일정)
         final dayNumber = day + 1;
         final newDayData = DayData(
@@ -420,14 +429,14 @@ class TravelModel {
           dayNumber: dayNumber,
           schedules: [],
         );
-        
+
         newMap[dateKey] = newDayData;
       }
     }
-    
+
     return newMap;
   }
-  
+
   // 빈 여행 객체 생성
   factory TravelModel.empty() {
     return TravelModel(
@@ -448,4 +457,63 @@ class TravelModel {
     sortedDays.sort((a, b) => a.date.compareTo(b.date));
     return sortedDays;
   }
-} 
+
+  // 두 TravelModel 객체의 동등성 비교
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TravelModel) return false;
+
+    return id == other.id &&
+        title == other.title &&
+        _listEquals(destination, other.destination) &&
+        _listEquals(countryInfos, other.countryInfos) &&
+        _areDatesEqual(startDate, other.startDate) &&
+        _areDatesEqual(endDate, other.endDate) &&
+        _listEquals(schedules, other.schedules) &&
+        _mapEquals(dayDataMap, other.dayDataMap) &&
+        createdAt == other.createdAt &&
+        updatedAt == other.updatedAt;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      id,
+      title,
+      Object.hashAll(destination),
+      Object.hashAll(countryInfos),
+      startDate,
+      endDate,
+      Object.hashAll(schedules),
+      Object.hashAll(dayDataMap.entries),
+      createdAt,
+      updatedAt,
+    );
+  }
+
+  // 리스트 동등성 비교 헬퍼
+  bool _listEquals<T>(List<T> list1, List<T> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
+  }
+
+  // 맵 동등성 비교 헬퍼
+  bool _mapEquals(Map<String, DayData> map1, Map<String, DayData> map2) {
+    if (map1.length != map2.length) return false;
+    return map1.entries
+        .every((e) => map2.containsKey(e.key) && map2[e.key] == e.value);
+  }
+
+  // 날짜 동등성 비교 헬퍼
+  bool _areDatesEqual(DateTime? date1, DateTime? date2) {
+    if (date1 == null && date2 == null) return true;
+    if (date1 == null || date2 == null) return false;
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+}

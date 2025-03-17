@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelee/router.dart';
-import 'package:travelee/screen/input/destination_screen.dart';
+import 'package:travelee/screen/input/date_screen.dart';
 import 'package:travelee/screen/saved_travels_screen.dart';
 
 class FirstScreen extends ConsumerWidget {
@@ -76,7 +76,7 @@ class FirstScreen extends ConsumerWidget {
                   type: B2bButtonType.primary,
                   title: '여행 계획 만들기',
                   onTap: () {
-                    ref.read(routerProvider).push(DestinationScreen.routePath);
+                    ref.read(routerProvider).push(DateScreen.routePath);
                   },
                 ),
                 const SizedBox(height: 12),

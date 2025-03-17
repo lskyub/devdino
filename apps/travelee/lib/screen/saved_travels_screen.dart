@@ -6,7 +6,7 @@ import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
-import 'package:travelee/screen/input/destination_screen.dart';
+import 'package:travelee/screen/input/date_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
 import 'dart:math' as Math;
 
@@ -98,7 +98,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           ref.read(currentTravelIdProvider.notifier).state = '';
-          context.push(DestinationScreen.routePath);
+          context.push(DateScreen.routePath);
         },
         backgroundColor: $b2bToken.color.primary.resolve(context),
         child: SvgPicture.asset(

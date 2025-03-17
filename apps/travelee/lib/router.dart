@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/screen/first_screen.dart';
 import 'package:travelee/screen/input/date_screen.dart';
-import 'package:travelee/screen/input/destination_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
 import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
 import 'package:travelee/screen/input/location_search_screen.dart';
@@ -23,11 +22,6 @@ final routerProvider = Provider<GoRouter>(
           name: FirstScreen.routeName,
           path: FirstScreen.routePath,
           builder: (context, state) => const FirstScreen(),
-        ),
-        GoRoute(
-          name: DestinationScreen.routeName,
-          path: DestinationScreen.routePath,
-          builder: (context, state) => const DestinationScreen(),
         ),
         GoRoute(
           name: DateScreen.routeName,

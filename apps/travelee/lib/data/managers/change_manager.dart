@@ -68,12 +68,10 @@ class ChangeManager {
       dev.log('ChangeManager: 목적지 개수 변경 감지');
       return true;
     }
-    
-    for (int i = 0; i < backup.destination.length; i++) {
-      if (i >= current.destination.length || backup.destination[i] != current.destination[i]) {
-        dev.log('ChangeManager: 목적지 내용 변경 감지');
-        return true;
-      }
+
+    if (backup != current) {
+      dev.log('ChangeManager: 목적지 개수 변경 감지');
+      return true;
     }
     
     // 4. 일정 개수 변경 확인

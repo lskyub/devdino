@@ -32,13 +32,6 @@ class UnifiedController {
       return;
     }
     
-    // 기존 백업이 있는지 확인
-    final existingBackup = _ref.read(travel_providers.travelBackupProvider);
-    if (existingBackup != null && existingBackup.id == travel.id) {
-      dev.log('UnifiedController - 백업 생성 건너뜀: 이미 백업이 존재함 (${travel.id})');
-      return;
-    }
-    
     changeManager.createBackup(travel);
     _ref.read(travel_providers.travelBackupProvider.notifier).state = travel;
     dev.log('UnifiedController - 백업 생성 완료: ${travel.id}');

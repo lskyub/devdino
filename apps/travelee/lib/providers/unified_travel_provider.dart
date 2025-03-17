@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/models/schedule.dart';
-import 'package:travelee/models/country_info.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'dart:developer' as dev;
 import 'package:travelee/data/managers/change_manager.dart';

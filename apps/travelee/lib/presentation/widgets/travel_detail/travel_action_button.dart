@@ -32,6 +32,11 @@ class TravelActionButton extends ConsumerWidget {
     
     dev.log('TravelActionButton - 버튼 생성: isNewTravel=$isNewTravel, 버튼 텍스트=$buttonText');
     
+    // 수정 완료일 때는 버튼 숨김
+    if (!isNewTravel) {
+      return const SizedBox.shrink();
+    }
+
     return SafeArea(
       minimum: const EdgeInsets.all(16),
       child: SizedBox(
