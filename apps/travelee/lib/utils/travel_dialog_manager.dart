@@ -10,20 +10,16 @@ import 'package:travelee/screen/input/edit_travel_dialog.dart';
 import 'package:travelee/utils/date_util.dart';
 import 'dart:developer' as dev;
 
-/**
- * TravelDialogManager
- * 
- * 여행 관련 다이얼로그를 관리하는 유틸리티 클래스
- * - 여행 일정 날짜 삭제 확인 다이얼로그
- * - 여행 정보 수정 다이얼로그 및 관련 로직 처리
- * - 국가 정보 백업 및 복원 기능 제공
- */
+/// TravelDialogManager
+/// 
+/// 여행 관련 다이얼로그를 관리하는 유틸리티 클래스
+/// - 여행 일정 날짜 삭제 확인 다이얼로그
+/// - 여행 정보 수정 다이얼로그 및 관련 로직 처리
+/// - 국가 정보 백업 및 복원 기능 제공
 class TravelDialogManager {
-  /**
-   * 날짜 삭제 확인 다이얼로그 표시
-   * @param context 현재 빌드 컨텍스트
-   * @return 사용자 응답 (true: 삭제 승인, false: 취소)
-   */
+  /// 날짜 삭제 확인 다이얼로그 표시
+  /// @param context 현재 빌드 컨텍스트
+  /// @return 사용자 응답 (true: 삭제 승인, false: 취소)
   static Future<bool?> showDeleteDateConfirmDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -58,11 +54,9 @@ class TravelDialogManager {
     );
   }
   
-  /**
-   * 여행 정보 수정 다이얼로그 표시 및 결과 처리
-   * @param context 현재 빌드 컨텍스트
-   * @param ref Provider 참조
-   */
+  /// 여행 정보 수정 다이얼로그 표시 및 결과 처리
+  /// @param context 현재 빌드 컨텍스트
+  /// @param ref Provider 참조
   static Future<void> showEditTravelDialog(BuildContext context, WidgetRef ref) async {
     final currentTravel = ref.read(currentTravelProvider);
     if (currentTravel == null) {
@@ -292,9 +286,6 @@ class TravelDialogManager {
     // 모든 날짜 확인
     updatedDayDataMap.forEach((dateKey, dayData) {
       // null 체크 추가
-      if (dayData == null) return;
-      
-      // 해당 날짜가 삭제된 국가를 사용하는지 확인
       if (removedDestinations.contains(dayData.countryName)) {
         dev.log('국가 초기화 - 날짜 $dateKey의 국가 ${dayData.countryName}이 삭제됨');
         

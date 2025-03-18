@@ -8,9 +8,9 @@ class TravelInfoSection extends StatelessWidget {
   final TravelModel travelInfo;
 
   const TravelInfoSection({
-    Key? key,
+    super.key,
     required this.travelInfo,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,51 +1,141 @@
+import 'dart:convert';
+
 import 'package:design_systems/b2b/b2b.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 
 class LocationSearchScreen extends ConsumerStatefulWidget {
   static const routeName = 'location_search';
   static const routePath = '/location_search';
 
   final String initialLocation;
+  final String countryCode;
 
   const LocationSearchScreen({
     super.key,
     required this.initialLocation,
+    required this.countryCode,
   });
 
   @override
-  ConsumerState<LocationSearchScreen> createState() => _LocationSearchScreenState();
+  ConsumerState<LocationSearchScreen> createState() =>
+      _LocationSearchScreenState();
 }
 
 class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
+  final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
-  List<String> _searchResults = [];
+  LatLng _selectedLocation = const LatLng(37.5665, 126.9780); // 기본 서울 좌표
+  List<Map<String, dynamic>> _searchResults = [];
+  Marker? _clickedMarker; // 사용자가 클릭한 마커
+
+  Future<LatLng?> getCoordinatesFromCountryCode(String countryCode) async {
+    print('countryCode $countryCode');
+    if (countryCode.isEmpty) return null;
+    final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/search?countrycodes=$countryCode&format=json');
+
+    final response = await http.get(url);
+    print('countryCode ${response.statusCode}');
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      if (data.isNotEmpty) {
+        double lat = double.parse(data[0]['lat']);
+        double lon = double.parse(data[0]['lon']);
+        return _selectedLocation = LatLng(lat, lon); // ✅ 위도, 경도 반환
+      }
+    }
+    return null; // 실패 시 null 반환
+  }
+
+  // 📌 자동완성 검색 요청
+  Future<void> _fetchSearchResults(String query) async {
+    if (query.isEmpty) {
+      setState(() => _searchResults = []);
+      return;
+    }
+
+    // 한글을 포함한 검색어를 URL 인코딩
+    final encodedQuery = Uri.encodeComponent(query);
+    final url = Uri.parse(
+        "https://nominatim.openstreetmap.org/search?format=json&q=$encodedQuery&limit=5");
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        _searchResults = data
+            .map((item) => {
+                  "name": item["display_name"],
+                  "lat": double.parse(item["lat"]),
+                  "lon": double.parse(item["lon"]),
+                })
+            .toList();
+      });
+    }
+  }
+
+  // 📌 도시 선택 시 지도 이동
+  void _selectCity(Map<String, dynamic> city) {
+    setState(() {
+      _selectedLocation = LatLng(city["lat"], city["lon"]);
+      _searchController.text = city["name"];
+      _searchResults = []; // 자동완성 목록 숨기기
+    });
+
+    // 📌 지도 이동
+    _mapController.move(_selectedLocation, 12.0);
+  }
+
+  // 📌 지도 클릭 시 마커 추가 & 주변 식당 가져오기
+  void _onMapTap(LatLng point) {
+    setState(() {
+      _selectedLocation = point;
+      _clickedMarker = Marker(
+        width: 80.0,
+        height: 80.0,
+        point: point,
+        child: Icon(
+          Icons.location_pin,
+          color: $b2bToken.color.primary.resolve(context),
+          size: 40.0,
+        ),
+      );
+    });
+  }
+
+  // 📌 줌인
+  void _zoomIn() {
+    double currentZoom = _mapController.camera.zoom;
+    if (currentZoom < 18.0) {
+      _mapController.move(_mapController.camera.center, currentZoom + 1);
+    }
+  }
+
+  // 📌 줌아웃
+  void _zoomOut() {
+    double currentZoom = _mapController.camera.zoom;
+    if (currentZoom > 4.0) {
+      _mapController.move(_mapController.camera.center, currentZoom - 1);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _searchController.text = widget.initialLocation;
+    getCoordinatesFromCountryCode(widget.countryCode);
+    // _searchController.text = widget.initialLocation;
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _searchLocation(String query) {
-    // TODO: 실제 위치 검색 API 연동
-    setState(() {
-      _searchResults = [
-        '서울특별시 강남구',
-        '서울특별시 강남구 테헤란로',
-        '서울특별시 강남구 역삼동',
-      ];
-    });
   }
 
   @override
@@ -74,54 +164,90 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: '위치를 검색하세요',
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: $b2bToken.color.gray400.resolve(context),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+          // 🌍 지도 표시
+          Positioned.fill(
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                onTap: (_, point) => _onMapTap(point), // 📌 지도 클릭 이벤트 추가
               ),
-              onChanged: _searchLocation,
+              children: [
+                TileLayer(
+                    urlTemplate:
+                        "https://tile.openstreetmap.org/{z}/{x}/{y}.png"),
+                if (_clickedMarker != null)
+                  MarkerLayer(markers: [_clickedMarker!]),
+              ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _searchResults.length,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemBuilder: (context, index) {
-                final location = _searchResults[index];
-                return ListTile(
-                  leading: Icon(
-                    Icons.location_on,
-                    color: $b2bToken.color.primary.resolve(context),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "도시 이름을 입력하세요",
+                    border: const OutlineInputBorder(),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                _searchController.clear();
+                                _searchResults = [];
+                              });
+                            },
+                          )
+                        : null,
                   ),
-                  title: B2bText.medium(
-                    type: B2bTextType.body2,
-                    text: location,
-                    color: $b2bToken.color.labelNomal.resolve(context),
+                  onChanged: _fetchSearchResults, // 입력할 때마다 자동완성 요청
+                ),
+                if (_searchResults.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(top: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black26, blurRadius: 5)
+                      ],
+                    ),
+                    child: Column(
+                      children: _searchResults.map((city) {
+                        return ListTile(
+                          title: Text(city["name"]),
+                          onTap: () => _selectCity(city), // 선택 시 이동
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  onTap: () {
-                    context.pop(location);
-                  },
-                );
-              },
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            right: 10,
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  onPressed: _zoomIn,
+                  tooltip: 'Zoom In',
+                  child: const Icon(Icons.zoom_in),
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton(
+                  onPressed: _zoomOut,
+                  tooltip: 'Zoom Out',
+                  child: const Icon(Icons.zoom_out),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-} 
+}

@@ -43,7 +43,7 @@ class ChangeManager {
     
     // 변경 플래그 또는 실제 변경사항 중 하나라도 있으면 변경으로 간주
     bool result = _hasChanges || hasBasicChanges;
-    dev.log('ChangeManager: 변경 상태 확인 - 플래그=${_hasChanges}, 실제변경=${hasBasicChanges}, 최종=${result}');
+    dev.log('ChangeManager: 변경 상태 확인 - 플래그=$_hasChanges, 실제변경=$hasBasicChanges, 최종=$result');
     
     return result;
   }

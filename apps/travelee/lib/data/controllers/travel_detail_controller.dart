@@ -97,7 +97,7 @@ class TravelDetailController {
       for (int i = 0; i < Math.min(3, dayDataMap.length); i++) {
         final key = dayDataMap.keys.elementAt(i);
         final dayData = dayDataMap[key];
-        dev.log('TravelDetailController - 백업 데이터[${i}]: 날짜=${key}, 국가=${dayData?.countryName}, 플래그=${dayData?.flagEmoji}');
+        dev.log('TravelDetailController - 백업 데이터[$i]: 날짜=$key, 국가=${dayData?.countryName}, 플래그=${dayData?.flagEmoji}');
       }
       
       // 백업 후에 임시 편집 모드 다시 시작
@@ -188,7 +188,7 @@ class TravelDetailController {
       // 백업 데이터 내용 확인을 위한 기본 정보 로깅
       for (int i = 0; i < Math.min(3, _originalScheduleBackup.length); i++) {
         final schedule = _originalScheduleBackup[i];
-        dev.log('  백업[${i}]: ID=${schedule.id}, 위치=${schedule.location}');
+        dev.log('  백업[$i]: ID=${schedule.id}, 위치=${schedule.location}');
       }
     }
     
@@ -253,12 +253,12 @@ class TravelDetailController {
       }
       
       // 3. 강제 리렌더링을 위해 모든 상태 갱신
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 200));
       
       // 4. 강제로 현재 여행 ID 재설정하여 화면 갱신
       final currentId = ref.read(currentTravelIdProvider);
       ref.read(currentTravelIdProvider.notifier).state = '';
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 50));
       ref.read(currentTravelIdProvider.notifier).state = currentId;
       
       dev.log('TravelDetailController - 복원 작업 완료');

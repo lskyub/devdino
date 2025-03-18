@@ -5,6 +5,7 @@ import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/providers/unified_travel_provider.dart'
     as travel_providers;
+import 'package:travelee/router.dart';
 import 'package:travelee/services/database_helper.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:travelee/presentation/widgets/travel_detail/travel_detail_app_bar.dart';
@@ -95,7 +96,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
     // 날짜가 null인 경우 임시 날짜 설정 (현재 날짜로)
     if (travelInfo.startDate == null || travelInfo.endDate == null) {
-      return _buildScreenWithTemporaryDates(context, travelInfo);
+      // return _buildScreenWithTemporaryDates(context, travelInfo);
+      Navigator.pop(context);
     }
 
     final dates = TravelDateFormatter.getDateRange(
@@ -197,40 +199,40 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     return daySchedules;
   }
 
-  /// 임시 날짜로 화면 구성
-  Widget _buildScreenWithTemporaryDates(
-      BuildContext context, TravelModel travelInfo) {
-    final today = DateTime.now();
-    final tomorrow = today.add(const Duration(days: 1));
+  // /// 임시 날짜로 화면 구성
+  // Widget _buildScreenWithTemporaryDates(
+  //     BuildContext context, TravelModel travelInfo) {
+  //   final today = DateTime.now();
+  //   final tomorrow = today.add(const Duration(days: 1));
 
-    // 여행 정보 업데이트
-    final updatedTravel = travelInfo.copyWith(
-      startDate: today,
-      endDate: tomorrow,
-    );
+  //   // 여행 정보 업데이트
+  //   final updatedTravel = travelInfo.copyWith(
+  //     startDate: today,
+  //     endDate: tomorrow,
+  //   );
 
-    // 업데이트된 여행 정보 저장
-    ref
-        .read(travel_providers.travelsProvider.notifier)
-        .updateTravel(updatedTravel);
+  //   // 업데이트된 여행 정보 저장
+  //   ref
+  //       .read(travel_providers.travelsProvider.notifier)
+  //       .updateTravel(updatedTravel);
 
-    // 로딩 화면 표시
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: TravelDetailAppBar(
-        onBackPressed: () => _handleBackNavigation(context),
-        onRefresh: () => _refreshAllData(),
-      ),
-      body: Column(
-        children: [
-          TravelInfoSection(travelInfo: updatedTravel),
-          Expanded(
-            child: _buildLoadingIndicator(context),
-          ),
-        ],
-      ),
-    );
-  }
+  //   // 로딩 화면 표시
+  //   return Scaffold(
+  //     backgroundColor: Colors.white,
+  //     appBar: TravelDetailAppBar(
+  //       onBackPressed: () => _handleBackNavigation(context),
+  //       onRefresh: () => _refreshAllData(),
+  //     ),
+  //     body: Column(
+  //       children: [
+  //         TravelInfoSection(travelInfo: updatedTravel),
+  //         Expanded(
+  //           child: _buildLoadingIndicator(context),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   /// 로딩 화면 구성
   Widget _buildLoadingScreen(BuildContext context) {
@@ -471,13 +473,12 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     dev.log(
         'TravelDetailScreen - 일정 화면 이동 전 백업 상태: ${originalBackup?.id}, 현재 여행: ${beforeTravel?.id}');
 
-    final result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (context) => ScheduleDetailScreen(
-          date: date,
-          dayNumber: dayNumber,
-        ),
-      ),
+    final result = await ref.read(routerProvider).push<bool>(
+      ScheduleDetailScreen.routePath,
+      extra: {
+        'date': date,
+        'dayNumber': dayNumber,
+      },
     );
 
     if (result == true) {
@@ -501,7 +502,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
             _detectActualChanges(beforeDayData, afterDayData);
 
         // 변경사항 로그
-        dev.log('TravelDetailScreen - 일정 화면 복귀 후: 실제 변경사항=${hasRealChanges}');
+        dev.log('TravelDetailScreen - 일정 화면 복귀 후: 실제 변경사항=$hasRealChanges');
 
         // 실제 변경사항이 있을 때만 hasChanges 플래그 설정
         if (hasRealChanges) {

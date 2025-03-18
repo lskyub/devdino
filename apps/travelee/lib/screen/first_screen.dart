@@ -64,33 +64,33 @@ class FirstScreen extends ConsumerWidget {
             ],
           ),
         ),
-        Positioned(
-          bottom: 50,
-          left: 0,
-          right: 0,
-          child: SafeArea(
-            minimum: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                B2bButton.medium(
-                  type: B2bButtonType.primary,
-                  title: '여행 계획 만들기',
-                  onTap: () {
-                    ref.read(routerProvider).push(DateScreen.routePath);
-                  },
-                ),
-                const SizedBox(height: 12),
-                B2bButton.medium(
-                  type: B2bButtonType.secondary,
-                  title: '저장된 여행 보기',
-                  onTap: () {
-                    ref.read(routerProvider).push(SavedTravelsScreen.routePath);
-                  },
-                ),
-              ],
-            ),
-          ),
-        )
+        // Positioned(
+        //   bottom: 50,
+        //   left: 0,
+        //   right: 0,
+        //   child: SafeArea(
+        //     minimum: const EdgeInsets.symmetric(horizontal: 16),
+        //     child: Column(
+        //       children: [
+        //         B2bButton.medium(
+        //           type: B2bButtonType.primary,
+        //           title: '여행 계획 만들기',
+        //           onTap: () {
+        //             ref.read(routerProvider).push(DateScreen.routePath);
+        //           },
+        //         ),
+        //         const SizedBox(height: 12),
+        //         B2bButton.medium(
+        //           type: B2bButtonType.secondary,
+        //           title: '저장된 여행 보기',
+        //           onTap: () {
+        //             ref.read(routerProvider).push(SavedTravelsScreen.routePath);
+        //           },
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // )
       ],
     );
   }

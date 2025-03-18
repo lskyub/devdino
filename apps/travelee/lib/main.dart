@@ -5,6 +5,7 @@ import 'package:mix/mix.dart';
 import 'package:design_systems/b2b/b2b.dart';
 import 'package:travelee/router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:country_picker/country_picker.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -30,11 +31,13 @@ class MyApp extends ConsumerWidget {
         ),
         supportedLocales: const [
           Locale('ko', 'KR'),
+          Locale('en', 'US'),
         ],
         localizationsDelegates: const [
+          CountryLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
         routerConfig: ref.read(routerProvider),
         builder: (context, child) => child!,

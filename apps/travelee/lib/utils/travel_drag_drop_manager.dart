@@ -6,30 +6,26 @@ import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'dart:developer' as dev;
 
-/**
- * TravelDragDropManager
- * 
- * 여행 일정 카드의 드래그 앤 드롭 기능을 관리하는 클래스
- * - 드래그 앤 드롭 이벤트 처리
- * - 일정 간 이동 로직 구현
- * - 드래그 결과 검증 및 오류 처리
- * - 필요한 경우 데이터 새로고침
- */
+/// TravelDragDropManager
+/// 
+/// 여행 일정 카드의 드래그 앤 드롭 기능을 관리하는 클래스
+/// - 드래그 앤 드롭 이벤트 처리
+/// - 일정 간 이동 로직 구현
+/// - 드래그 결과 검증 및 오류 처리
+/// - 필요한 경우 데이터 새로고침
 class TravelDragDropManager {
   final WidgetRef ref;
   
   TravelDragDropManager(this.ref);
   
-  /**
-   * 드래그 앤 드롭 수락 이벤트 처리
-   * @param travelId 여행 ID
-   * @param sourceDate 원본 날짜
-   * @param targetDate 대상 날짜
-   * @param scheduleIds 이동할 일정 ID 목록
-   * @param sourceDayNumber 원본 Day 번호
-   * @param sourceCountry 원본 국가
-   * @param sourceCountryFlag 원본 국가 코드 또는 플래그 (호환성 유지를 위해 파라미터명은 유지)
-   */
+  /// 드래그 앤 드롭 수락 이벤트 처리
+  /// @param travelId 여행 ID
+  /// @param sourceDate 원본 날짜
+  /// @param targetDate 대상 날짜
+  /// @param scheduleIds 이동할 일정 ID 목록
+  /// @param sourceDayNumber 원본 Day 번호
+  /// @param sourceCountry 원본 국가
+  /// @param sourceCountryFlag 원본 국가 코드 또는 플래그 (호환성 유지를 위해 파라미터명은 유지)
   void handleDragAccept({
     required String travelId,
     required DateTime sourceDate,
@@ -164,7 +160,7 @@ class TravelDragDropManager {
         }
         
         // 5.4. 소스 DayData 업데이트
-        updatedDayDataMap[sourceDateKey] = sourceDayData!.copyWith(
+        updatedDayDataMap[sourceDateKey] = sourceDayData.copyWith(
           countryName: sourceCountryName,
           flagEmoji: sourceFlagEmoji,
           countryCode: sourceCountryCode,
@@ -175,7 +171,7 @@ class TravelDragDropManager {
         );
         
         // 5.5. 타겟 DayData 업데이트
-        updatedDayDataMap[targetDateKey] = targetDayData!.copyWith(
+        updatedDayDataMap[targetDateKey] = targetDayData.copyWith(
           countryName: targetCountryName, 
           flagEmoji: targetFlagEmoji,
           countryCode: targetCountryCode,
@@ -336,12 +332,10 @@ class TravelDragDropManager {
       .inDays + 1;
   }
   
-  /**
-   * 드래그 앤 드롭 결과 검증
-   * @param travelId 여행 ID
-   * @param sourceDate 원본 날짜
-   * @param targetDate 대상 날짜
-   */
+  /// 드래그 앤 드롭 결과 검증
+  /// @param travelId 여행 ID
+  /// @param sourceDate 원본 날짜
+  /// @param targetDate 대상 날짜
   void _verifyDragExchangeResult(
     String travelId, 
     DateTime sourceDate, 
@@ -370,20 +364,16 @@ class TravelDragDropManager {
     });
   }
   
-  /**
-   * 드래그 앤 드롭 오류 처리
-   * @param travelId 여행 ID
-   */
+  /// 드래그 앤 드롭 오류 처리
+  /// @param travelId 여행 ID
   void _handleDragError(String travelId) {
     Future.delayed(const Duration(milliseconds: 500), () {
       _refreshData(travelId);
     });
   }
   
-  /**
-   * 데이터 새로고침
-   * @param travelId 여행 ID
-   */
+  /// 데이터 새로고침
+  /// @param travelId 여행 ID
   void _refreshData(String travelId) {
     final currentTravel = ref.read(currentTravelProvider);
     if (currentTravel != null && currentTravel.id == travelId) {

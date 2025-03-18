@@ -21,33 +21,15 @@ class CountrySelectModal extends ConsumerStatefulWidget {
 }
 
 class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
   
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text;
-      });
-    });
   }
   
   @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
-  }
-  
-  List<CountryInfo> get _filteredCountries {
-    if (_searchQuery.isEmpty) {
-      return widget.countryInfos;
-    }
-    
-    return widget.countryInfos.where((country) {
-      return country.name.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
   }
   
   void _selectCountry(CountryInfo country) {
@@ -135,7 +117,7 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                     return Container(
                       decoration: BoxDecoration(
                         color: isSelected 
-                          ? $b2bToken.color.primary.resolve(context).withOpacity(0.1)
+                          ? $b2bToken.color.primary.resolve(context).withAlpha((0.1 * 255).toInt())
                           : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                       ),

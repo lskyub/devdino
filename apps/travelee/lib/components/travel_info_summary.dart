@@ -3,14 +3,12 @@ import 'package:design_systems/b2b/b2b.dart';
 import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
 
-/**
- * TravelInfoSummary
- * 
- * 여행 정보를 요약하여 표시하는 컴포넌트
- * - 여행 목적지 정보 표시
- * - 여행 시작일과 종료일 표시
- * - 정보를 시각적으로 구분된 카드 형태로 제공
- */
+/// TravelInfoSummary
+/// 
+/// 여행 정보를 요약하여 표시하는 컴포넌트
+/// - 여행 목적지 정보 표시
+/// - 여행 시작일과 종료일 표시
+/// - 정보를 시각적으로 구분된 카드 형태로 제공
 class TravelInfoSummary extends StatelessWidget {
   final String destination;
   final DateTime? startDate;
@@ -18,12 +16,12 @@ class TravelInfoSummary extends StatelessWidget {
   final String Function(DateTime?) formatDate;
 
   const TravelInfoSummary({
-    Key? key,
+    super.key,
     required this.destination,
     required this.startDate,
     required this.endDate,
     required this.formatDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

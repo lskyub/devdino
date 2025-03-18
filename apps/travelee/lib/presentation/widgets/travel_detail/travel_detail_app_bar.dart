@@ -13,10 +13,10 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final VoidCallback? onRefresh;
   
   const TravelDetailAppBar({
-    Key? key,
+    super.key,
     required this.onBackPressed,
     this.onRefresh,
-  }) : super(key: key);
+  });
   
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);

@@ -8,6 +8,7 @@ import 'package:design_systems/b2b/components/text/text.variant.dart';
 import 'package:design_systems/b2b/components/buttons/button.variant.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
+import 'package:travelee/router.dart';
 import 'package:travelee/screen/input/time_picker_modal.dart';
 import 'package:travelee/screen/input/location_search_screen.dart';
 import 'package:uuid/uuid.dart';
@@ -40,7 +41,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
   final _memoController = TextEditingController();
   late TimeOfDay _selectedTime;
   final _formKey = GlobalKey<FormState>();
-  
+
   // 신규 일정인지 수정 모드인지 확인
   bool get isEditMode => widget.scheduleId != null;
 
@@ -76,12 +77,14 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
   }
 
   Future<void> _selectLocation(BuildContext context) async {
-    final String? selectedLocation = await Navigator.of(context).push<String>(
-      MaterialPageRoute(
-        builder: (context) => LocationSearchScreen(
-          initialLocation: _locationController.text,
-        ),
-      ),
+    final dayData = ref.watch(dayDataProvider(widget.date));
+    final countryCode = dayData?.countryCode ?? '';
+    final selectedLocation = await ref.read(routerProvider).push<String>(
+      LocationSearchScreen.routePath,
+      extra: {
+        'location': _locationController.text,
+        'countryCode': countryCode,
+      },
     );
 
     if (selectedLocation != null && selectedLocation.isNotEmpty) {

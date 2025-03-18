@@ -236,7 +236,31 @@ class DateScreen extends ConsumerWidget {
                 showCountryPicker(
                   context: context,
                   showPhoneCode: false,
-                  exclude: ['KR', 'US'],
+                  countryListTheme: CountryListThemeData(
+                    backgroundColor: Colors.white,
+                    textStyle: TextStyle(
+                      fontSize: 16,
+                      color: $b2bToken.color.labelNomal.resolve(context),
+                    ),
+                    bottomSheetHeight: MediaQuery.of(context).size.height * 0.7,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0),
+                    ),
+                    inputDecoration: InputDecoration(
+                      labelText: '국가 검색',
+                      hintText: '국가 이름을 입력하세요',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: $b2bToken.color.labelNomal.resolve(context),
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                  ),
                   onSelect: (Country country) {
                     // Country 객체 정보와 함께 저장
                     final countryName = country.nameLocalized ?? country.name;
@@ -277,31 +301,6 @@ class DateScreen extends ConsumerWidget {
                         .read(travel_providers.travelsProvider.notifier)
                         .updateTravel(updatedTravel);
                   },
-                  countryListTheme: CountryListThemeData(
-                    backgroundColor: Colors.white,
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      color: $b2bToken.color.labelNomal.resolve(context),
-                    ),
-                    bottomSheetHeight: MediaQuery.of(context).size.height * 0.7,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16.0),
-                      topRight: Radius.circular(16.0),
-                    ),
-                    inputDecoration: InputDecoration(
-                      labelText: 'Search',
-                      hintText: 'Start typing to search',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: $b2bToken.color.labelNomal.resolve(context),
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8.0),
-                        ),
-                      ),
-                    ),
-                  ),
                 );
               },
             ),
@@ -492,7 +491,9 @@ class DateScreen extends ConsumerWidget {
                     dev.log('DateScreen - 임시 여행 ID 변경됨: $travelId -> $newId');
 
                     // 현재 ID 업데이트
-                    ref.read(travel_providers.currentTravelIdProvider.notifier).state = newId;
+                    ref
+                        .read(travel_providers.currentTravelIdProvider.notifier)
+                        .state = newId;
 
                     // 백업 다시 생성
                     controller.createBackup();

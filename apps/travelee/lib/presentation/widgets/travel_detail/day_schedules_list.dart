@@ -18,11 +18,11 @@ class DaySchedulesList extends ConsumerStatefulWidget {
   final ScheduleTapCallback? onScheduleTap;
 
   const DaySchedulesList({
-    Key? key,
+    super.key,
     required this.travelInfo,
     required this.daySchedules,
     this.onScheduleTap,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<DaySchedulesList> createState() => _DaySchedulesListState();
@@ -30,13 +30,13 @@ class DaySchedulesList extends ConsumerStatefulWidget {
 
 class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
   late PageController _pageController;
-  
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
   }
-  
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -46,19 +46,18 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
   @override
   Widget build(BuildContext context) {
     final selectedIndex = ref.watch(selectedIndexProvider);
-    
+
     // 일정이 비어있는 경우 처리
     if (widget.daySchedules.isEmpty) {
       return const Center(
         child: Text('표시할 일정이 없습니다.'),
       );
     }
-    
+
     // 선택된 인덱스가 범위를 벗어나는 경우 처리
-    final validIndex = selectedIndex < widget.daySchedules.length 
-        ? selectedIndex 
-        : 0;
-    
+    final validIndex =
+        selectedIndex < widget.daySchedules.length ? selectedIndex : 0;
+
     return Column(
       children: [
         // 날짜 탭 바
@@ -73,7 +72,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
             },
           ),
         ),
-        
+
         // 날짜별 일정 페이지
         Expanded(
           child: PageView.builder(
@@ -91,16 +90,17 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
       ],
     );
   }
-  
+
   // 날짜 탭 위젯 구성
-  Widget _buildDayTab(BuildContext context, int index, DayScheduleData day, int selectedIndex) {
+  Widget _buildDayTab(
+      BuildContext context, int index, DayScheduleData day, int selectedIndex) {
     final isSelected = index == selectedIndex;
-    
+
     return GestureDetector(
       onTap: () {
         ref.read(selectedIndexProvider.notifier).state = index;
         _pageController.animateToPage(
-          index, 
+          index,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
@@ -109,7 +109,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? $b2bToken.color.primary.resolve(context)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
@@ -122,7 +122,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
         child: Row(
           children: [
             Text(
-              day.flagEmoji ?? '🏳️',  // null 체크 및 기본값 제공
+              day.flagEmoji, // null 체크 및 기본값 제공
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(width: 4),
@@ -139,7 +139,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
       ),
     );
   }
-  
+
   // 날짜별 일정 내용 위젯 구성
   Widget _buildDayContent(BuildContext context, DayScheduleData day) {
     return Column(
@@ -163,12 +163,12 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
                     Row(
                       children: [
                         Text(
-                          day.flagEmoji ?? '🏳️',  // null 체크 및 기본값 제공
+                          day.flagEmoji, // null 체크 및 기본값 제공
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          day.countryName ?? '국가 미지정',  // null 체크 및 기본값 제공
+                          day.countryName, // null 체크 및 기본값 제공
                           style: const TextStyle(fontSize: 14),
                         ),
                       ],
@@ -179,7 +179,8 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
               ElevatedButton.icon(
                 onPressed: () {
                   if (widget.onScheduleTap != null) {
-                    dev.log('DaySchedulesList - 일정으로 이동: ${day.date}, Day ${day.dayNumber}');
+                    dev.log(
+                        'DaySchedulesList - 일정으로 이동: ${day.date}, Day ${day.dayNumber}');
                     widget.onScheduleTap!(day.date, day.dayNumber);
                   }
                 },
@@ -193,7 +194,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
             ],
           ),
         ),
-        
+
         // 일정 목록
         Expanded(
           child: day.schedules.isEmpty
@@ -203,7 +204,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
       ],
     );
   }
-  
+
   // 일정이 없을 때 표시할 위젯
   Widget _buildEmptyState(BuildContext context, DayScheduleData day) {
     return Center(
@@ -223,50 +224,44 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
               fontSize: 16,
             ),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              if (widget.onScheduleTap != null) {
-                widget.onScheduleTap!(day.date, day.dayNumber);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: $b2bToken.color.primary.resolve(context),
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('일정 추가하기'),
-          ),
+          // const SizedBox(height: 16),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     if (widget.onScheduleTap != null) {
+          //       widget.onScheduleTap!(day.date, day.dayNumber);
+          //     }
+          //   },
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor: $b2bToken.color.primary.resolve(context),
+          //     foregroundColor: Colors.white,
+          //   ),
+          //   child: const Text('일정 추가하기'),
+          // ),
         ],
       ),
     );
   }
-  
+
   // 일정 목록 위젯
   Widget _buildScheduleList(BuildContext context, DayScheduleData day) {
     if (day.schedules.isEmpty) {
       return _buildEmptyState(context, day);
     }
-    
+
     // 시간 순으로 일정 정렬
     final schedules = List<Schedule>.from(day.schedules)
       ..sort((a, b) {
-        // null 체크 후 시간 비교
-        final aTime = a.time != null ? a.time!.hour * 60 + a.time!.minute : 0;
-        final bTime = b.time != null ? b.time!.hour * 60 + b.time!.minute : 0;
+        final aTime = a.time.hour * 60 + a.time.minute;
+        final bTime = b.time.hour * 60 + b.time.minute;
         return aTime.compareTo(bTime);
       });
-      
+
     return ListView.builder(
       itemCount: schedules.length,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemBuilder: (context, index) {
         final schedule = schedules[index];
-        
-        // null 체크 추가
-        if (schedule == null) {
-          return const SizedBox.shrink();
-        }
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
@@ -292,34 +287,32 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      schedule.time != null 
-                          ? '${schedule.time!.hour.toString().padLeft(2, '0')}:${schedule.time!.minute.toString().padLeft(2, '0')}'
-                          : '--:--',
+                      '${schedule.time.hour.toString().padLeft(2, '0')}:${schedule.time.minute.toString().padLeft(2, '0')}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: $b2bToken.color.primary.resolve(context),
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(width: 16),
-                  
+
                   // 장소 및 메모
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          schedule.location ?? '위치 미지정',  // null 체크 추가
+                          schedule.location, // null 체크 추가
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        if (schedule.memo != null && schedule.memo!.isNotEmpty) ...[
+                        if (schedule.memo.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
-                            schedule.memo!,
+                            schedule.memo,
                             style: TextStyle(
                               color: $b2bToken.color.gray600.resolve(context),
                               fontSize: 14,
@@ -337,14 +330,25 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
       },
     );
   }
-  
+
   // 날짜 형식화 헬퍼 메서드
   String _formatDate(DateTime date) {
-    if (date == null) return '날짜 미지정';
-    
-    final months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    final months = [
+      '1월',
+      '2월',
+      '3월',
+      '4월',
+      '5월',
+      '6월',
+      '7월',
+      '8월',
+      '9월',
+      '10월',
+      '11월',
+      '12월'
+    ];
     final weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-    
+
     try {
       final weekday = weekdays[date.weekday - 1]; // 월요일이 1, 일요일이 7
       return '${date.year}년 ${months[date.month - 1]} ${date.day}일 ($weekday)';
@@ -353,4 +357,4 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
       return '${date.year}-${date.month}-${date.day}';
     }
   }
-} 
+}

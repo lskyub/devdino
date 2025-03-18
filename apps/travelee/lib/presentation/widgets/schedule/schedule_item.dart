@@ -11,11 +11,11 @@ class ScheduleItem extends StatefulWidget {
   final VoidCallback onDelete;
 
   const ScheduleItem({
-    Key? key,
+    super.key,
     required this.schedule,
     required this.onEdit,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   State<ScheduleItem> createState() => _ScheduleItemState();
@@ -94,7 +94,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
         key: _timeWidgetKey, // GlobalKey 추가하여 너비 측정
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: $b2bToken.color.primary.resolve(context).withOpacity(0.1),
+          color: $b2bToken.color.primary.resolve(context).withAlpha((0.1 * 255).toInt()),
           borderRadius: BorderRadius.circular(8),
         ),
         child: B2bText.medium(
@@ -146,7 +146,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
           value: 'delete',
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.delete_outline,
                 color: Colors.red,
                 size: 20,

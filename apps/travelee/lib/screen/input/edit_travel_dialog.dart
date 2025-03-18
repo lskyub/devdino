@@ -15,12 +15,12 @@ class EditTravelDialog extends StatefulWidget {
   final DateTime initialEndDate;
 
   const EditTravelDialog({
-    Key? key,
+    super.key,
     required this.initialDestination,
     required this.initialCountryInfos,
     required this.initialStartDate,
     required this.initialEndDate,
-  }) : super(key: key);
+  });
 
   static Future<Map<String, dynamic>?> show({
     required BuildContext context,
@@ -47,7 +47,8 @@ class EditTravelDialog extends StatefulWidget {
   State<EditTravelDialog> createState() => _EditTravelDialogState();
 }
 
-class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerProviderStateMixin {
+class _EditTravelDialogState extends State<EditTravelDialog>
+    with SingleTickerProviderStateMixin {
   late List<String> _destination;
   late List<CountryInfo> _countryInfos;
   late DateTime _startDate;
@@ -87,21 +88,20 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
                 showCountryPicker(
                   context: context,
                   showPhoneCode: false,
-                  exclude: ['KR', 'US'],
                   onSelect: (Country country) {
                     final countryName = country.nameLocalized ?? country.name;
-                    
+
                     // 이미 선택된 국가라면 추가하지 않음
                     if (_destination.contains(countryName)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('이미 선택된 국가입니다'),
-                          duration: const Duration(seconds: 2),
+                          duration: Duration(seconds: 2),
                         ),
                       );
                       return;
                     }
-                    
+
                     setState(() {
                       _destination.add(countryName);
                       _countryInfos.add(
@@ -125,8 +125,8 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
                       topRight: Radius.circular(16.0),
                     ),
                     inputDecoration: InputDecoration(
-                      labelText: 'Search',
-                      hintText: 'Start typing to search',
+                      labelText: '국가 검색',
+                      hintText: '국가 이름을 입력하세요',
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -179,9 +179,10 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
             child: Column(
               children: List.generate(_destination.length, (index) {
                 final country = _destination[index];
-                final countryInfo = index < _countryInfos.length ? _countryInfos[index] : null;
+                final countryInfo =
+                    index < _countryInfos.length ? _countryInfos[index] : null;
                 final flagEmoji = countryInfo?.flagEmoji ?? "🏳️";
-                
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(
@@ -261,30 +262,35 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
             ),
             monthFormat: 'MMM',
             monthCellStyle: DateRangePickerMonthCellStyle(
-              textStyle: $b2bToken.textStyle.body4regular.resolve(context).merge(
-                    TextStyle(
-                      color: $b2bToken.color.gray500.resolve(context),
-                    ),
-                  ),
-              todayTextStyle: $b2bToken.textStyle.body4regular.resolve(context).merge(
-                    TextStyle(
-                      color: $b2bToken.color.gray500.resolve(context),
-                    ),
-                  ),
+              textStyle:
+                  $b2bToken.textStyle.body4regular.resolve(context).merge(
+                        TextStyle(
+                          color: $b2bToken.color.gray500.resolve(context),
+                        ),
+                      ),
+              todayTextStyle:
+                  $b2bToken.textStyle.body4regular.resolve(context).merge(
+                        TextStyle(
+                          color: $b2bToken.color.gray500.resolve(context),
+                        ),
+                      ),
             ),
-            startRangeSelectionColor: $b2bToken.color.violet200.resolve(context),
+            startRangeSelectionColor:
+                $b2bToken.color.violet200.resolve(context),
             endRangeSelectionColor: $b2bToken.color.violet200.resolve(context),
             rangeSelectionColor: $b2bToken.color.violet200.resolve(context),
-            selectionTextStyle: $b2bToken.textStyle.body4regular.resolve(context).merge(
-                  TextStyle(
-                    color: $b2bToken.color.primary.resolve(context),
-                  ),
-                ),
-            rangeTextStyle: $b2bToken.textStyle.body4regular.resolve(context).merge(
-                  TextStyle(
-                    color: $b2bToken.color.primary.resolve(context),
-                  ),
-                ),
+            selectionTextStyle:
+                $b2bToken.textStyle.body4regular.resolve(context).merge(
+                      TextStyle(
+                        color: $b2bToken.color.primary.resolve(context),
+                      ),
+                    ),
+            rangeTextStyle:
+                $b2bToken.textStyle.body4regular.resolve(context).merge(
+                      TextStyle(
+                        color: $b2bToken.color.primary.resolve(context),
+                      ),
+                    ),
             todayHighlightColor: $b2bToken.color.primary.resolve(context),
             selectionColor: $b2bToken.color.primary.resolve(context),
             allowViewNavigation: false,
@@ -361,15 +367,18 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
                           Tab(text: '날짜'),
                         ],
                         labelColor: $b2bToken.color.primary.resolve(context),
-                        unselectedLabelColor: $b2bToken.color.gray400.resolve(context),
-                        indicatorColor: $b2bToken.color.primary.resolve(context),
+                        unselectedLabelColor:
+                            $b2bToken.color.gray400.resolve(context),
+                        indicatorColor:
+                            $b2bToken.color.primary.resolve(context),
                       ),
                       const SizedBox(height: 16),
                       Flexible(
                         child: TabBarView(
                           controller: _tabController,
                           children: [
-                            SingleChildScrollView(child: _buildDestinationTab()),
+                            SingleChildScrollView(
+                                child: _buildDestinationTab()),
                             SingleChildScrollView(child: _buildDateTab()),
                           ],
                         ),
@@ -413,4 +422,4 @@ class _EditTravelDialogState extends State<EditTravelDialog> with SingleTickerPr
       ),
     );
   }
-} 
+}
