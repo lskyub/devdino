@@ -1,5 +1,5 @@
 /// TravelDateFormatter
-/// 
+///
 /// 여행 앱에서 사용하는 날짜 관련 유틸리티 클래스
 /// - 날짜 포맷팅 (YYYY.MM.DD 형식)
 /// - 시작일과 종료일 사이의 날짜 범위 생성
@@ -9,7 +9,9 @@ class TravelDateFormatter {
   /// @return 포맷된 날짜 문자열 (날짜가 null인 경우 '-' 반환)
   static String formatDate(DateTime? date) {
     if (date == null) return '-';
-    return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+    String formattedDate =
+        '${date.year.toString().substring(2, 4)}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+    return formattedDate;
   }
 
   /// 시작일부터 종료일까지의 연속된 날짜 목록 생성
@@ -25,4 +27,4 @@ class TravelDateFormatter {
     }
     return dates;
   }
-} 
+}

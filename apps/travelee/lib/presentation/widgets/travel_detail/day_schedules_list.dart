@@ -30,17 +30,39 @@ class DaySchedulesList extends ConsumerStatefulWidget {
 
 class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
   late PageController _pageController;
+  bool _isPageChanging = false; // 페이지 변경 중인지 추적하는 플래그 추가
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    // 화면이 로드된 후 임시 여행 데이터 정리
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedIndexProvider.notifier).state = 0;
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  // 탭 선택 시 호출되는 메서드
+  void _onTabSelected(int index) {
+    if (!_isPageChanging) {
+      _isPageChanging = true;
+      ref.read(selectedIndexProvider.notifier).state = index;
+      _pageController
+          .animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      )
+          .then((_) {
+        _isPageChanging = false;
+      });
+    }
   }
 
   @override
@@ -79,7 +101,13 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
             controller: _pageController,
             itemCount: widget.daySchedules.length,
             onPageChanged: (index) {
-              ref.read(selectedIndexProvider.notifier).state = index;
+              if (!_isPageChanging) {
+                _isPageChanging = true;
+                ref.read(selectedIndexProvider.notifier).state = index;
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  _isPageChanging = false;
+                });
+              }
             },
             itemBuilder: (context, index) {
               final dayData = widget.daySchedules[index];
@@ -97,14 +125,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
     final isSelected = index == selectedIndex;
 
     return GestureDetector(
-      onTap: () {
-        ref.read(selectedIndexProvider.notifier).state = index;
-        _pageController.animateToPage(
-          index,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      },
+      onTap: () => _onTabSelected(index), // 수정된 탭 선택 핸들러 사용
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
