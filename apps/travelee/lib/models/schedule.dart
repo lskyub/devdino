@@ -38,4 +38,8 @@ class Schedule {
       dayNumber: dayNumber ?? this.dayNumber,
     );
   }
+  @override
+  String toString() {
+    return 'id: $id, travelId: $travelId, time: $time, location: $location, memo: $memo, date: $date, dayNumber: $dayNumber';
+  }
 } 

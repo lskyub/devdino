@@ -307,7 +307,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
     String selectedCountryCode = currentTravel.countryInfos.isNotEmpty
         ? currentTravel.countryInfos.first.countryCode
         : "";
-    
+
     // DayData가 있으면 해당 정보 사용
     if (dayData != null && dayData.countryName.isNotEmpty) {
       selectedCountryName = dayData.countryName;
@@ -331,7 +331,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
           if (!shouldSaveChanges) {
             // 저장 안 함 - 백업에서 복원
             ref.read(scheduleDetailControllerProvider).restoreFromBackup(date);
-            
+
             // 변경사항 없음으로 표시하고 화면 닫기
             Navigator.pop(context, false);
             return true;
@@ -339,15 +339,15 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
 
           // 저장 - 변경사항 있음으로 표시하고 화면 닫기
           ref.read(travelsProvider.notifier).commitChanges();
-          
+
           // 로그 추가
           dev.log('ScheduleDetailScreen - 변경사항 저장 후 화면 닫기');
-          
+
           // 명시적으로 변경사항 있음(true) 전달
           Navigator.pop(context, true);
           return true;
         }
-        
+
         // 변경사항이 없을 때는 false 반환 (변경 없음)
         dev.log('ScheduleDetailScreen - 변경사항 없이 뒤로가기');
         Navigator.pop(context, false);
@@ -414,6 +414,7 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       String selectedCountryName, String selectedCountryCode) {
     dev.log('selectedCountryCode: $selectedCountryCode');
     return AppBar(
+      surfaceTintColor: Colors.transparent, // 자동 색상 변
       title: Row(
         children: [
           B2bText.bold(

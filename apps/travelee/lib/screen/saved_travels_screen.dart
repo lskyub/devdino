@@ -86,6 +86,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent, // 자동 색상 변
         leading: null,
         title: SvgPicture.asset(
           'assets/icons/logo.svg',

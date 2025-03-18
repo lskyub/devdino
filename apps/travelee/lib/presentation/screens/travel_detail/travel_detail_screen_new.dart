@@ -1,9 +1,6 @@
-import 'package:collection/collection.dart';
-import 'package:country_icons/country_icons.dart';
 import 'package:design_systems/b2b/b2b.dart';
 import 'package:design_systems/b2b/components/text/text.dart';
 import 'package:design_systems/b2b/components/text/text.variant.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,11 +13,11 @@ import 'package:travelee/presentation/screens/input/schedule_input_modal.dart';
 import 'package:travelee/presentation/screens/schedule/schedule_detail_screen.dart';
 import 'package:travelee/providers/unified_travel_provider.dart'
     as travel_providers;
-import 'package:travelee/router.dart';
 import 'package:travelee/services/database_helper.dart';
 import 'package:travelee/utils/result_types.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
 import 'dart:developer' as dev;
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
@@ -36,6 +33,7 @@ class TravelDetailScreen extends ConsumerStatefulWidget {
 class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     with WidgetsBindingObserver {
   late FocusNode _focusNode;
+  bool isEdit = false;
 
   @override
   void initState() {
@@ -108,6 +106,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent, // 자동 색상 변화 방지
         elevation: 0,
         leading: IconButton(
           onPressed: () => _handleBackNavigation(context),
@@ -146,7 +145,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                 ),
               ),
               const SizedBox(
-                width: 8,
+                width: 15,
               ),
               B2bText.medium(
                 text: 'EVENTS',
@@ -155,141 +154,39 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               ),
               const Spacer(),
               IconButton(
-                icon: const Icon(Icons.fullscreen, color: Colors.grey),
-                onPressed: () {},
+                icon: isEdit
+                    ? const Icon(Icons.visibility, color: Colors.grey)
+                    : const Icon(Icons.edit, color: Colors.grey),
+                onPressed: () {
+                  setState(() {
+                    isEdit = !isEdit;
+                  });
+                },
               ),
             ],
           ),
-          const Divider(height: 1),
+          Divider(
+            height: 1,
+            color: $b2bToken.color.divider1
+                .resolve(context)
+                .withAlpha((0.5 * 255).toInt()),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: daySchedules.length,
               itemBuilder: (context, index) {
-                return _buildDayItem(daySchedules[index]);
+                return DayItem(
+                  index: index,
+                  isEdit: isEdit,
+                  dayData: daySchedules[index],
+                  onScheduleTap: _editSchedule,
+                  onScheduleDrop: _onScheduleDrop,
+                  getScheduleColor: _getScheduleColor,
+                  onSelectCountry: _selectCountry,
+                  addSchedule: _addSchedule,
+                  deleteSchedule: _deleteSchedule,
+                );
               },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDayItem(DayScheduleData dayData) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 날짜
-          GestureDetector(
-            onTap: () => _selectCountry(dayData.date),
-            child: SizedBox(
-              width: 70,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  B2bText.medium(
-                    type: B2bTextType.body2,
-                    text: dayData.date.day.toString().padLeft(2, '0'),
-                    color: $b2bToken.color.labelNomal.resolve(context),
-                  ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: $b2bToken.color.gray300.resolve(context),
-                        width: 0.5,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child: FittedBox(
-                        fit: BoxFit.cover, // 내부 요소가 원형 컨테이너에 꽉 차도록 설정
-                        child: CountryIcons.getSvgFlag(dayData.countryCode),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // 일정 목록
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ...dayData.schedules.mapIndexed((index, schedule) {
-                    return GestureDetector(
-                      onTap: () {
-                        _editSchedule(dayData, schedule);
-                        // _navigateToSchedule(dayData.date, dayData.dayNumber)
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(
-                            bottom:
-                                index == dayData.schedules.length - 1 ? 0 : 8,
-                            top: index == 0 ? 8 : 0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getScheduleColor(schedule.location),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                schedule.location,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              schedule.time.format(context),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                  GestureDetector(
-                    onTap: () {
-                      _addSchedule(dayData);
-                      // _navigateToSchedule(dayData.date, dayData.dayNumber)
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 12),
-                      child: DottedBorder(
-                        color:
-                            $b2bToken.color.divider1.resolve(context), // 점선 색상
-                        strokeWidth: 0.7, // 점선 두께
-                        dashPattern: const [6, 3], // 점선 간격 (6px 선, 3px 간격)
-                        borderType: BorderType.RRect,
-                        radius: const Radius.circular(10), // 둥근 사각형
-                        child: const SizedBox(
-                          height: 40,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Icon(Icons.fullscreen, color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],
@@ -363,127 +260,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         child: CircularProgressIndicator(),
       ),
     );
-  }
-
-  void _navigateToSchedule(DateTime date, int dayNumber) async {
-    dev.log('일정 화면으로 이동: Day $dayNumber, 날짜: ${date.toString()}');
-    // 통합 컨트롤러 가져오기
-    final controller = ref.read(unifiedControllerProvider);
-
-    // 이동 전 상태 저장 - 기존 백업 유지 (새 백업 생성하지 않음)
-    final beforeTravel = ref.read(travel_providers.currentTravelProvider);
-    final beforeDayData = beforeTravel?.dayDataMap[_formatDateKey(date)];
-
-    // 현재 백업 상태 저장 (이후 비교용)
-    final originalBackup = ref.read(travel_providers.travelBackupProvider);
-    dev.log(
-        'TravelDetailScreen - 일정 화면 이동 전 백업 상태: ${originalBackup?.id}, 현재 여행: ${beforeTravel?.id}');
-
-    final result = await ref.read(routerProvider).push<bool>(
-      ScheduleDetailScreen.routePath,
-      extra: {
-        'date': date,
-        'dayNumber': dayNumber,
-      },
-    );
-
-    if (result == true) {
-      dev.log('TravelDetailScreen - 일정 화면에서 변경사항 있음 - 데이터 새로고침');
-
-      // 화면 전체 갱신을 위해 여행 ID를 재설정
-      final currentId = ref.read(travel_providers.currentTravelIdProvider);
-      if (currentId.isNotEmpty) {
-        // Provider 캐시 초기화
-        ref.invalidate(travel_providers.dayDataProvider(date));
-
-        // 통합 컨트롤러를 통한 데이터 새로고침
-        controller.refreshData(date);
-
-        // 변경사항 여부 확인
-        final afterTravel = ref.read(travel_providers.currentTravelProvider);
-        final afterDayData = afterTravel?.dayDataMap[_formatDateKey(date)];
-
-        // 실제 변경사항이 있는지 비교
-        final hasRealChanges =
-            _detectActualChanges(beforeDayData, afterDayData);
-
-        // 변경사항 로그
-        dev.log('TravelDetailScreen - 일정 화면 복귀 후: 실제 변경사항=$hasRealChanges');
-
-        // 실제 변경사항이 있을 때만 hasChanges 플래그 설정
-        if (hasRealChanges) {
-          // 원래 백업을 유지하여 비교 기준 유지
-          if (originalBackup != null) {
-            dev.log('TravelDetailScreen - 원래 백업 유지: ${originalBackup.id}');
-            ref.read(travel_providers.travelBackupProvider.notifier).state =
-                originalBackup;
-          }
-
-          // 변경사항 플래그 설정
-          controller.hasChanges = true;
-          ref.read(travel_providers.travelChangesProvider.notifier).state =
-              true;
-          dev.log('TravelDetailScreen - 실제 변경사항 감지됨, 다이얼로그 표시 가능');
-        } else {
-          dev.log('TravelDetailScreen - 실제 변경사항 없음');
-        }
-
-        // UI 갱신
-        if (mounted) {
-          setState(() {
-            dev.log('TravelDetailScreen - 날짜 데이터 새로고침 후 UI 갱신 ($currentId)');
-          });
-        }
-      }
-    } else {
-      dev.log('TravelDetailScreen - 일정 화면에서 변경사항 없음 또는 취소됨');
-      // 변경 없음으로 표시
-      controller.hasChanges = false;
-    }
-  }
-
-  bool _detectActualChanges(DayData? before, DayData? after) {
-    if (before == null && after == null) return false;
-    if (before == null || after == null) return true;
-
-    // 국가 정보 변경 확인
-    if (before.countryName != after.countryName ||
-        before.flagEmoji != after.flagEmoji ||
-        before.countryCode != after.countryCode) {
-      return true;
-    }
-
-    // 일정 개수 변경 확인
-    if (before.schedules.length != after.schedules.length) {
-      return true;
-    }
-
-    // 일정 내용 변경 확인 (일정 개수가 같은 경우)
-    for (int i = 0; i < before.schedules.length; i++) {
-      // 안전하게 인덱스 체크
-      if (i >= after.schedules.length) return true;
-
-      final beforeSchedule = before.schedules[i];
-      final afterSchedule = after.schedules[i];
-
-      // ID가 다르면 변경된 것으로 간주
-      if (beforeSchedule.id != afterSchedule.id) return true;
-
-      // 내용 비교
-      if (beforeSchedule.location != afterSchedule.location ||
-          beforeSchedule.memo != afterSchedule.memo ||
-          _timeToMinutes(beforeSchedule.time) !=
-              _timeToMinutes(afterSchedule.time)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  int _timeToMinutes(TimeOfDay? time) {
-    if (time == null) return -1;
-    return time.hour * 60 + time.minute;
   }
 
   Future<void> _handleBackNavigation(BuildContext context) async {
@@ -859,20 +635,20 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
   }
 
   /// 일정 삭제
-  void _deleteSchedule(DayScheduleData dayData, Schedule schedule) {
-    showDialog(
+  _deleteSchedule(Schedule schedule) {
+    showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('일정 삭제'),
         content: const Text('이 일정을 삭제하시겠습니까?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(context).pop(false),
             child: const Text('취소'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop(true);
 
               ref
                   .read(scheduleDetailControllerProvider)
@@ -891,6 +667,38 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
             child: const Text('삭제'),
           ),
         ],
+      ),
+    );
+  }
+
+  void _onScheduleDrop(Schedule schedule, DateTime newDate) {
+    final controller = ref.read(unifiedControllerProvider);
+    // 날짜가 변경된 새로운 일정 생성
+    final updatedSchedule = schedule.copyWith(
+      date: newDate,
+      dayNumber: controller.getDayNumber(
+        ref.read(travel_providers.currentTravelProvider)!.startDate!,
+        newDate,
+      ),
+    );
+
+    // 기존 일정 삭제 및 새 일정 추가
+    ref.read(travel_providers.travelsProvider.notifier).updateSchedule(
+          controller.currentTravelId,
+          updatedSchedule,
+        );
+
+    // 변경사항 저장
+    ref.read(travel_providers.travelsProvider.notifier).commitChanges();
+
+    // UI 갱신
+    setState(() {});
+
+    // 사용자에게 피드백 제공
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('일정이 ${newDate.month}월 ${newDate.day}일로 이동되었습니다'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

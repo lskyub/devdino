@@ -143,6 +143,7 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent, // 자동 색상 변
         title: SvgPicture.asset(
           'assets/icons/logo.svg',
           width: 120,

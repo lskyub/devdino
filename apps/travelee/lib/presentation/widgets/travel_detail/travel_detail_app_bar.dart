@@ -30,6 +30,7 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final controller = ref.watch(travelDetailControllerProvider);
 
     return AppBar(
+      surfaceTintColor: Colors.transparent, // 자동 색상 변
       title: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

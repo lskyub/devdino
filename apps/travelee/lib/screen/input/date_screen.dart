@@ -101,6 +101,7 @@ class DateScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent, // 자동 색상 변
         title: B2bText.bold(
           type: B2bTextType.title3,
           text: '여행 기간',
