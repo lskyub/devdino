@@ -1,8 +1,8 @@
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
-import 'package:design_systems/b2b/components/buttons/button.variant.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
 
 class TimePickerModal extends StatefulWidget {
   final TimeOfDay initialTime;
@@ -69,17 +69,17 @@ class _TimePickerModalState extends State<TimePickerModal> {
         children: [
           Row(
             children: [
-              B2bText.medium(
-                type: B2bTextType.body1,
+              DinoText(
+                type: DinoTextType.bodyM,
                 text: '시간 설정',
-                color: $b2bToken.color.labelNomal.resolve(context),
+                color: $dinoToken.color.black.resolve(context),
               ),
               const Spacer(),
               IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(
                   Icons.close,
-                  color: $b2bToken.color.gray400.resolve(context),
+                  color: $dinoToken.color.blingGray400.resolve(context),
                 ),
               ),
             ],
@@ -96,10 +96,10 @@ class _TimePickerModalState extends State<TimePickerModal> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: B2bText.medium(
-                  type: B2bTextType.body1,
+                child: DinoText(
+                  type: DinoTextType.bodyM,
                   text: ':',
-                  color: $b2bToken.color.labelNomal.resolve(context),
+                  color: $dinoToken.color.black.resolve(context),
                 ),
               ),
               _buildNumberPicker(
@@ -142,7 +142,7 @@ class _TimePickerModalState extends State<TimePickerModal> {
       width: 100,
       height: 200,
       decoration: BoxDecoration(
-        color: $b2bToken.color.gray100.resolve(context),
+        color: $dinoToken.color.blingGray100.resolve(context),
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListWheelScrollView.useDelegate(
@@ -157,12 +157,12 @@ class _TimePickerModalState extends State<TimePickerModal> {
             final number = min + index;
             final isSelected = number == value;
             return Center(
-              child: B2bText.medium(
-                type: B2bTextType.body1,
+              child: DinoText(
+                type: DinoTextType.bodyM,
                 text: number.toString().padLeft(2, '0'),
                 color: isSelected
-                    ? $b2bToken.color.primary.resolve(context)
-                    : $b2bToken.color.labelNomal.resolve(context),
+                    ? $dinoToken.color.primary.resolve(context)
+                    : $dinoToken.color.black.resolve(context),
               ),
             );
           },

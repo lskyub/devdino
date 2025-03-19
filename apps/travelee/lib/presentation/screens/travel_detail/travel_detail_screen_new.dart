@@ -1,6 +1,6 @@
-import 'package:design_systems/b2b/b2b.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -116,11 +116,11 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
             height: 27,
           ),
         ),
-        title: B2bText.medium(
-          type: B2bTextType.body2,
+        title: DinoText(
+          type: DinoTextType.bodyM,
           text:
               '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
-          color: $b2bToken.color.labelNomal.resolve(context),
+          color: $dinoToken.color.black.resolve(context),
         ),
         actions: [
           IconButton(
@@ -137,20 +137,20 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                 width: 70,
                 child: Align(
                   alignment: Alignment.center,
-                  child: B2bText.medium(
+                  child: DinoText(
                     text: 'DATE',
-                    type: B2bTextType.body4,
-                    color: $b2bToken.color.labelNomal.resolve(context),
+                    type: DinoTextType.bodyS,
+                    color: $dinoToken.color.black.resolve(context),
                   ),
                 ),
               ),
               const SizedBox(
                 width: 15,
               ),
-              B2bText.medium(
+              DinoText(
                 text: 'EVENTS',
-                type: B2bTextType.body4,
-                color: $b2bToken.color.labelNomal.resolve(context),
+                type: DinoTextType.bodyS,
+                color: $dinoToken.color.black.resolve(context),
               ),
               const Spacer(),
               IconButton(
@@ -167,7 +167,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           ),
           Divider(
             height: 1,
-            color: $b2bToken.color.divider1
+            color: $dinoToken.color.blingGray200
                 .resolve(context)
                 .withAlpha((0.5 * 255).toInt()),
           ),

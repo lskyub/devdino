@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/models/schedule.dart';
@@ -131,13 +131,13 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
-              ? $b2bToken.color.primary.resolve(context)
+              ? $dinoToken.color.primary.resolve(context)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? $b2bToken.color.primary.resolve(context)
-                : $b2bToken.color.gray300.resolve(context),
+                ? $dinoToken.color.primary.resolve(context)
+                : $dinoToken.color.blingGray300.resolve(context),
           ),
         ),
         child: Row(
@@ -208,7 +208,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
                 icon: const Icon(Icons.edit_calendar, size: 16),
                 label: const Text('일정 관리'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: $b2bToken.color.primary.resolve(context),
+                  backgroundColor: $dinoToken.color.primary.resolve(context),
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -235,13 +235,13 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
           Icon(
             Icons.event_note,
             size: 48,
-            color: $b2bToken.color.gray300.resolve(context),
+            color: $dinoToken.color.blingGray300.resolve(context),
           ),
           const SizedBox(height: 12),
           Text(
             '등록된 일정이 없습니다',
             style: TextStyle(
-              color: $b2bToken.color.gray400.resolve(context),
+              color: $dinoToken.color.blingGray400.resolve(context),
               fontSize: 16,
             ),
           ),
@@ -304,14 +304,14 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: $b2bToken.color.gray100.resolve(context),
+                      color: $dinoToken.color.blingGray100.resolve(context),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '${schedule.time.hour.toString().padLeft(2, '0')}:${schedule.time.minute.toString().padLeft(2, '0')}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: $b2bToken.color.primary.resolve(context),
+                        color: $dinoToken.color.primary.resolve(context),
                       ),
                     ),
                   ),
@@ -335,7 +335,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
                           Text(
                             schedule.memo,
                             style: TextStyle(
-                              color: $b2bToken.color.gray600.resolve(context),
+                              color: $dinoToken.color.blingGray600.resolve(context),
                               fontSize: 14,
                             ),
                           ),

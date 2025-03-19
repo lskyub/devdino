@@ -1,12 +1,12 @@
-import 'package:design_systems/b2b/components/buttons/button.variant.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/data/controllers/travel_detail_controller.dart';
 import 'package:travelee/providers/unified_travel_provider.dart'
     as travel_providers;
@@ -82,11 +82,11 @@ class DateScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                color: $b2bToken.color.primary.resolve(context),
+                color: $dinoToken.color.primary.resolve(context),
               ),
               const SizedBox(height: 16),
-              B2bText.regular(
-                type: B2bTextType.body2,
+              const DinoText(
+                type: DinoTextType.bodyM,
                 text: '새 여행 생성 중...',
               ),
             ],
@@ -102,10 +102,10 @@ class DateScreen extends ConsumerWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: Colors.transparent, // 자동 색상 변
-        title: B2bText.bold(
-          type: B2bTextType.title3,
+        title: DinoText(
+          type: DinoTextType.bodyXL,
           text: '여행 기간',
-          color: $b2bToken.color.labelNomal.resolve(context),
+          color: $dinoToken.color.black.resolve(context),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -145,10 +145,10 @@ class DateScreen extends ConsumerWidget {
               top: 16,
               bottom: 8,
             ),
-            child: B2bText.medium(
-              type: B2bTextType.body1,
+            child: DinoText(
+              type: DinoTextType.bodyM,
               text: '여행 목적지를 추가 하세요.',
-              color: $b2bToken.color.labelNomal.resolve(context),
+              color: $dinoToken.color.black.resolve(context),
             ),
           ),
           Container(
@@ -171,7 +171,7 @@ class DateScreen extends ConsumerWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: $b2bToken.color.gray100.resolve(context),
+                      color: $dinoToken.color.blingGray100.resolve(context),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -182,8 +182,8 @@ class DateScreen extends ConsumerWidget {
                           style: const TextStyle(fontSize: 20),
                         ),
                         const SizedBox(width: 8),
-                        B2bText.regular(
-                          type: B2bTextType.body4,
+                        DinoText(
+                          type: DinoTextType.detailL,
                           text: data,
                         ),
                         const SizedBox(width: 8),
@@ -215,7 +215,7 @@ class DateScreen extends ConsumerWidget {
                           child: Icon(
                             Icons.close,
                             size: 16,
-                            color: $b2bToken.color.gray400.resolve(context),
+                            color: $dinoToken.color.blingGray400.resolve(context),
                           ),
                         ),
                       ],
@@ -241,7 +241,7 @@ class DateScreen extends ConsumerWidget {
                     backgroundColor: Colors.white,
                     textStyle: TextStyle(
                       fontSize: 16,
-                      color: $b2bToken.color.labelNomal.resolve(context),
+                      color: $dinoToken.color.black.resolve(context),
                     ),
                     bottomSheetHeight: MediaQuery.of(context).size.height * 0.7,
                     borderRadius: const BorderRadius.only(
@@ -254,7 +254,7 @@ class DateScreen extends ConsumerWidget {
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: $b2bToken.color.labelNomal.resolve(context),
+                          color: $dinoToken.color.black.resolve(context),
                         ),
                         borderRadius: const BorderRadius.all(
                           Radius.circular(8.0),
@@ -312,10 +312,10 @@ class DateScreen extends ConsumerWidget {
               right: 16,
               top: 16,
             ),
-            child: B2bText.medium(
-              type: B2bTextType.body1,
+            child: DinoText(  
+              type: DinoTextType.bodyM,
               text: '여행 기간을 선택하세요.',
-              color: $b2bToken.color.labelNomal.resolve(context),
+              color: $dinoToken.color.black.resolve(context),
             ),
           ),
           Expanded(
@@ -349,45 +349,45 @@ class DateScreen extends ConsumerWidget {
               monthFormat: 'MMM',
               monthCellStyle: DateRangePickerMonthCellStyle(
                 textStyle:
-                    $b2bToken.textStyle.body4regular.resolve(context).merge(
+                    $dinoToken.typography.detailL.resolve(context).merge(
                           TextStyle(
-                            color: $b2bToken.color.gray500.resolve(context),
+                            color: $dinoToken.color.blingGray500.resolve(context),
                           ),
                         ),
                 todayTextStyle:
-                    $b2bToken.textStyle.body4regular.resolve(context).merge(
+                    $dinoToken.typography.detailL.resolve(context).merge(
                           TextStyle(
-                            color: $b2bToken.color.gray500.resolve(context),
+                            color: $dinoToken.color.blingGray500.resolve(context),
                           ),
                         ),
               ),
               startRangeSelectionColor:
-                  $b2bToken.color.violet200.resolve(context),
+                  $dinoToken.color.brandBlingViolet200.resolve(context),
               endRangeSelectionColor:
-                  $b2bToken.color.violet200.resolve(context),
-              rangeSelectionColor: $b2bToken.color.violet200.resolve(context),
+                  $dinoToken.color.brandBlingViolet200.resolve(context),
+              rangeSelectionColor: $dinoToken.color.brandBlingViolet200.resolve(context),
               selectionTextStyle:
-                  $b2bToken.textStyle.body4regular.resolve(context).merge(
+                  $dinoToken.typography.detailL.resolve(context).merge(
                         TextStyle(
-                          color: $b2bToken.color.primary.resolve(context),
+                          color: $dinoToken.color.primary.resolve(context),
                         ),
                       ),
               rangeTextStyle:
-                  $b2bToken.textStyle.body4regular.resolve(context).merge(
+                  $dinoToken.typography.detailL.resolve(context).merge(
                         TextStyle(
-                          color: $b2bToken.color.primary.resolve(context),
+                          color: $dinoToken.color.primary.resolve(context),
                         ),
                       ),
-              todayHighlightColor: $b2bToken.color.primary.resolve(context),
-              selectionColor: $b2bToken.color.primary.resolve(context),
+              todayHighlightColor: $dinoToken.color.primary.resolve(context),
+              selectionColor: $dinoToken.color.primary.resolve(context),
               allowViewNavigation: false,
               headerStyle: DateRangePickerHeaderStyle(
                 textAlign: TextAlign.end,
                 backgroundColor: Colors.white,
                 textStyle:
-                    $b2bToken.textStyle.body1medium.resolve(context).merge(
+                    $dinoToken.typography.bodyM.resolve(context).merge(
                           TextStyle(
-                            color: $b2bToken.color.primary.resolve(context),
+                            color: $dinoToken.color.primary.resolve(context),
                           ),
                         ),
               ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "920218990687",
+    "project_id": "externalwebcall",
+    "storage_bucket": "externalwebcall.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920218990687:android:fa5f26f169c1a7ab1b03ea",
+        "android_client_info": {
+          "package_name": "com.devdino.external_web_call"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwpRsImxjzQ_YIG74aqdPiP7oNvDd3ffk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,8 +1,8 @@
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
-import 'package:design_systems/b2b/components/buttons/button.variant.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -78,10 +78,10 @@ class _EditTravelDialogState extends State<EditTravelDialog>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            B2bText.medium(
-              type: B2bTextType.body1,
+            DinoText(
+              type: DinoTextType.bodyM,
               text: '여행 목적지',
-              color: $b2bToken.color.labelNomal.resolve(context),
+              color: $dinoToken.color.black.resolve(context),
             ),
             IconButton(
               onPressed: () {
@@ -117,7 +117,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                     backgroundColor: Colors.white,
                     textStyle: TextStyle(
                       fontSize: 16,
-                      color: $b2bToken.color.labelNomal.resolve(context),
+                      color: $dinoToken.color.black.resolve(context),
                     ),
                     bottomSheetHeight: MediaQuery.of(context).size.height * 0.7,
                     borderRadius: const BorderRadius.only(
@@ -130,7 +130,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: $b2bToken.color.labelNomal.resolve(context),
+                          color: $dinoToken.color.black.resolve(context),
                         ),
                         borderRadius: const BorderRadius.all(
                           Radius.circular(8.0),
@@ -155,15 +155,15 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             width: double.infinity,
             decoration: BoxDecoration(
               border: Border.all(
-                color: $b2bToken.color.gray200.resolve(context),
+                color: $dinoToken.color.blingGray200.resolve(context),
               ),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: B2bText.regular(
-                type: B2bTextType.body3,
+              child: DinoText(
+                type: DinoTextType.bodyM,
                 text: '여행 목적지를 추가해주세요',
-                color: $b2bToken.color.gray400.resolve(context),
+                color: $dinoToken.color.blingGray400.resolve(context),
               ),
             ),
           )
@@ -172,7 +172,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border.all(
-                color: $b2bToken.color.gray200.resolve(context),
+                color: $dinoToken.color.blingGray200.resolve(context),
               ),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -195,8 +195,8 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                             style: const TextStyle(fontSize: 20),
                           ),
                           const SizedBox(width: 8),
-                          B2bText.regular(
-                            type: B2bTextType.body4,
+                          DinoText(
+                            type: DinoTextType.bodyM,
                             text: country,
                           ),
                         ],
@@ -205,7 +205,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                         IconButton(
                           icon: Icon(
                             Icons.close,
-                            color: $b2bToken.color.gray400.resolve(context),
+                            color: $dinoToken.color.blingGray400.resolve(context),
                           ),
                           onPressed: () {
                             setState(() {
@@ -230,10 +230,10 @@ class _EditTravelDialogState extends State<EditTravelDialog>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        B2bText.medium(
-          type: B2bTextType.body1,
+        DinoText(
+          type: DinoTextType.bodyM,
           text: '여행 기간',
-          color: $b2bToken.color.labelNomal.resolve(context),
+          color: $dinoToken.color.black.resolve(context),
         ),
         const SizedBox(height: 16),
         SizedBox(
@@ -262,44 +262,44 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             ),
             monthFormat: 'MMM',
             monthCellStyle: DateRangePickerMonthCellStyle(
-              textStyle:
-                  $b2bToken.textStyle.body4regular.resolve(context).merge(
+              textStyle:  
+                  $dinoToken.typography.bodyM.resolve(context).merge(
                         TextStyle(
-                          color: $b2bToken.color.gray500.resolve(context),
+                          color: $dinoToken.color.blingGray500.resolve(context),
                         ),
                       ),
               todayTextStyle:
-                  $b2bToken.textStyle.body4regular.resolve(context).merge(
+                  $dinoToken.typography.bodyM.resolve(context).merge(
                         TextStyle(
-                          color: $b2bToken.color.gray500.resolve(context),
+                          color: $dinoToken.color.blingGray500.resolve(context),
                         ),
                       ),
             ),
             startRangeSelectionColor:
-                $b2bToken.color.violet200.resolve(context),
-            endRangeSelectionColor: $b2bToken.color.violet200.resolve(context),
-            rangeSelectionColor: $b2bToken.color.violet200.resolve(context),
+                $dinoToken.color.brandBlingViolet200.resolve(context),
+            endRangeSelectionColor: $dinoToken.color.brandBlingViolet200.resolve(context),
+            rangeSelectionColor: $dinoToken.color.brandBlingViolet200.resolve(context),
             selectionTextStyle:
-                $b2bToken.textStyle.body4regular.resolve(context).merge(
+                $dinoToken.typography.bodyM.resolve(context).merge(
                       TextStyle(
-                        color: $b2bToken.color.primary.resolve(context),
+                        color: $dinoToken.color.primary.resolve(context),
                       ),
                     ),
             rangeTextStyle:
-                $b2bToken.textStyle.body4regular.resolve(context).merge(
+                $dinoToken.typography.bodyM.resolve(context).merge(
                       TextStyle(
-                        color: $b2bToken.color.primary.resolve(context),
+                        color: $dinoToken.color.primary.resolve(context),
                       ),
                     ),
-            todayHighlightColor: $b2bToken.color.primary.resolve(context),
-            selectionColor: $b2bToken.color.primary.resolve(context),
+            todayHighlightColor: $dinoToken.color.primary.resolve(context),
+            selectionColor: $dinoToken.color.primary.resolve(context),
             allowViewNavigation: false,
             headerStyle: DateRangePickerHeaderStyle(
               textAlign: TextAlign.end,
               backgroundColor: Colors.white,
-              textStyle: $b2bToken.textStyle.body1medium.resolve(context).merge(
+              textStyle: $dinoToken.typography.bodyM.resolve(context).merge(
                     TextStyle(
-                      color: $b2bToken.color.primary.resolve(context),
+                      color: $dinoToken.color.primary.resolve(context),
                     ),
                   ),
             ),
@@ -324,7 +324,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             height: 4,
             margin: const EdgeInsets.only(top: 8, bottom: 16),
             decoration: BoxDecoration(
-              color: $b2bToken.color.gray300.resolve(context),
+              color: $dinoToken.color.blingGray300.resolve(context),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -354,10 +354,10 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      B2bText.bold(
-                        type: B2bTextType.title3,
+                      DinoText(
+                        type: DinoTextType.bodyM,
                         text: '여행 정보 수정',
-                        color: $b2bToken.color.labelNomal.resolve(context),
+                        color: $dinoToken.color.black.resolve(context),
                       ),
                       const SizedBox(height: 24),
                       TabBar(
@@ -366,11 +366,11 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                           Tab(text: '여행지'),
                           Tab(text: '날짜'),
                         ],
-                        labelColor: $b2bToken.color.primary.resolve(context),
+                        labelColor: $dinoToken.color.primary.resolve(context),
                         unselectedLabelColor:
-                            $b2bToken.color.gray400.resolve(context),
+                            $dinoToken.color.blingGray400.resolve(context),
                         indicatorColor:
-                            $b2bToken.color.primary.resolve(context),
+                            $dinoToken.color.primary.resolve(context),
                       ),
                       const SizedBox(height: 16),
                       Flexible(

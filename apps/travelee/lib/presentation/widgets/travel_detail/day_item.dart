@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:country_icons/country_icons.dart';
-import 'package:design_systems/b2b/b2b.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,10 +58,10 @@ class _DayItemState extends ConsumerState<DayItem> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  B2bText.medium(
-                    type: B2bTextType.body2,
+                  DinoText(
+                    type: DinoTextType.bodyM,
                     text: widget.dayData.date.day.toString().padLeft(2, '0'),
-                    color: $b2bToken.color.labelNomal.resolve(context),
+                    color: $dinoToken.color.black.resolve(context),
                   ),
                   Container(
                     width: 30,
@@ -69,7 +69,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: $b2bToken.color.gray300.resolve(context),
+                        color: $dinoToken.color.blingGray300.resolve(context),
                         width: 0.5,
                       ),
                     ),
@@ -98,7 +98,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                     if (widget.index != 0) ...[
                       Divider(
                         height: 0.5,
-                        color: $b2bToken.color.divider1
+                        color: $dinoToken.color.blingGray200
                             .resolve(context)
                             .withAlpha((0.3 * 255).toInt()),
                       ),
@@ -133,7 +133,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                         child: Container(
                           margin: const EdgeInsets.only(top: 12),
                           child: DottedBorder(
-                            color: $b2bToken.color.divider1
+                            color: $dinoToken.color.blingGray200
                                 .resolve(context), // 점선 색상
                             strokeWidth: 0.5, // 점선 두께
                             dashPattern: const [6, 3], // 점선 간격 (6px 선, 3px 간격)
@@ -148,16 +148,16 @@ class _DayItemState extends ConsumerState<DayItem> {
                                   children: [
                                     ColorFiltered(
                                       colorFilter: ColorFilter.mode(
-                                        $b2bToken.color.divider1
+                                        $dinoToken.color.blingGray200
                                             .resolve(context), // 적용할 색상
                                         BlendMode.srcIn, // 아이콘 색상을 변경하는 모드
                                       ),
                                       child: const Icon(Icons.add),
                                     ),
-                                    B2bText.regular(
+                                    DinoText(
                                       text: '일정 추가 하기',
-                                      type: B2bTextType.caption1,
-                                      color: $b2bToken.color.divider1
+                                      type: DinoTextType.detailL,
+                                      color: $dinoToken.color.blingGray200
                                           .resolve(context),
                                     )
                                   ],

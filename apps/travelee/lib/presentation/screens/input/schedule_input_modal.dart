@@ -1,11 +1,11 @@
-import 'package:design_systems/b2b/b2b.dart';
-import 'package:design_systems/b2b/components/textfield/textfield.dart';
-import 'package:design_systems/b2b/components/textfield/textfield.variant.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:design_systems/dino/components/textfield/textfield.dart';
+import 'package:design_systems/dino/components/textfield/textfield.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
-import 'package:design_systems/b2b/components/buttons/button.variant.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/router.dart';
@@ -165,16 +165,16 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                B2bText.bold(
-                  type: B2bTextType.title3,
+                DinoText(
+                  type: DinoTextType.bodyXL,
                   text: isEditMode ? '일정 수정' : '일정 추가',
-                  color: $b2bToken.color.labelNomal.resolve(context),
+                  color: $dinoToken.color.black.resolve(context),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(
                     Icons.close,
-                    color: $b2bToken.color.gray400.resolve(context),
+                    color: $dinoToken.color.blingGray400.resolve(context),
                   ),
                 ),
               ],
@@ -186,10 +186,10 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      B2bText.medium(
-                        type: B2bTextType.body2,
+                      DinoText(
+                        type: DinoTextType.bodyM,
                         text: '시간',
-                        color: $b2bToken.color.labelNomal.resolve(context),
+                        color: $dinoToken.color.black.resolve(context),
                       ),
                       GestureDetector(
                         onTap: () => _selectTime(context),
@@ -200,22 +200,22 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: $b2bToken.color.gray300.resolve(context),
+                              color: $dinoToken.color.blingGray300.resolve(context),
                               width: 0.7,
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             children: [
-                              B2bText.regular(
-                                type: B2bTextType.body2,
+                              DinoText(
+                                type: DinoTextType.bodyM,
                                 text:
                                     '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
                               ),
                               const Spacer(),
                               Icon(
                                 Icons.access_time,
-                                color: $b2bToken.color.gray400.resolve(context),
+                                color: $dinoToken.color.blingGray400.resolve(context),
                               ),
                             ],
                           ),
@@ -229,10 +229,10 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      B2bText.medium(
-                        type: B2bTextType.body2,
+                      DinoText(
+                        type: DinoTextType.bodyM,
                         text: '위치',
-                        color: $b2bToken.color.labelNomal.resolve(context),
+                        color: $dinoToken.color.black.resolve(context),
                       ),
                       GestureDetector(
                         onTap: () => _selectLocation(context),
@@ -243,21 +243,21 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: $b2bToken.color.gray300.resolve(context),
+                              color: $dinoToken.color.blingGray300.resolve(context),
                               width: 0.7,
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             children: [
-                              B2bText.regular(
-                                type: B2bTextType.body2,
+                              const DinoText(
+                                type: DinoTextType.bodyM,
                                 text: '지도',
                               ),
                               const Spacer(),
                               Icon(
                                 Icons.location_on,
-                                color: $b2bToken.color.gray400.resolve(context),
+                                color: $dinoToken.color.blingGray400.resolve(context),
                               ),
                             ],
                           ),
@@ -269,16 +269,16 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
               ],
             ),
             const SizedBox(height: 16),
-            B2bText.medium(
-              type: B2bTextType.body2,
+            DinoText(
+              type: DinoTextType.bodyM,
               text: '장소',
-              color: $b2bToken.color.labelNomal.resolve(context),
+              color: $dinoToken.color.black.resolve(context),
             ),
             const SizedBox(height: 8),
             B2bTextField(
               status: B2bTextFieldStatus.before,
               size: B2bTextFieldSize.medium,
-              boder: B2bTextFieldBoder.box,
+                boder: B2bTextFieldBoder.box,
               isError: false,
               hint: '장소, 할일을 입력하세요',
               initialValue: widget.initialLocation,
@@ -288,10 +288,10 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
               },
             ),
             const SizedBox(height: 16),
-            B2bText.medium(
-              type: B2bTextType.body2,
+            DinoText(
+              type: DinoTextType.bodyM,
               text: '메모',
-              color: $b2bToken.color.labelNomal.resolve(context),
+              color: $dinoToken.color.black.resolve(context),
             ),
             const SizedBox(height: 8),
             B2bTextField(

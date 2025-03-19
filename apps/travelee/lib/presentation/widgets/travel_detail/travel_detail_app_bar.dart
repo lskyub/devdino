@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:design_systems/b2b/b2b.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:travelee/models/travel_model.dart';
 import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:travelee/utils/travel_dialog_manager.dart';
@@ -35,16 +35,16 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            B2bText.medium(
-                type: B2bTextType.body2,
+            DinoText(
+                type: DinoTextType.bodyM,
                 text:
                     '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}'),
             Row(
               children: [
-                B2bText.regular(
-                  type: B2bTextType.caption1,
+                DinoText(
+                  type: DinoTextType.detailL,
                   text: travelInfo.destination.join(', '),
-                  color: $b2bToken.color.gray500.resolve(context),
+                  color: $dinoToken.color.blingGray500.resolve(context),
                 )
               ],
             )
@@ -74,7 +74,7 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
           },
           icon: Icon(
             Icons.edit,
-            color: $b2bToken.color.primary.resolve(context),
+            color: $dinoToken.color.primary.resolve(context),
           ),
         ),
       ],

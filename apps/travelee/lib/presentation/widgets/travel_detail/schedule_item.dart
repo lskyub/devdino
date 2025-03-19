@@ -1,4 +1,3 @@
-import 'package:design_systems/b2b/b2b.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travelee/models/schedule.dart';
@@ -104,7 +103,7 @@ class ScheduleItem extends ConsumerWidget {
               //     padding: const EdgeInsets.only(left: 8),
               //     child: Icon(
               //       Icons.delete,
-              //       color: $b2bToken.color.gray400.resolve(context),
+              //       color: $b2bToken.color.blingGray400.resolve(context),
               //     ),
               //   ),
               // )

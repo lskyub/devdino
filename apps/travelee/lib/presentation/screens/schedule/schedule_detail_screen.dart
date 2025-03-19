@@ -1,11 +1,10 @@
 import 'package:country_icons/country_icons.dart';
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
-import 'package:design_systems/b2b/components/buttons/button.variant.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:travelee/data/controllers/schedule_detail_controller.dart';
 import 'package:travelee/models/schedule.dart';
 import 'package:travelee/presentation/screens/input/schedule_input_modal.dart';
@@ -55,12 +54,12 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: B2bText.bold(
-          type: B2bTextType.title3,
+        title: const DinoText(
+          type: DinoTextType.bodyXL,
           text: '변경 사항 저장',
         ),
-        content: B2bText.regular(
-          type: B2bTextType.body2,
+        content: const DinoText(
+          type: DinoTextType.bodyM,
           text: '변경된 내용이 있습니다.\n저장하시겠습니까?',
         ),
         actions: [
@@ -69,8 +68,8 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               dev.log('다이얼로그 - [저장 안 함] 선택');
               Navigator.pop(context, false);
             },
-            child: B2bText.medium(
-              type: B2bTextType.body2,
+            child: const DinoText(
+              type: DinoTextType.bodyM,
               text: '저장 안 함',
               color: Colors.red,
             ),
@@ -80,10 +79,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               dev.log('다이얼로그 - [취소] 선택');
               Navigator.pop(context, null);
             },
-            child: B2bText.medium(
-              type: B2bTextType.body2,
+            child: DinoText(
+              type: DinoTextType.bodyM,
               text: '취소',
-              color: $b2bToken.color.gray400.resolve(context),
+              color: $dinoToken.color.blingGray400.resolve(context),
             ),
           ),
           ElevatedButton(
@@ -92,10 +91,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
               Navigator.pop(context, true);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: $b2bToken.color.primary.resolve(context),
+              backgroundColor: $dinoToken.color.primary.resolve(context),
             ),
-            child: B2bText.medium(
-              type: B2bTextType.body2,
+            child: const DinoText(
+              type: DinoTextType.bodyM,
               text: '저장',
               color: Colors.white,
             ),
@@ -390,13 +389,13 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
             Icon(
               Icons.error_outline,
               size: 48,
-              color: $b2bToken.color.gray400.resolve(context),
+              color: $dinoToken.color.blingGray400.resolve(context),
             ),
             const SizedBox(height: 16),
-            B2bText.medium(
-              type: B2bTextType.body2,
+            DinoText(
+              type: DinoTextType.bodyM,
               text: '여행 정보를 찾을 수 없습니다',
-              color: $b2bToken.color.gray400.resolve(context),
+              color: $dinoToken.color.blingGray400.resolve(context),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -417,10 +416,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
       surfaceTintColor: Colors.transparent, // 자동 색상 변
       title: Row(
         children: [
-          B2bText.bold(
-            type: B2bTextType.title3,
+          DinoText(
+            type: DinoTextType.bodyXL,
             text: 'Day ${widget.dayNumber}',
-            color: $b2bToken.color.labelNomal.resolve(context),
+            color: $dinoToken.color.black.resolve(context),
           ),
         ],
       ),
@@ -464,10 +463,10 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
             height: 30,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: $b2bToken.color.gray100.resolve(context),
+              color: $dinoToken.color.blingGray100.resolve(context),
               shape: BoxShape.circle,
               border: Border.all(
-                color: $b2bToken.color.gray100.resolve(context),
+                color: $dinoToken.color.blingGray100.resolve(context),
                 width: 0.5,
               ),
             ),
@@ -506,13 +505,13 @@ class _ScheduleDetailScreenState extends ConsumerState<ScheduleDetailScreen> {
             Icon(
               Icons.event_note,
               size: 48,
-              color: $b2bToken.color.gray400.resolve(context),
+              color: $dinoToken.color.blingGray400.resolve(context),
             ),
             const SizedBox(height: 16),
-            B2bText.medium(
-              type: B2bTextType.body2,
+            DinoText(
+              type: DinoTextType.bodyM,
               text: '아직 등록된 일정이 없습니다',
-              color: $b2bToken.color.gray400.resolve(context),
+              color: $dinoToken.color.blingGray400.resolve(context),
             ),
           ],
         ),

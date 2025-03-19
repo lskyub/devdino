@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:async';
 
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,15 +34,15 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
   LatLng _selectedLocation = const LatLng(37.5665, 126.9780); // 기본 서울 좌표
   List<Map<String, dynamic>> _searchResults = [];
   Marker? _clickedMarker; // 사용자가 클릭한 마커
+  final _debouncer = Debouncer();
 
   Future<LatLng?> getCoordinatesFromCountryCode(String countryCode) async {
-    print('countryCode $countryCode');
     if (countryCode.isEmpty) return null;
     final url = Uri.parse(
         'https://nominatim.openstreetmap.org/search?countrycodes=$countryCode&format=json');
 
     final response = await http.get(url);
-    print('countryCode ${response.statusCode}');
+    print('countryCode[$countryCode] ${response.statusCode}');
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       if (data.isNotEmpty) {
@@ -59,25 +60,26 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
       setState(() => _searchResults = []);
       return;
     }
+    _debouncer.call(() async {
+      // 한글을 포함한 검색어를 URL 인코딩
+      final encodedQuery = Uri.encodeComponent(query);
+      final url = Uri.parse(
+          "https://nominatim.openstreetmap.org/search?format=json&q=$encodedQuery&limit=5");
+      final response = await http.get(url);
 
-    // 한글을 포함한 검색어를 URL 인코딩
-    final encodedQuery = Uri.encodeComponent(query);
-    final url = Uri.parse(
-        "https://nominatim.openstreetmap.org/search?format=json&q=$encodedQuery&limit=5");
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        _searchResults = data
-            .map((item) => {
-                  "name": item["display_name"],
-                  "lat": double.parse(item["lat"]),
-                  "lon": double.parse(item["lon"]),
-                })
-            .toList();
-      });
-    }
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _searchResults = data
+              .map((item) => {
+                    "name": item["display_name"],
+                    "lat": double.parse(item["lat"]),
+                    "lon": double.parse(item["lon"]),
+                  })
+              .toList();
+        });
+      }
+    });
   }
 
   // 📌 도시 선택 시 지도 이동
@@ -101,8 +103,8 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
         height: 80.0,
         point: point,
         child: Icon(
-          Icons.location_pin,
-          color: $b2bToken.color.primary.resolve(context),
+          Icons.location_pin, 
+          color: $dinoToken.color.primary.resolve(context),
           size: 40.0,
         ),
       );
@@ -134,6 +136,7 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
 
   @override
   void dispose() {
+    _debouncer.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -148,7 +151,7 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
           'assets/icons/logo.svg',
           width: 120,
           colorFilter: ColorFilter.mode(
-            $b2bToken.color.primary.resolve(context),
+            $dinoToken.color.primary.resolve(context),
             BlendMode.srcIn,
           ),
         ),
@@ -250,5 +253,21 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
         ],
       ),
     );
+  }
+}
+
+class Debouncer {
+  final Duration delay;
+  Timer? _timer;
+
+  Debouncer({this.delay = const Duration(milliseconds: 500)});
+
+  void call(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(delay, action);
+  }
+
+  void dispose() {
+    _timer?.cancel();
   }
 }

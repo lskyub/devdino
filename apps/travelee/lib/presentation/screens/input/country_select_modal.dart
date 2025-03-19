@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:design_systems/b2b/b2b.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:travelee/models/country_info.dart';
 import 'dart:developer' as dev;
 
@@ -62,16 +62,16 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              B2bText.bold(
-                type: B2bTextType.body1,
+              DinoText(
+                type: DinoTextType.bodyL,
                 text: '국가 선택',
-                color: $b2bToken.color.labelNomal.resolve(context),
+                color: $dinoToken.color.black.resolve(context),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(
                   Icons.close,
-                  color: $b2bToken.color.gray400.resolve(context),
+                  color: $dinoToken.color.blingGray400.resolve(context),
                 ),
               ),
             ],
@@ -81,10 +81,10 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
-                      child: B2bText.medium(
-                        type: B2bTextType.body2,
+                      child: DinoText(
+                        type: DinoTextType.bodyM,
                         text: '이 여행에 추가된 국가가 없습니다',
-                        color: $b2bToken.color.gray400.resolve(context),
+                        color: $dinoToken.color.blingGray400.resolve(context),
                       ),
                     ),
                   )
@@ -99,7 +99,7 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                       return Container(
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? $b2bToken.color.primary
+                              ? $dinoToken.color.primary
                                   .resolve(context)
                                   .withAlpha((0.1 * 255).toInt())
                               : Colors.transparent,
@@ -118,7 +118,7 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                                   ? FontWeight.bold
                                   : FontWeight.normal,
                               color: isSelected
-                                  ? $b2bToken.color.primary.resolve(context)
+                                  ? $dinoToken.color.primary.resolve(context)
                                   : null,
                             ),
                           ),
@@ -126,7 +126,7 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                               ? Icon(
                                   Icons.check_circle,
                                   color:
-                                      $b2bToken.color.primary.resolve(context),
+                                      $dinoToken.color.primary.resolve(context),
                                 )
                               : null,
                           onTap: () => _selectCountry(country),

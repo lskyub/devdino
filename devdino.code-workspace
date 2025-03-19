@@ -9,6 +9,10 @@
       "path": "./apps/travelee"
     },
     {
+      "name": "external_web_call",
+      "path": "./apps/external_web_call"
+    },
+    {
       "name": "design_systems",
       "path": "./packages/design_systems"
     }

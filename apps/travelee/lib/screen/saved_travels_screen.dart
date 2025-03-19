@@ -1,9 +1,9 @@
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/foundations/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/router.dart';
@@ -92,7 +92,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
           'assets/icons/logo.svg',
           width: 120,
           colorFilter: ColorFilter.mode(
-            $b2bToken.color.primary.resolve(context),
+            $dinoToken.color.primary.resolve(context),
             BlendMode.srcIn,
           ),
         ),
@@ -104,7 +104,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
           ref.read(currentTravelIdProvider.notifier).state = '';
           context.push(DateScreen.routePath);
         },
-        backgroundColor: $b2bToken.color.primary.resolve(context),
+        backgroundColor: $dinoToken.color.primary.resolve(context),
         child: SvgPicture.asset(
           'assets/icons/bytesize_plus.svg',
           width: 24,
@@ -123,13 +123,13 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                   Icon(
                     Icons.flight,
                     size: 48,
-                    color: $b2bToken.color.gray400.resolve(context),
+                    color: $dinoToken.color.blingGray400.resolve(context),
                   ),
                   const SizedBox(height: 16),
-                  B2bText.medium(
-                    type: B2bTextType.body2,
+                  DinoText(
+                    type: DinoTextType.bodyL,
                     text: '저장된 여행이 없습니다',
-                    color: $b2bToken.color.gray400.resolve(context),
+                    color: $dinoToken.color.blingGray400.resolve(context),
                   ),
                 ],
               ),
@@ -144,7 +144,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: $b2bToken.color.gray200.resolve(context),
+                        color: $dinoToken.color.blingGray200.resolve(context),
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -168,13 +168,13 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                                 children: [
                                   Icon(
                                     Icons.location_on,
-                                    color: $b2bToken.color.primary
+                                    color: $dinoToken.color.primary
                                         .resolve(context),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: B2bText.medium(
-                                      type: B2bTextType.body2,
+                                    child: DinoText(
+                                      type: DinoTextType.bodyL,
                                       text: travel.destination.join(', '),
                                     ),
                                   ),
@@ -212,7 +212,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                                     },
                                     icon: Icon(
                                       Icons.delete_outline,
-                                      color: $b2bToken.color.gray400
+                                      color: $dinoToken.color.blingGray400
                                           .resolve(context),
                                     ),
                                   ),
@@ -223,15 +223,15 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                                 children: [
                                   Icon(
                                     Icons.calendar_today,
-                                    color: $b2bToken.color.primary
+                                    color: $dinoToken.color.primary
                                         .resolve(context),
                                   ),
                                   const SizedBox(width: 8),
-                                  B2bText.regular(
-                                    type: B2bTextType.body2,
+                                  DinoText(
+                                    type: DinoTextType.bodyL,
                                     text:
                                         '${_formatDate(travel.startDate)} ~ ${_formatDate(travel.endDate)}',
-                                    color: $b2bToken.color.gray500
+                                    color: $dinoToken.color.blingGray500
                                         .resolve(context),
                                   ),
                                 ],
@@ -243,16 +243,16 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                                   Icon(
                                     Icons.info_outline,
                                     size: 14,
-                                    color: $b2bToken.color.gray400
+                                    color: $dinoToken.color.blingGray400
                                         .resolve(context),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: B2bText.regular(
-                                      type: B2bTextType.caption1,
+                                    child: DinoText(
+                                      type: DinoTextType.detailS,
                                       text:
                                           'ID: ${travel.id.substring(0, Math.min(travel.id.length, 16))}...',
-                                      color: $b2bToken.color.gray400
+                                      color: $dinoToken.color.blingGray400
                                           .resolve(context),
                                     ),
                                   ),

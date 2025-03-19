@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mix/mix.dart';
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/foundations/theme.dart';
 import 'package:travelee/router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:country_picker/country_picker.dart';
@@ -22,7 +22,7 @@ class MyApp extends ConsumerWidget {
       FlutterNativeSplash.remove();
     });
     return MixTheme(
-      data: b2bTheme,
+      data: dinoTheme,
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(

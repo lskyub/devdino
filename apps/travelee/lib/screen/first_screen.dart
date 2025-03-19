@@ -1,4 +1,5 @@
-import 'package:design_systems/b2b/b2b.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +26,7 @@ class FirstScreen extends ConsumerWidget {
         Container(
           width: double.infinity,
           height: double.infinity,
-          color: $b2bToken.color.toastSystem.resolve(context),
+          color: $dinoToken.color.black.resolve(context),
         ),
         Center(
           child: Column(
@@ -45,14 +46,11 @@ class FirstScreen extends ConsumerWidget {
               const SizedBox(
                 height: 25,
               ),
-              Text(
-                '여행의 꿈에 뛰어들어\n오늘부터 계획을 세우세요!',
-                style:
-                    $b2bToken.textStyle.body1medium.resolve(context).copyWith(
-                          color: $b2bToken.color.white.resolve(context),
-                          decoration: TextDecoration.none,
-                        ),
-                textAlign: TextAlign.center,
+              DinoText(
+                type: DinoTextType.bodyL,
+                text:
+                    '여행의 꿈에 뛰어들어\n오늘부터 계획을 세우세요!',
+                color: $dinoToken.color.white.resolve(context),
               ),
               const SizedBox(
                 height: 90,

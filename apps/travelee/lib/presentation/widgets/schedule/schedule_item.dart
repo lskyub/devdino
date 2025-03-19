@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:design_systems/b2b/b2b.dart';
-import 'package:design_systems/b2b/components/text/text.dart';
-import 'package:design_systems/b2b/components/text/text.variant.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:travelee/models/schedule.dart';
 
 /// 일정 목록의 개별 일정 아이템 위젯
@@ -62,15 +62,15 @@ class _ScheduleItemState extends State<ScheduleItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 일정 내용 영역
-                    B2bText.bold(
-                      type: B2bTextType.body1,
+                    DinoText(
+                      type: DinoTextType.bodyL,
                       text: widget.schedule.location,
-                      color: $b2bToken.color.labelNomal.resolve(context),
+                      color: $dinoToken.color.black.resolve(context),
                     ),
-                    B2bText.regular(
-                      type: B2bTextType.body3,
+                    DinoText(
+                      type: DinoTextType.bodyM,
                       text: widget.schedule.memo,
-                      color: $b2bToken.color.gray300.resolve(context),
+                      color: $dinoToken.color.blingGray300.resolve(context),
                     )
                   ],
                 ),
@@ -94,13 +94,13 @@ class _ScheduleItemState extends State<ScheduleItem> {
         key: _timeWidgetKey, // GlobalKey 추가하여 너비 측정
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: $b2bToken.color.primary.resolve(context).withAlpha((0.1 * 255).toInt()),
+          color: $dinoToken.color.primary.resolve(context).withAlpha((0.1 * 255).toInt()),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: B2bText.medium(
-          type: B2bTextType.body3,
+        child: DinoText(
+          type: DinoTextType.bodyM,
           text: formattedTime,
-          color: $b2bToken.color.primary.resolve(context),
+          color: $dinoToken.color.primary.resolve(context),
         ),
       ),
     );
@@ -111,7 +111,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
     return PopupMenuButton<String>(
       icon: Icon(
         Icons.more_vert,
-        color: $b2bToken.color.gray600.resolve(context),
+        color: $dinoToken.color.blingGray600.resolve(context),
         size: 20,
       ),
       padding: EdgeInsets.zero,
@@ -130,14 +130,14 @@ class _ScheduleItemState extends State<ScheduleItem> {
             children: [
               Icon(
                 Icons.edit_outlined,
-                color: $b2bToken.color.primary.resolve(context),
+                color: $dinoToken.color.primary.resolve(context),
                 size: 20,
               ),
               const SizedBox(width: 8),
-              B2bText.medium(
-                type: B2bTextType.body2,
+              DinoText(
+                type: DinoTextType.bodyM,
                 text: '수정',
-                color: $b2bToken.color.labelNomal.resolve(context),
+                color: $dinoToken.color.black.resolve(context),
               ),
             ],
           ),
@@ -152,10 +152,10 @@ class _ScheduleItemState extends State<ScheduleItem> {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              B2bText.medium(
-                type: B2bTextType.body2,
+              DinoText(
+                type: DinoTextType.bodyM,
                 text: '삭제',
-                color: $b2bToken.color.labelNomal.resolve(context),
+                color: $dinoToken.color.black.resolve(context),
               ),
             ],
           ),

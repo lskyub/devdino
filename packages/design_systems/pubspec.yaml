@@ -39,6 +39,7 @@ flutter:
     - assets/icons/toast_close.svg
     # images
     - assets/images/clap.png
+    - assets/tokens.json
 
   fonts:
     # - family: RiaSans-ExtraBold
