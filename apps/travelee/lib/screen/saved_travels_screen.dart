@@ -69,6 +69,9 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     final savedTravels =
         allTravels.where((travel) => !travel.id.startsWith('temp_')).toList();
 
+    // 생성일 기준으로 최신순 정렬
+    savedTravels.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
     // 저장된 여행 목록 로깅 (상세 정보 포함)
     print(
         'SavedTravelsScreen - 저장된 여행 목록: ${savedTravels.length}개 (전체: ${allTravels.length}개)');
@@ -87,7 +90,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        surfaceTintColor: Colors.transparent, // 자동 색상 변
+        surfaceTintColor: Colors.transparent,
         leading: null,
         title: SvgPicture.asset(
           'assets/icons/logo.svg',
@@ -100,52 +103,77 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(currentTravelIdProvider.notifier).state = '';
-          context.push(DateScreen.routePath);
-        },
-        backgroundColor: $dinoToken.color.primary.resolve(context),
-        child: SvgPicture.asset(
-          'assets/icons/bytesize_plus.svg',
-          width: 24,
-          height: 24,
-          colorFilter: const ColorFilter.mode(
-            Colors.white,
-            BlendMode.srcIn,
+      body: Column(
+        children: [
+          Expanded(
+            child: savedTravels.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.flight,
+                          size: 48,
+                          color: $dinoToken.color.blingGray400.resolve(context),
+                        ),
+                        const SizedBox(height: 16),
+                        DinoText(
+                          type: DinoTextType.bodyL,
+                          text: '저장된 여행이 없습니다',
+                          color: $dinoToken.color.blingGray400.resolve(context),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: savedTravels.length,
+                    padding: const EdgeInsets.all(16),
+                    itemBuilder: (context, index) {
+                      final travel = savedTravels[index];
+                      return SavedTravelItem(
+                        travel: travel,
+                        formatDate: _formatDate,
+                      );
+                    },
+                  ),
           ),
-        ),
-      ),
-      body: savedTravels.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.flight,
-                    size: 48,
-                    color: $dinoToken.color.blingGray400.resolve(context),
-                  ),
-                  const SizedBox(height: 16),
-                  DinoText(
-                    type: DinoTextType.bodyL,
-                    text: '저장된 여행이 없습니다',
-                    color: $dinoToken.color.blingGray400.resolve(context),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: savedTravels.length,
+          SafeArea(
+            child: Padding(
               padding: const EdgeInsets.all(16),
-              itemBuilder: (context, index) {
-                final travel = savedTravels[index];
-                return SavedTravelItem(
-                  travel: travel,
-                  formatDate: _formatDate,
-                );
-              },
+              child: ElevatedButton(
+                onPressed: () {
+                  ref.read(currentTravelIdProvider.notifier).state = '';
+                  context.push(DateScreen.routePath);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: $dinoToken.color.primary.resolve(context),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/bytesize_plus.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('여행 추가하기'),
+                  ],
+                ),
+              ),
             ),
+          ),
+        ],
+      ),
     );
   }
 }

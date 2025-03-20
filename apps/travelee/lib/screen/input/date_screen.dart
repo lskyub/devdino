@@ -469,19 +469,6 @@ class DateScreen extends ConsumerWidget {
                       .read(travel_providers.travelsProvider.notifier)
                       .updateTravel(updatedTravel);
 
-                  // // 변경사항 즉시 저장
-                  // ref
-                  //     .read(travel_providers.travelsProvider.notifier)
-                  //     .commitChanges();
-
-                  // // 백업 갱신
-                  // ref
-                  //     .read(travel_providers.changeManagerProvider)
-                  //     .createBackup(updatedTravel);
-                  // ref
-                  //     .read(travel_providers.travelBackupProvider.notifier)
-                  //     .state = updatedTravel;
-
                   // 임시 ID로 된 여행을 영구 저장
                   final travelId = travelInfo.id;
                   final controller = ref.read(travelDetailControllerProvider);
@@ -502,8 +489,8 @@ class DateScreen extends ConsumerWidget {
                     // 변경 플래그 초기화
                     controller.hasChanges = false;
 
-                    // 저장된 여행 목록 화면으로 이동
-                    context.go(SavedTravelsScreen.routePath);
+                    // 여행 상세 화면으로 이동 (replace 사용)
+                    context.replace('/travel_detail/$newId');
                   }
                 },
               ),

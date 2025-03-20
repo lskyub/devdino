@@ -119,6 +119,22 @@ class SavedTravelItem extends ConsumerWidget {
                   Row(
                     children: [
                       Icon(
+                        Icons.access_time,
+                        size: 12,
+                        color: $dinoToken.color.blingGray400.resolve(context),
+                      ),
+                      const SizedBox(width: 6),
+                      DinoText(
+                        type: DinoTextType.detailS,
+                        text: '생성일: ${formatDate(travel.createdAt)}',
+                        color: $dinoToken.color.blingGray400.resolve(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
                         Icons.info_outline,
                         size: 12,
                         color: $dinoToken.color.blingGray400.resolve(context),
