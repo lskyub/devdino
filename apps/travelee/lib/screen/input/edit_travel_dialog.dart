@@ -1,6 +1,5 @@
 import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -205,7 +204,8 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                         IconButton(
                           icon: Icon(
                             Icons.close,
-                            color: $dinoToken.color.blingGray400.resolve(context),
+                            color:
+                                $dinoToken.color.blingGray400.resolve(context),
                           ),
                           onPressed: () {
                             setState(() {
@@ -242,6 +242,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             backgroundColor: Colors.white,
             minDate: DateTime(DateTime.now().year - 1),
             maxDate: DateTime(DateTime.now().year + 5),
+            initialSelectedRange: PickerDateRange(_startDate, _endDate),
             onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
               if (args.value is PickerDateRange) {
                 setState(() {
@@ -251,10 +252,9 @@ class _EditTravelDialogState extends State<EditTravelDialog>
               }
             },
             selectionMode: DateRangePickerSelectionMode.range,
-            initialSelectedRange: PickerDateRange(_startDate, _endDate),
             view: DateRangePickerView.month,
-            navigationDirection: DateRangePickerNavigationDirection.vertical,
-            enableMultiView: true,
+            navigationDirection: DateRangePickerNavigationDirection.horizontal,
+            enableMultiView: false,
             viewSpacing: 0,
             monthViewSettings: const DateRangePickerMonthViewSettings(
               enableSwipeSelection: false,
@@ -262,14 +262,13 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             ),
             monthFormat: 'MMM',
             monthCellStyle: DateRangePickerMonthCellStyle(
-              textStyle:  
-                  $dinoToken.typography.bodyM.resolve(context).merge(
-                        TextStyle(
-                          color: $dinoToken.color.blingGray500.resolve(context),
-                        ),
-                      ),
+              textStyle: $dinoToken.typography.detailL.resolve(context).merge(
+                    TextStyle(
+                      color: $dinoToken.color.blingGray500.resolve(context),
+                    ),
+                  ),
               todayTextStyle:
-                  $dinoToken.typography.bodyM.resolve(context).merge(
+                  $dinoToken.typography.detailL.resolve(context).merge(
                         TextStyle(
                           color: $dinoToken.color.blingGray500.resolve(context),
                         ),
@@ -277,16 +276,18 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             ),
             startRangeSelectionColor:
                 $dinoToken.color.brandBlingViolet200.resolve(context),
-            endRangeSelectionColor: $dinoToken.color.brandBlingViolet200.resolve(context),
-            rangeSelectionColor: $dinoToken.color.brandBlingViolet200.resolve(context),
+            endRangeSelectionColor:
+                $dinoToken.color.brandBlingViolet200.resolve(context),
+            rangeSelectionColor:
+                $dinoToken.color.brandBlingViolet200.resolve(context),
             selectionTextStyle:
-                $dinoToken.typography.bodyM.resolve(context).merge(
+                $dinoToken.typography.detailL.resolve(context).merge(
                       TextStyle(
                         color: $dinoToken.color.primary.resolve(context),
                       ),
                     ),
             rangeTextStyle:
-                $dinoToken.typography.bodyM.resolve(context).merge(
+                $dinoToken.typography.detailL.resolve(context).merge(
                       TextStyle(
                         color: $dinoToken.color.primary.resolve(context),
                       ),
@@ -311,115 +312,107 @@ class _EditTravelDialogState extends State<EditTravelDialog>
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: screenHeight * 0.9,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            margin: const EdgeInsets.only(top: 8, bottom: 16),
-            decoration: BoxDecoration(
-              color: $dinoToken.color.blingGray300.resolve(context),
-              borderRadius: BorderRadius.circular(2),
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 40,
+          height: 4,
+          margin: const EdgeInsets.only(top: 8, bottom: 16),
+          decoration: BoxDecoration(
+            color: $dinoToken.color.blingGray300.resolve(context),
+            borderRadius: BorderRadius.circular(2),
           ),
-          Flexible(
-            child: Material(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
-              ),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
+        ),
+        Flexible(
+          child: Material(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16.0,
-                    top: 16.0,
-                    bottom: 16.0,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DinoText(
-                        type: DinoTextType.bodyM,
-                        text: '여행 정보 수정',
-                        color: $dinoToken.color.black.resolve(context),
-                      ),
-                      const SizedBox(height: 24),
-                      TabBar(
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0,
+                  bottom: 16.0,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DinoText(
+                      type: DinoTextType.bodyM,
+                      text: '여행 정보 수정',
+                      color: $dinoToken.color.black.resolve(context),
+                    ),
+                    const SizedBox(height: 24),
+                    TabBar(
+                      controller: _tabController,
+                      tabs: const [
+                        Tab(text: '여행지'),
+                        Tab(text: '날짜'),
+                      ],
+                      labelColor: $dinoToken.color.primary.resolve(context),
+                      unselectedLabelColor:
+                          $dinoToken.color.blingGray400.resolve(context),
+                      indicatorColor: $dinoToken.color.primary.resolve(context),
+                    ),
+                    const SizedBox(height: 16),
+                    Flexible(
+                      child: TabBarView(
                         controller: _tabController,
-                        tabs: const [
-                          Tab(text: '여행지'),
-                          Tab(text: '날짜'),
-                        ],
-                        labelColor: $dinoToken.color.primary.resolve(context),
-                        unselectedLabelColor:
-                            $dinoToken.color.blingGray400.resolve(context),
-                        indicatorColor:
-                            $dinoToken.color.primary.resolve(context),
-                      ),
-                      const SizedBox(height: 16),
-                      Flexible(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            SingleChildScrollView(
-                                child: _buildDestinationTab()),
-                            SingleChildScrollView(child: _buildDateTab()),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
                         children: [
-                          Expanded(
-                            child: B2bButton.medium(
-                              title: '취소',
-                              type: B2bButtonType.secondary,
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: B2bButton.medium(
-                              title: '확인',
-                              type: B2bButtonType.primary,
-                              onTap: () {
-                                Navigator.pop(context, {
-                                  'destination': _destination,
-                                  'countryInfos': _countryInfos,
-                                  'startDate': _startDate,
-                                  'endDate': _endDate,
-                                });
-                              },
-                            ),
-                          ),
+                          SingleChildScrollView(child: _buildDestinationTab()),
+                          SingleChildScrollView(child: _buildDateTab()),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: B2bButton.medium(
+                            title: '취소',
+                            type: B2bButtonType.secondary,
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: B2bButton.medium(
+                            title: '확인',
+                            type: B2bButtonType.primary,
+                            onTap: () {
+                              Navigator.pop(context, {
+                                'destination': _destination,
+                                'countryInfos': _countryInfos,
+                                'startDate': _startDate,
+                                'endDate': _endDate,
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

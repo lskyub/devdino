@@ -10,6 +10,8 @@ class ScheduleDBModel {
   final String location;
   final String memo;
   final int dayNumber;
+  final double? latitude;
+  final double? longitude;
 
   ScheduleDBModel({
     required this.id,
@@ -20,6 +22,8 @@ class ScheduleDBModel {
     required this.location,
     this.memo = '',
     required this.dayNumber,
+    this.latitude,
+    this.longitude,
   });
 
   // UI 모델에서 DB 모델로 변환
@@ -33,6 +37,8 @@ class ScheduleDBModel {
       location: schedule.location,
       memo: schedule.memo,
       dayNumber: schedule.dayNumber,
+      latitude: schedule.latitude,
+      longitude: schedule.longitude,
     );
   }
 
@@ -46,6 +52,8 @@ class ScheduleDBModel {
       location: location,
       memo: memo,
       dayNumber: dayNumber,
+      latitude: latitude,
+      longitude: longitude,
     );
   }
 
@@ -60,6 +68,8 @@ class ScheduleDBModel {
       'location': location,
       'memo': memo,
       'day_number': dayNumber,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 
@@ -74,11 +84,13 @@ class ScheduleDBModel {
       location: map['location'] as String,
       memo: map['memo'] as String? ?? '',
       dayNumber: map['day_number'] as int,
+      latitude: map['latitude'] as double?,
+      longitude: map['longitude'] as double?,
     );
   }
 
   @override
   String toString() {
-    return 'ScheduleDBModel{id: $id, travelId: $travelId, date: $date, location: $location}';
+    return 'ScheduleDBModel{id: $id, travelId: $travelId, date: $date, location: $location, memo: $memo, dayNumber: $dayNumber, latitude: $latitude, longitude: $longitude}';
   }
 } 

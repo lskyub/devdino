@@ -33,8 +33,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDatabase,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -65,11 +66,33 @@ class DatabaseHelper {
         location TEXT NOT NULL,
         memo TEXT,
         day_number INTEGER NOT NULL,
+        latitude REAL,
+        longitude REAL,
         FOREIGN KEY (travel_id) REFERENCES travels (id) ON DELETE CASCADE
       )
     ''');
 
     dev.log('데이터베이스 테이블 생성 완료');
+  }
+
+  // 데이터베이스 업그레이드 핸들러
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    dev.log('데이터베이스 업그레이드: $oldVersion -> $newVersion');
+    
+    if (oldVersion < 2) {
+      // schedules 테이블에 latitude와 longitude 컬럼 추가
+      await db.execute('''
+        ALTER TABLE schedules
+        ADD COLUMN latitude REAL
+      ''');
+      
+      await db.execute('''
+        ALTER TABLE schedules
+        ADD COLUMN longitude REAL
+      ''');
+      
+      dev.log('schedules 테이블 업그레이드 완료');
+    }
   }
 
   // 여행 저장

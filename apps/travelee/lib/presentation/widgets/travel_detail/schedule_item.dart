@@ -23,6 +23,7 @@ class ScheduleItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return LongPressDraggable<Schedule>(
       data: schedule,
+      maxSimultaneousDrags: isEdit ? 1 : 0,
       feedback: Material(
         elevation: 4.0,
         child: Container(
@@ -96,18 +97,6 @@ class ScheduleItem extends ConsumerWidget {
                 fontSize: 12,
               ),
             ),
-            if (isEdit) ...[
-              // GestureDetector(
-              //   onTap: () => Navigator.pop(context),
-              //   child: Padding(
-              //     padding: const EdgeInsets.only(left: 8),
-              //     child: Icon(
-              //       Icons.delete,
-              //       color: $b2bToken.color.blingGray400.resolve(context),
-              //     ),
-              //   ),
-              // )
-            ],
           ],
         ),
       ),

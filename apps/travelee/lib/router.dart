@@ -71,9 +71,14 @@ final routerProvider = Provider<GoRouter>(
             final Map<String, dynamic> extraData =
                 state.extra as Map<String, dynamic>;
             final location = extraData['location'] as String;
+            final latitude = extraData['latitude'] as double;
+            final longitude = extraData['longitude'] as double;
+
             final countryCode = extraData['countryCode'] as String;
             return LocationSearchScreen(
               initialLocation: location,
+              initialLatitude: latitude,
+              initialLongitude: longitude,
               countryCode: countryCode,
             );
           },

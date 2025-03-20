@@ -1,12 +1,11 @@
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/textfield/textfield.dart';
 import 'package:design_systems/dino/components/textfield/textfield.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:travelee/models/schedule.dart';
+import 'package:travelee/models/location_data.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/router.dart';
 import 'package:travelee/screen/input/time_picker_modal.dart';
@@ -21,6 +20,8 @@ class ScheduleInputModal extends ConsumerStatefulWidget {
   final DateTime date;
   final int dayNumber;
   final String? scheduleId; // null이면 신규 일정, 값이 있으면 기존 일정 수정
+  final double initialLatitude;
+  final double initialLongitude;
 
   const ScheduleInputModal({
     super.key,
@@ -30,6 +31,8 @@ class ScheduleInputModal extends ConsumerStatefulWidget {
     required this.date,
     required this.dayNumber,
     this.scheduleId,
+    required this.initialLatitude,
+    required this.initialLongitude,
   });
 
   @override
@@ -41,6 +44,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
   final _memoController = TextEditingController();
   late TimeOfDay _selectedTime;
   final _formKey = GlobalKey<FormState>();
+  LocationData? _locationData;
 
   // 신규 일정인지 수정 모드인지 확인
   bool get isEditMode => widget.scheduleId != null;
@@ -51,6 +55,11 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
     _locationController.text = widget.initialLocation;
     _memoController.text = widget.initialMemo;
     _selectedTime = widget.initialTime;
+    _locationData = LocationData(
+      latitude: widget.initialLatitude,
+      longitude: widget.initialLongitude,
+      location: widget.initialLocation,
+    );
   }
 
   @override
@@ -79,19 +88,19 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
   Future<void> _selectLocation(BuildContext context) async {
     final dayData = ref.watch(dayDataProvider(widget.date));
     final countryCode = dayData?.countryCode ?? '';
-    final selectedLocation = await ref.read(routerProvider).push<String>(
+    final result = await ref.read(routerProvider).push<LocationData>(
       LocationSearchScreen.routePath,
       extra: {
         'location': _locationController.text,
+        'latitude': _locationData?.latitude ?? 0,
+        'longitude': _locationData?.longitude ?? 0,
         'countryCode': countryCode,
       },
     );
 
-    if (selectedLocation != null && selectedLocation.isNotEmpty) {
-      setState(() {
-        _locationController.text = selectedLocation;
-      });
-    }
+    setState(() {
+      _locationData = result;
+    });
   }
 
   void _saveSchedule() {
@@ -105,7 +114,6 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
           const SnackBar(content: Text('여행 정보를 찾을 수 없습니다. 다시 시도해주세요.')));
       return;
     }
-
     if (isEditMode) {
       // 기존 일정 수정
       final updatedSchedule = Schedule(
@@ -116,6 +124,8 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
         location: _locationController.text,
         memo: _memoController.text,
         dayNumber: widget.dayNumber,
+        latitude: _locationData?.latitude,
+        longitude: _locationData?.longitude,
       );
 
       ref
@@ -126,13 +136,15 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
     } else {
       // 신규 일정 추가
       final newSchedule = Schedule(
-        id: const Uuid().v4(), // 새로운 ID 생성
+        id: const Uuid().v4(),
         travelId: currentTravel.id,
         date: widget.date,
         time: _selectedTime,
         location: _locationController.text,
         memo: _memoController.text,
         dayNumber: widget.dayNumber,
+        latitude: _locationData?.latitude,
+        longitude: _locationData?.longitude,
       );
 
       ref
@@ -200,7 +212,8 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: $dinoToken.color.blingGray300.resolve(context),
+                              color: $dinoToken.color.blingGray300
+                                  .resolve(context),
                               width: 0.7,
                             ),
                             borderRadius: BorderRadius.circular(8),
@@ -215,7 +228,8 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                               const Spacer(),
                               Icon(
                                 Icons.access_time,
-                                color: $dinoToken.color.blingGray400.resolve(context),
+                                color: $dinoToken.color.blingGray400
+                                    .resolve(context),
                               ),
                             ],
                           ),
@@ -243,7 +257,8 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: $dinoToken.color.blingGray300.resolve(context),
+                              color: $dinoToken.color.blingGray300
+                                  .resolve(context),
                               width: 0.7,
                             ),
                             borderRadius: BorderRadius.circular(8),
@@ -257,7 +272,8 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                               const Spacer(),
                               Icon(
                                 Icons.location_on,
-                                color: $dinoToken.color.blingGray400.resolve(context),
+                                color: $dinoToken.color.blingGray400
+                                    .resolve(context),
                               ),
                             ],
                           ),
@@ -278,7 +294,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
             B2bTextField(
               status: B2bTextFieldStatus.before,
               size: B2bTextFieldSize.medium,
-                boder: B2bTextFieldBoder.box,
+              boder: B2bTextFieldBoder.box,
               isError: false,
               hint: '장소, 할일을 입력하세요',
               initialValue: widget.initialLocation,

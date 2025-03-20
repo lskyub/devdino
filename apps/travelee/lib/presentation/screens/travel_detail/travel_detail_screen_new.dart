@@ -3,6 +3,7 @@ import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:travelee/data/controllers/travel_detail_controller.dart';
 import 'package:travelee/data/controllers/unified_controller.dart';
 import 'package:travelee/models/day_schedule_data.dart';
 import 'package:travelee/models/schedule.dart';
@@ -18,6 +19,8 @@ import 'package:travelee/utils/travel_date_formatter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
 import 'dart:developer' as dev;
+
+import 'package:travelee/utils/travel_dialog_manager.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -115,15 +118,27 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
             height: 27,
           ),
         ),
-        title: DinoText(
-          type: DinoTextType.bodyM,
-          text:
-              '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
-          color: $dinoToken.color.black.resolve(context),
+        title: Column(
+          children: [
+            DinoText(
+              type: DinoTextType.bodyL,
+              text: travelInfo.title,
+              color: $dinoToken.color.black.resolve(context),
+            ),
+            DinoText(
+              type: DinoTextType.detailL,
+              text:
+                  '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
+              color: $dinoToken.color.blingGray600.resolve(context),
+            )
+          ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black),
+            icon: Icon(
+              Icons.settings,
+              color: $dinoToken.color.blingGray600.resolve(context),
+            ),
             onPressed: _refreshAllData,
           ),
         ],
@@ -143,9 +158,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 15,
-              ),
               DinoText(
                 text: 'EVENTS',
                 type: DinoTextType.bodyS,
@@ -154,8 +166,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               const Spacer(),
               IconButton(
                 icon: isEdit
-                    ? const Icon(Icons.visibility, color: Colors.grey)
-                    : const Icon(Icons.edit, color: Colors.grey),
+                    ? Icon(
+                        Icons.visibility,
+                        color: $dinoToken.color.blingGray600.resolve(context),
+                      )
+                    : Icon(
+                        Icons.edit,
+                        color: $dinoToken.color.blingGray600.resolve(context),
+                      ),
                 onPressed: () {
                   setState(() {
                     isEdit = !isEdit;
@@ -164,28 +182,42 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
               ),
             ],
           ),
-          Divider(
-            height: 1,
-            color: $dinoToken.color.blingGray200
-                .resolve(context)
-                .withAlpha((0.5 * 255).toInt()),
-          ),
           Expanded(
-            child: ListView.builder(
-              itemCount: daySchedules.length,
-              itemBuilder: (context, index) {
-                return DayItem(
-                  index: index,
-                  isEdit: isEdit,
-                  dayData: daySchedules[index],
-                  onScheduleTap: _editSchedule,
-                  onScheduleDrop: _onScheduleDrop,
-                  getScheduleColor: _getScheduleColor,
-                  onSelectCountry: _selectCountry,
-                  addSchedule: _addSchedule,
-                  deleteSchedule: _deleteSchedule,
-                );
-              },
+            child: Stack(
+              children: [
+                ListView.builder(
+                  itemCount: daySchedules.length,
+                  itemBuilder: (context, index) {
+                    return DayItem(
+                      index: index,
+                      isEdit: isEdit,
+                      dayData: daySchedules[index],
+                      onScheduleTap: _editSchedule,
+                      onScheduleDrop: _onScheduleDrop,
+                      getScheduleColor: _getScheduleColor,
+                      onSelectCountry: _selectCountry,
+                      addSchedule: _addSchedule,
+                      deleteSchedule: _deleteSchedule,
+                    );
+                  },
+                ),
+                Container(
+                  height: 3, // Divider 두께
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        $dinoToken.color.blingGray400
+                            .resolve(context)
+                            .withAlpha((0.3 * 255).toInt()),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 1.0],
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ],
@@ -421,7 +453,9 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           backupSchedule.date != currentSchedule.date ||
           backupSchedule.time != currentSchedule.time ||
           backupSchedule.location != currentSchedule.location ||
-          backupSchedule.memo != currentSchedule.memo) {
+          backupSchedule.memo != currentSchedule.memo ||
+          backupSchedule.latitude != currentSchedule.latitude ||
+          backupSchedule.longitude != currentSchedule.longitude) {
         return true;
       }
     }
@@ -465,8 +499,10 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         date1.day == date2.day;
   }
 
-  void _refreshAllData() {
-    setState(() {});
+  void _refreshAllData() async {
+    final controller = ref.watch(travelDetailControllerProvider);
+    await TravelDialogManager.showEditTravelDialog(context, ref);
+    controller.setModified(); // 여행 정보 편집 후 수정 플래그 설정
   }
 
   String _formatDateKey(DateTime date) {
@@ -586,6 +622,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           initialTime: TimeOfDay.now(),
           initialLocation: '',
           initialMemo: '',
+          initialLatitude: 0,
+          initialLongitude: 0,
           date: dayData.date,
           dayNumber: dayNumber,
         ),
@@ -621,6 +659,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           initialTime: schedule.time,
           initialLocation: schedule.location,
           initialMemo: schedule.memo,
+          initialLatitude: schedule.latitude ?? 0,
+          initialLongitude: schedule.longitude ?? 0,
           date: dayData.date,
           dayNumber: dayNumber,
           scheduleId: schedule.id,

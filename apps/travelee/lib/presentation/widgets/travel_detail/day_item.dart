@@ -43,7 +43,7 @@ class _DayItemState extends ConsumerState<DayItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -98,7 +98,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                     if (widget.index != 0) ...[
                       Divider(
                         height: 0.5,
-                        color: $dinoToken.color.blingGray200
+                        color: $dinoToken.color.blingGray400
                             .resolve(context)
                             .withAlpha((0.3 * 255).toInt()),
                       ),
@@ -113,7 +113,8 @@ class _DayItemState extends ConsumerState<DayItem> {
                         padding: EdgeInsets.only(
                             bottom: index == widget.dayData.schedules.length - 1
                                 ? 0
-                                : 8),
+                                : 8,
+                            right: 16),
                         child: ScheduleItem(
                           schedule: schedule,
                           onTap: () {
@@ -128,39 +129,45 @@ class _DayItemState extends ConsumerState<DayItem> {
                       );
                     }),
                     if (widget.isEdit) ...[
-                      GestureDetector(
-                        onTap: () => widget.addSchedule(widget.dayData),
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 12),
-                          child: DottedBorder(
-                            color: $dinoToken.color.blingGray200
-                                .resolve(context), // 점선 색상
-                            strokeWidth: 0.5, // 점선 두께
-                            dashPattern: const [6, 3], // 점선 간격 (6px 선, 3px 간격)
-                            borderType: BorderType.RRect,
-                            radius: const Radius.circular(10), // 둥근 사각형
-                            child: SizedBox(
-                              height: 40,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ColorFiltered(
-                                      colorFilter: ColorFilter.mode(
-                                        $dinoToken.color.blingGray200
-                                            .resolve(context), // 적용할 색상
-                                        BlendMode.srcIn, // 아이콘 색상을 변경하는 모드
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: GestureDetector(
+                          onTap: () => widget.addSchedule(widget.dayData),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 12),
+                            child: DottedBorder(
+                              color: $dinoToken.color.blingGray400
+                                  .resolve(context), // 점선 색상
+                              strokeWidth: 0.5, // 점선 두께
+                              dashPattern: const [
+                                6,
+                                3
+                              ], // 점선 간격 (6px 선, 3px 간격)
+                              borderType: BorderType.RRect,
+                              radius: const Radius.circular(10), // 둥근 사각형
+                              child: SizedBox(
+                                height: 40,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ColorFiltered(
+                                        colorFilter: ColorFilter.mode(
+                                          $dinoToken.color.blingGray400
+                                              .resolve(context), // 적용할 색상
+                                          BlendMode.srcIn, // 아이콘 색상을 변경하는 모드
+                                        ),
+                                        child: const Icon(Icons.add),
                                       ),
-                                      child: const Icon(Icons.add),
-                                    ),
-                                    DinoText(
-                                      text: '일정 추가 하기',
-                                      type: DinoTextType.detailL,
-                                      color: $dinoToken.color.blingGray200
-                                          .resolve(context),
-                                    )
-                                  ],
+                                      DinoText(
+                                        text: '일정 추가 하기',
+                                        type: DinoTextType.detailL,
+                                        color: $dinoToken.color.blingGray400
+                                            .resolve(context),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

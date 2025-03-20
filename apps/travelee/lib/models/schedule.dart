@@ -8,6 +8,8 @@ class Schedule {
   final String memo;
   final DateTime date;
   final int dayNumber;
+  final double? latitude;
+  final double? longitude;
 
   Schedule({
     required this.id,
@@ -17,6 +19,8 @@ class Schedule {
     required this.memo,
     required this.date,
     required this.dayNumber,
+    this.latitude,
+    this.longitude,
   });
 
   Schedule copyWith({
@@ -27,6 +31,8 @@ class Schedule {
     String? memo,
     DateTime? date,
     int? dayNumber,
+    double? latitude,
+    double? longitude,
   }) {
     return Schedule(
       id: id ?? this.id,
@@ -36,6 +42,8 @@ class Schedule {
       memo: memo ?? this.memo,
       date: date ?? this.date,
       dayNumber: dayNumber ?? this.dayNumber,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
     );
   }
   @override
