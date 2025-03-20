@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
-import 'package:travelee/presentation/screens/travel/edit/date_screen.dart';
+import 'package:travelee/presentation/screens/travel_detail/edit/date_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
-import 'package:travelee/presentation/screens/travel/edit/location_search_screen.dart';
-import 'package:travelee/presentation/screens/travel/list/saved_travels_screen.dart';
+import 'package:travelee/presentation/screens/travel_detail/edit/location_search_screen.dart';
+import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'dart:developer' as dev;
 
 GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();

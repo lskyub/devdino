@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
@@ -31,25 +30,23 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     return AppBar(
       surfaceTintColor: Colors.transparent, // 자동 색상 변
-      title: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DinoText(
-                type: DinoTextType.bodyM,
-                text:
-                    '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}'),
-            Row(
-              children: [
-                DinoText(
-                  type: DinoTextType.detailL,
-                  text: travelInfo.destination.join(', '),
-                  color: $dinoToken.color.blingGray500.resolve(context),
-                )
-              ],
-            )
-          ],
-        ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DinoText(
+              type: DinoTextType.bodyM,
+              text:
+                  '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}'),
+          Row(
+            children: [
+              DinoText(
+                type: DinoTextType.detailL,
+                text: travelInfo.destination.join(', '),
+                color: $dinoToken.color.blingGray500.resolve(context),
+              )
+            ],
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       elevation: 0,

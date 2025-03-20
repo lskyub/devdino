@@ -2,18 +2,17 @@ import 'package:design_systems/dino/dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelee/data/controllers/schedule_detail_controller.dart';
 import 'package:travelee/data/controllers/travel_detail_controller.dart';
 import 'package:travelee/data/controllers/travel_controller.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/data/services/database_helper.dart';
 import 'package:travelee/presentation/modal/country_select_modal.dart';
 import 'package:travelee/presentation/modal/schedule_input_modal.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart'
     as travel_providers;
-import 'package:travelee/data/services/database_helper.dart';
 import 'package:travelee/core/utils/result_types.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:go_router/go_router.dart';
@@ -104,123 +103,130 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         travelInfo.startDate!, travelInfo.endDate!);
     final daySchedules = _buildDaySchedulesFromDates(travelInfo, dates);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return PopScope<bool>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop && result != null) {
+          _handleBackNavigation(context);
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent, // 자동 색상 변화 방지
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => _handleBackNavigation(context),
-          icon: SvgPicture.asset(
-            'assets/icons/back.svg',
-            width: 27,
-            height: 27,
-          ),
-        ),
-        title: Column(
-          children: [
-            DinoText(
-              type: DinoTextType.bodyL,
-              text: travelInfo.title,
-              color: $dinoToken.color.black.resolve(context),
-            ),
-            DinoText(
-              type: DinoTextType.detailL,
-              text:
-                  '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
-              color: $dinoToken.color.blingGray600.resolve(context),
-            )
-          ],
-        ),
-        actions: [
-          IconButton(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent, // 자동 색상 변화 방지
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => _handleBackNavigation(context),
             icon: Icon(
-              Icons.settings,
+              Icons.home,
               color: $dinoToken.color.blingGray600.resolve(context),
             ),
-            onPressed: _refreshAllData,
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Row(
+          title: Column(
             children: [
-              SizedBox(
-                width: 70,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: DinoText(
-                    text: 'DATE',
-                    type: DinoTextType.bodyS,
-                    color: $dinoToken.color.black.resolve(context),
-                  ),
-                ),
-              ),
               DinoText(
-                text: 'EVENTS',
-                type: DinoTextType.bodyS,
+                type: DinoTextType.bodyL,
+                text: travelInfo.destination.join(', '),
                 color: $dinoToken.color.black.resolve(context),
               ),
-              const Spacer(),
-              IconButton(
-                icon: isEdit
-                    ? Icon(
-                        Icons.visibility,
-                        color: $dinoToken.color.blingGray600.resolve(context),
-                      )
-                    : Icon(
-                        Icons.edit,
-                        color: $dinoToken.color.blingGray600.resolve(context),
-                      ),
-                onPressed: () {
-                  setState(() {
-                    isEdit = !isEdit;
-                  });
-                },
-              ),
+              DinoText(
+                type: DinoTextType.detailL,
+                text:
+                    '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
+                color: $dinoToken.color.blingGray600.resolve(context),
+              )
             ],
           ),
-          Expanded(
-            child: Stack(
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                color: $dinoToken.color.blingGray600.resolve(context),
+              ),
+              onPressed: _refreshAllData,
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Row(
               children: [
-                ListView.builder(
-                  itemCount: daySchedules.length,
-                  itemBuilder: (context, index) {
-                    return DayItem(
-                      index: index,
-                      isEdit: isEdit,
-                      dayData: daySchedules[index],
-                      onScheduleTap: _editSchedule,
-                      onScheduleDrop: _onScheduleDrop,
-                      getScheduleColor: _getScheduleColor,
-                      onSelectCountry: _selectCountry,
-                      addSchedule: _addSchedule,
-                      deleteSchedule: _deleteSchedule,
-                    );
-                  },
-                ),
-                Container(
-                  height: 3, // Divider 두께
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        $dinoToken.color.blingGray400
-                            .resolve(context)
-                            .withAlpha((0.3 * 255).toInt()),
-                        Colors.transparent,
-                      ],
-                      stops: const [0.0, 1.0],
+                SizedBox(
+                  width: 70,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: DinoText(
+                      text: 'DATE',
+                      type: DinoTextType.bodyS,
+                      color: $dinoToken.color.black.resolve(context),
                     ),
                   ),
-                )
+                ),
+                DinoText(
+                  text: 'EVENTS',
+                  type: DinoTextType.bodyS,
+                  color: $dinoToken.color.black.resolve(context),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: isEdit
+                      ? Icon(
+                          Icons.visibility,
+                          color: $dinoToken.color.blingGray600.resolve(context),
+                        )
+                      : Icon(
+                          Icons.edit,
+                          color: $dinoToken.color.blingGray600.resolve(context),
+                        ),
+                  onPressed: () {
+                    setState(() {
+                      isEdit = !isEdit;
+                    });
+                  },
+                ),
               ],
             ),
-          ),
-        ],
+            Expanded(
+              child: Stack(
+                children: [
+                  ListView.builder(
+                    itemCount: daySchedules.length,
+                    itemBuilder: (context, index) {
+                      return DayItem(
+                        index: index,
+                        isEdit: isEdit,
+                        dayData: daySchedules[index],
+                        onScheduleTap: _editSchedule,
+                        onScheduleDrop: _onScheduleDrop,
+                        getScheduleColor: _getScheduleColor,
+                        onSelectCountry: _selectCountry,
+                        addSchedule: _addSchedule,
+                        deleteSchedule: _deleteSchedule,
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 4, // Divider 두께
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          $dinoToken.color.blingGray200
+                              .resolve(context)
+                              .withAlpha((0.2 * 255).toInt()),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -403,7 +409,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
             },
             child: const Text('취소'),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () {
               dev.log('다이얼로그 - [저장] 선택');
               Navigator.pop(context, SaveResult.save);

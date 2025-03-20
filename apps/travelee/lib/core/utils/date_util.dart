@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 /// 애플리케이션 내에서 날짜 표시를 처리하는 유틸리티 클래스
 class DateUtil {
   /// 날짜를 'yyyy년 MM월 dd일' 형식으로 변환

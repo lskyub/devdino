@@ -5,9 +5,10 @@ import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/data/models/location/country_info.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart';
-import 'package:travelee/presentation/screens/travel/edit/edit_travel_dialog.dart';
+import 'package:travelee/presentation/screens/travel_detail/edit/edit_travel_dialog.dart';
 import 'package:travelee/core/utils/date_util.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/core/utils/result_types.dart';
 
 /// TravelDialogManager
 ///

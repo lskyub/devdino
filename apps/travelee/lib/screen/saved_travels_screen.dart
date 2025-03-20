@@ -6,7 +6,7 @@ import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart';
-import 'package:travelee/presentation/screens/travel/edit/date_screen.dart';
+import 'package:travelee/presentation/screens/travel_detail/edit/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {

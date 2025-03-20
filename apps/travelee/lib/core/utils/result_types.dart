@@ -4,4 +4,10 @@
 /// - save: 변경사항 저장
 /// - discard: 변경사항 폐기
 /// - cancel: 작업 취소
-enum SaveResult { save, discard, cancel } 
+enum SaveResult { save, discard, cancel }
+
+enum DialogResult {
+  save,
+  discard,
+  cancel,
+} 
