@@ -2,11 +2,11 @@ import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:travelee/models/country_info.dart';
-import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/providers/unified_travel_provider.dart';
-import 'package:travelee/screen/input/edit_travel_dialog.dart';
-import 'package:travelee/utils/date_util.dart';
+import 'package:travelee/data/models/location/country_info.dart';
+import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
+import 'package:travelee/presentation/screens/travel/edit/edit_travel_dialog.dart';
+import 'package:travelee/core/utils/date_util.dart';
 import 'dart:developer' as dev;
 
 /// TravelDialogManager

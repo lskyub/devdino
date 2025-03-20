@@ -1,5 +1,5 @@
-import 'package:travelee/models/schedule.dart';
-import 'package:travelee/models/country_info.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
+import 'package:travelee/data/models/location/country_info.dart';
 
 // 하루 데이터 모델
 class DayData {

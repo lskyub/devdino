@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:travelee/models/day_schedule_data.dart';
-import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/models/schedule.dart';
+import 'package:travelee/data/models/schedule/day_schedule_data.dart';
+import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
 import 'dart:developer' as dev;
 
 // 일정 탭 콜백 정의

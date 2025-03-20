@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
-import 'package:travelee/models/country_info.dart';
+import 'package:travelee/data/models/location/country_info.dart';
 import 'dart:developer' as dev;
 
 class CountrySelectModal extends ConsumerStatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/models/schedule.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
 import 'dart:developer' as dev;
 
 class ScheduleItem extends ConsumerWidget {

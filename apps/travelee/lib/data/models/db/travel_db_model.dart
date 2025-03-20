@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:travelee/models/schedule.dart';
-import 'package:travelee/models/country_info.dart';
-import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/models/db/schedule_db_model.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
+import 'package:travelee/data/models/location/country_info.dart';
+import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/data/models/db/schedule_db_model.dart';
 
 class TravelDBModel {
   final String id;

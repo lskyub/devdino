@@ -1,4 +1,4 @@
-import 'package:travelee/models/schedule.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
 
 class DayScheduleData {
   final DateTime date;

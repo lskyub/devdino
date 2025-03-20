@@ -1,19 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/models/schedule.dart';
+import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/data/managers/change_manager.dart';
-import 'package:travelee/providers/unified_travel_provider.dart' as travel_providers;
+import 'package:travelee/presentation/providers/travel_state_provider.dart' as travel_providers;
 import 'dart:developer' as dev;
 
 /// 단일화된 데이터 관리를 위한 통합 컨트롤러
 /// 
 /// 여행 데이터의 변경, 저장, 복원 등을 담당하며 Provider와의 상호작용을 처리합니다.
 /// ChangeManager와 통합되어 일관된 데이터 관리를 제공합니다.
-class UnifiedController {
+class TravelController {
   final Ref _ref;
   bool hasChanges = false;
   
-  UnifiedController(this._ref);
+  TravelController(this._ref);
   
   /// 현재 여행 정보를 가져옵니다.
   TravelModel? get currentTravel => _ref.read(travel_providers.currentTravelProvider);
@@ -217,6 +217,6 @@ class UnifiedController {
 }
 
 /// UnifiedController Provider
-final unifiedControllerProvider = Provider<UnifiedController>((ref) {
-  return UnifiedController(ref);
+final unifiedControllerProvider = Provider<TravelController>((ref) {
+  return TravelController(ref);
 }); 

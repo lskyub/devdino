@@ -1,13 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:country_icons/country_icons.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/models/day_schedule_data.dart';
-import 'package:travelee/models/schedule.dart';
+import 'package:travelee/data/models/schedule/day_schedule_data.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/presentation/widgets/travel_detail/schedule_item.dart';
 import 'dart:developer' as dev;
 

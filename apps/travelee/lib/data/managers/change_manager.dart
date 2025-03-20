@@ -1,5 +1,5 @@
-import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/models/schedule.dart';
+import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
 import 'dart:developer' as dev;
 
 /// 변경사항 관리 클래스

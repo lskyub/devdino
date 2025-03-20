@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/models/schedule.dart';
-import 'package:travelee/models/travel_model.dart';
-import 'package:travelee/providers/unified_travel_provider.dart';
+import 'package:travelee/data/models/schedule/schedule.dart';
+import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'dart:developer' as dev;
 
 /// ScheduleDetailController를 제공하는 Provider
