@@ -184,12 +184,6 @@ class ScheduleDetailController {
       return;
     }
     
-    // 기존 일정 찾기
-    final existingSchedule = currentTravel.schedules.firstWhere(
-      (s) => s.id == scheduleId,
-      orElse: () => throw Exception('일정을 찾을 수 없음: $scheduleId'),
-    );
-    
     // dayNumber 계산
     final dayNumber = _getDayNumber(currentTravel.startDate!, date);
     

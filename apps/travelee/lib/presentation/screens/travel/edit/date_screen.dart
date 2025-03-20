@@ -1,5 +1,4 @@
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +10,6 @@ import 'package:travelee/data/controllers/travel_detail_controller.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart'
     as travel_providers;
 import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/presentation/screens/travel/list/saved_travels_screen.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:travelee/data/models/location/country_info.dart';

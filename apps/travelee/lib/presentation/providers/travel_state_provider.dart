@@ -144,8 +144,9 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
       if (state[i].id != _originalState[i].id) return true;
 
       // 일정 수가 다르면 변경 있음
-      if (state[i].schedules.length != _originalState[i].schedules.length)
+      if (state[i].schedules.length != _originalState[i].schedules.length) {
         return true;
+      }
     }
 
     return false;
@@ -286,15 +287,6 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
   bool _isDayDataDifferent(String oldCountry, String oldFlag, String oldCode,
       String newCountry, String newFlag, String newCode) {
     return oldCountry != newCountry || oldFlag != newFlag || oldCode != newCode;
-  }
-
-  // 날짜가 몇 번째 날인지 계산하는 헬퍼 메서드
-  int _calculateDayNumber(DateTime startDate, DateTime date) {
-    return DateTime(date.year, date.month, date.day)
-            .difference(
-                DateTime(startDate.year, startDate.month, startDate.day))
-            .inDays +
-        1;
   }
 
   // 모든 여행 데이터 설정 (데이터 로드 시)

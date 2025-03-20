@@ -10,19 +10,15 @@ import 'dart:developer' as dev;
 
 /// 여행 상세 화면의 비즈니스 로직을 담당하는 컨트롤러
 class TravelDetailController {
-  final ProviderRef ref;
+  final Ref ref;
   
   // 백업 저장을 위한 변수들
   List<Schedule> _originalScheduleBackup = [];
   List<DayScheduleData> _originalDayScheduleBackup = [];
-  dynamic _originalTravelInfoBackup;
   bool _hasChanges = false;
   bool _backupCreated = false;
   
   TravelDetailController(this.ref);
-  
-  /// 현재 변경사항이 있는지 확인
-  bool get hasChanges => _hasChanges;
   
   /// 백업이 생성되었는지 확인
   bool get isBackupCreated => _backupCreated;
@@ -53,7 +49,6 @@ class TravelDetailController {
       if (travelInfo == null) return;
       
       dev.log('TravelDetailController - 백업할 여행 정보: ID=${travelInfo.id}, 일정=${travelInfo.schedules.length}개');
-      _originalTravelInfoBackup = travelInfo; // 객체 참조 저장
       
       // 2. 스케줄 데이터 백업 (깊은 복사)
       final schedules = travelInfo.schedules;

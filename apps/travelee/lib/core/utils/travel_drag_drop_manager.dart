@@ -364,14 +364,6 @@ class TravelDragDropManager {
     });
   }
   
-  /// 드래그 앤 드롭 오류 처리
-  /// @param travelId 여행 ID
-  void _handleDragError(String travelId) {
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _refreshData(travelId);
-    });
-  }
-  
   /// 데이터 새로고침
   /// @param travelId 여행 ID
   void _refreshData(String travelId) {
