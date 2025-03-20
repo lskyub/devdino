@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/unified_travel_provider.dart';
 import 'package:travelee/router.dart';
 import 'package:travelee/screen/input/date_screen.dart';
+import 'package:travelee/screen/components/saved_travel_item.dart';
 import 'dart:math' as Math;
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
@@ -139,131 +140,9 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
               padding: const EdgeInsets.all(16),
               itemBuilder: (context, index) {
                 final travel = savedTravels[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: $dinoToken.color.blingGray200.resolve(context),
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          ref.read(currentTravelIdProvider.notifier).state =
-                              travel.id;
-                          ref
-                              .read(routerProvider)
-                              .push('/travel_detail/${travel.id}');
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: $dinoToken.color.primary
-                                        .resolve(context),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: DinoText(
-                                      type: DinoTextType.bodyL,
-                                      text: travel.destination.join(', '),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('여행 삭제'),
-                                          content: const Text(
-                                              '이 여행을 삭제하시겠습니까?\n삭제된 여행은 복구할 수 없습니다.'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                context.pop();
-                                              },
-                                              child: const Text('취소'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                ref
-                                                    .read(travelsProvider
-                                                        .notifier)
-                                                    .removeTravel(travel.id);
-                                                context.pop();
-                                              },
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.red,
-                                              ),
-                                              child: const Text('삭제'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      Icons.delete_outline,
-                                      color: $dinoToken.color.blingGray400
-                                          .resolve(context),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.calendar_today,
-                                    color: $dinoToken.color.primary
-                                        .resolve(context),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  DinoText(
-                                    type: DinoTextType.bodyL,
-                                    text:
-                                        '${_formatDate(travel.startDate)} ~ ${_formatDate(travel.endDate)}',
-                                    color: $dinoToken.color.blingGray500
-                                        .resolve(context),
-                                  ),
-                                ],
-                              ),
-                              // 디버그용 ID 정보 표시
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.info_outline,
-                                    size: 14,
-                                    color: $dinoToken.color.blingGray400
-                                        .resolve(context),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: DinoText(
-                                      type: DinoTextType.detailS,
-                                      text:
-                                          'ID: ${travel.id.substring(0, Math.min(travel.id.length, 16))}...',
-                                      color: $dinoToken.color.blingGray400
-                                          .resolve(context),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                return SavedTravelItem(
+                  travel: travel,
+                  formatDate: _formatDate,
                 );
               },
             ),

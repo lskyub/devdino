@@ -1,5 +1,4 @@
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,7 +32,7 @@ class TravelDetailScreen extends ConsumerStatefulWidget {
 class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     with WidgetsBindingObserver {
   late FocusNode _focusNode;
-  bool isEdit = false;
+  bool isEdit = true;
 
   @override
   void initState() {
