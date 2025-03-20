@@ -215,6 +215,10 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
           );
           _isLoading = false;
         });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
