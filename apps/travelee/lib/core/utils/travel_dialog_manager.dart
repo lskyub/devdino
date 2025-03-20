@@ -8,8 +8,6 @@ import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/edit/edit_travel_dialog.dart';
 import 'package:travelee/core/utils/date_util.dart';
 import 'dart:developer' as dev;
-import 'package:travelee/core/utils/result_types.dart';
-
 /// TravelDialogManager
 ///
 /// 여행 관련 다이얼로그를 관리하는 유틸리티 클래스
