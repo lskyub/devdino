@@ -63,13 +63,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // 앱이 포그라운드로 돌아왔을 때 데이터 새로고침
-      final travel = ref.read(travel_providers.currentTravelProvider);
-      if (travel != null && travel.startDate != null) {
-        _refreshAllData();
-      }
-    }
+    // if (state == AppLifecycleState.resumed) {
+    //   // 앱이 포그라운드로 돌아왔을 때 데이터 새로고침
+    //   final travel = ref.read(travel_providers.currentTravelProvider);
+    //   if (travel != null && travel.startDate != null) {
+    //     _refreshAllData();
+    //   }
+    // }
   }
 
   @override
