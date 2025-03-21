@@ -58,7 +58,6 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
     }
   }
 
-
   // 임시 여행 영구 저장 (temp_ 접두사 제거)
   String? saveTempTravel(String currentTravelId) {
     // 임시 여행인지 확인
@@ -166,6 +165,31 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
 
     // 로깅 추가
     dev.log('TravelNotifier - 여행 정보 업데이트: ${updatedTravel.id}');
+
+    // dayDataMap의 국가 정보 검사 및 업데이트
+    final travel = getTravel(updatedTravel.id);
+    if (travel != null && updatedTravel.countryInfos.isNotEmpty) {
+      final defaultInfo = updatedTravel.countryInfos[0];
+      final updatedDayDataMap = Map<String, DayData>.from(travel.dayDataMap);
+      
+      for (final entry in updatedDayDataMap.entries) {
+        if (!updatedTravel.countryInfos.any((info) => info.countryCode == entry.value.countryCode)) {
+          updatedDayDataMap[entry.key] = entry.value.copyWith(
+            countryName: defaultInfo.name,
+            flagEmoji: defaultInfo.flagEmoji,
+            countryCode: defaultInfo.countryCode
+          );
+        }
+      }
+      
+      state = [
+        for (final t in state)
+          if (t.id == updatedTravel.id) 
+            t.copyWith(dayDataMap: updatedDayDataMap)
+          else 
+            t
+      ];
+    }
 
     // 현재 여행 ID가 업데이트된 여행 ID와 같으면 변경 플래그 설정
     final currentTravelId = ref.read(currentTravelIdProvider);
