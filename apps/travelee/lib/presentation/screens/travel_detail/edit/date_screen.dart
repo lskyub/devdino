@@ -13,6 +13,7 @@ import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:travelee/data/models/location/country_info.dart';
+import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 import 'dart:developer' as dev;
 
 final searchTextProvider = StateProvider<String>((ref) => '');
@@ -213,7 +214,8 @@ class DateScreen extends ConsumerWidget {
                           child: Icon(
                             Icons.close,
                             size: 16,
-                            color: $dinoToken.color.blingGray400.resolve(context),
+                            color:
+                                $dinoToken.color.blingGray400.resolve(context),
                           ),
                         ),
                       ],
@@ -310,7 +312,7 @@ class DateScreen extends ConsumerWidget {
               right: 16,
               top: 16,
             ),
-            child: DinoText(  
+            child: DinoText(
               type: DinoTextType.bodyM,
               text: '여행 기간을 선택하세요.',
               color: $dinoToken.color.black.resolve(context),
@@ -346,24 +348,25 @@ class DateScreen extends ConsumerWidget {
               ),
               monthFormat: 'MMM',
               monthCellStyle: DateRangePickerMonthCellStyle(
-                textStyle:
-                    $dinoToken.typography.detailL.resolve(context).merge(
-                          TextStyle(
-                            color: $dinoToken.color.blingGray500.resolve(context),
-                          ),
-                        ),
-                todayTextStyle:
-                    $dinoToken.typography.detailL.resolve(context).merge(
-                          TextStyle(
-                            color: $dinoToken.color.blingGray500.resolve(context),
-                          ),
-                        ),
+                textStyle: $dinoToken.typography.detailL.resolve(context).merge(
+                      TextStyle(
+                        color: $dinoToken.color.blingGray500.resolve(context),
+                      ),
+                    ),
+                todayTextStyle: $dinoToken.typography.detailL
+                    .resolve(context)
+                    .merge(
+                      TextStyle(
+                        color: $dinoToken.color.blingGray500.resolve(context),
+                      ),
+                    ),
               ),
               startRangeSelectionColor:
                   $dinoToken.color.brandBlingViolet200.resolve(context),
               endRangeSelectionColor:
                   $dinoToken.color.brandBlingViolet200.resolve(context),
-              rangeSelectionColor: $dinoToken.color.brandBlingViolet200.resolve(context),
+              rangeSelectionColor:
+                  $dinoToken.color.brandBlingViolet200.resolve(context),
               selectionTextStyle:
                   $dinoToken.typography.detailL.resolve(context).merge(
                         TextStyle(
@@ -382,12 +385,11 @@ class DateScreen extends ConsumerWidget {
               headerStyle: DateRangePickerHeaderStyle(
                 textAlign: TextAlign.end,
                 backgroundColor: Colors.white,
-                textStyle:
-                    $dinoToken.typography.bodyM.resolve(context).merge(
-                          TextStyle(
-                            color: $dinoToken.color.primary.resolve(context),
-                          ),
-                        ),
+                textStyle: $dinoToken.typography.bodyM.resolve(context).merge(
+                      TextStyle(
+                        color: $dinoToken.color.primary.resolve(context),
+                      ),
+                    ),
               ),
             ),
           )),
@@ -398,100 +400,111 @@ class DateScreen extends ConsumerWidget {
               top: 16,
               bottom: 50,
             ),
-            child: SizedBox(
-              width: double.infinity,
-              child: B2bButton.medium(
-                state: startDate != '-' &&
-                        endDate != '-' &&
-                        travelInfo.destination.isNotEmpty
-                    ? B2bButtonState.base
-                    : B2bButtonState.disabled,
-                title: (startDate != '-' &&
-                        endDate != '-' &&
-                        travelInfo.destination.isNotEmpty)
-                    ? '$startDate ~ $endDate 여행 만들기'
-                    : '목적지와 기간을 선택하세요',
-                type: B2bButtonType.primary,
-                onTap: () {
-                  if (travelInfo.startDate == null ||
-                      travelInfo.endDate == null ||
-                      travelInfo.destination.isEmpty) {
-                    return;
-                  }
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: B2bButton.medium(
+                    state: startDate != '-' &&
+                            endDate != '-' &&
+                            travelInfo.destination.isNotEmpty
+                        ? B2bButtonState.base
+                        : B2bButtonState.disabled,
+                    title: (startDate != '-' &&
+                            endDate != '-' &&
+                            travelInfo.destination.isNotEmpty)
+                        ? '$startDate ~ $endDate 여행 만들기'
+                        : '목적지와 기간을 선택하세요',
+                    type: B2bButtonType.primary,
+                    onTap: () {
+                      if (travelInfo.startDate == null ||
+                          travelInfo.endDate == null ||
+                          travelInfo.destination.isEmpty) {
+                        return;
+                      }
 
-                  // 선택한 날짜 범위에 대해 dayDataMap 초기화
-                  final start = travelInfo.startDate!;
-                  final end = travelInfo.endDate!;
+                      // 선택한 날짜 범위에 대해 dayDataMap 초기화
+                      final start = travelInfo.startDate!;
+                      final end = travelInfo.endDate!;
 
-                  // 날짜 범위 내의 모든 날짜 생성
-                  final dayDifference = end.difference(start).inDays;
-                  Map<String, DayData> initialDayDataMap = {};
+                      // 날짜 범위 내의 모든 날짜 생성
+                      final dayDifference = end.difference(start).inDays;
+                      Map<String, DayData> initialDayDataMap = {};
 
-                  // 기본 국가 정보 (첫 번째 국가 사용)
-                  String defaultCountryName = '';
-                  String defaultFlagEmoji = '🏳️';
-                  String defaultCountryCode = '';
+                      // 기본 국가 정보 (첫 번째 국가 사용)
+                      String defaultCountryName = '';
+                      String defaultFlagEmoji = '🏳️';
+                      String defaultCountryCode = '';
 
-                  if (travelInfo.countryInfos.isNotEmpty) {
-                    defaultCountryName = travelInfo.countryInfos.first.name;
-                    defaultFlagEmoji = travelInfo.countryInfos.first.flagEmoji;
-                    defaultCountryCode =
-                        travelInfo.countryInfos.first.countryCode;
-                  } else if (travelInfo.destination.isNotEmpty) {
-                    defaultCountryName = travelInfo.destination.first;
-                  }
+                      if (travelInfo.countryInfos.isNotEmpty) {
+                        defaultCountryName = travelInfo.countryInfos.first.name;
+                        defaultFlagEmoji =
+                            travelInfo.countryInfos.first.flagEmoji;
+                        defaultCountryCode =
+                            travelInfo.countryInfos.first.countryCode;
+                      } else if (travelInfo.destination.isNotEmpty) {
+                        defaultCountryName = travelInfo.destination.first;
+                      }
 
-                  // 각 날짜에 대한 DayData 생성
-                  for (int i = 0; i <= dayDifference; i++) {
-                    final currentDate = start.add(Duration(days: i));
-                    final dateKey = TravelDateFormatter.formatDate(currentDate);
+                      // 각 날짜에 대한 DayData 생성
+                      for (int i = 0; i <= dayDifference; i++) {
+                        final currentDate = start.add(Duration(days: i));
+                        final dateKey =
+                            TravelDateFormatter.formatDate(currentDate);
 
-                    // 비어있는 DayData 생성
-                    initialDayDataMap[dateKey] = DayData(
-                      date: currentDate,
-                      dayNumber: i + 1,
-                      countryName: defaultCountryName,
-                      flagEmoji: defaultFlagEmoji,
-                      countryCode: defaultCountryCode,
-                      schedules: [],
-                    );
-                  }
+                        // 비어있는 DayData 생성
+                        initialDayDataMap[dateKey] = DayData(
+                          date: currentDate,
+                          dayNumber: i + 1,
+                          countryName: defaultCountryName,
+                          flagEmoji: defaultFlagEmoji,
+                          countryCode: defaultCountryCode,
+                          schedules: [],
+                        );
+                      }
 
-                  // 업데이트된 여행 정보 저장
-                  final updatedTravel = travelInfo.copyWith(
-                    dayDataMap: initialDayDataMap,
-                  );
+                      // 업데이트된 여행 정보 저장
+                      final updatedTravel = travelInfo.copyWith(
+                        dayDataMap: initialDayDataMap,
+                      );
 
-                  // 여행 정보 업데이트
-                  ref
-                      .read(travel_providers.travelsProvider.notifier)
-                      .updateTravel(updatedTravel);
+                      // 여행 정보 업데이트
+                      ref
+                          .read(travel_providers.travelsProvider.notifier)
+                          .updateTravel(updatedTravel);
 
-                  // 임시 ID로 된 여행을 영구 저장
-                  final travelId = travelInfo.id;
-                  final controller = ref.read(travelDetailControllerProvider);
-                  final newId = controller.saveTempTravel(travelId);
+                      // 임시 ID로 된 여행을 영구 저장
+                      final travelId = travelInfo.id;
+                      final controller =
+                          ref.read(travelDetailControllerProvider);
+                      final newId = controller.saveTempTravel(travelId);
 
-                  if (newId != null) {
-                    // 데이터베이스에 저장
-                    dev.log('DateScreen - 임시 여행 ID 변경됨: $travelId -> $newId');
+                      if (newId != null) {
+                        // 데이터베이스에 저장
+                        dev.log(
+                            'DateScreen - 임시 여행 ID 변경됨: $travelId -> $newId');
 
-                    // 현재 ID 업데이트
-                    ref
-                        .read(travel_providers.currentTravelIdProvider.notifier)
-                        .state = newId;
+                        // 현재 ID 업데이트
+                        ref
+                            .read(travel_providers
+                                .currentTravelIdProvider.notifier)
+                            .state = newId;
 
-                    // 백업 다시 생성
-                    controller.createBackup();
+                        // 백업 다시 생성
+                        controller.createBackup();
 
-                    // 변경 플래그 초기화
-                    controller.hasChanges = false;
+                        // 변경 플래그 초기화
+                        controller.hasChanges = false;
 
-                    // 여행 상세 화면으로 이동 (replace 사용)
-                    context.replace('/travel_detail/$newId');
-                  }
-                },
-              ),
+                        // 여행 상세 화면으로 이동 (replace 사용)
+                        context.replace('/travel_detail/$newId');
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const AdBannerWidget(),
+              ],
             ),
           )
         ],

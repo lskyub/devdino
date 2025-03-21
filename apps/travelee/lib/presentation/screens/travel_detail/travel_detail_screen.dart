@@ -20,6 +20,9 @@ import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
 import 'dart:developer' as dev;
 
 import 'package:travelee/core/utils/travel_dialog_manager.dart';
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -207,7 +210,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                     },
                   ),
                   Container(
-                    height: 4, // Divider 두께
+                    height: 4,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
@@ -222,6 +225,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                       ),
                     ),
                   )
+                ],
+              ),
+            ),
+            const SafeArea(
+              child: Column(
+                children: [
+                  AdBannerWidget(),
+                  SizedBox(height: 16),
                 ],
               ),
             ),

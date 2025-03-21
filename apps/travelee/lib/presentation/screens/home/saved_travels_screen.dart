@@ -135,6 +135,14 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                     },
                   ),
           ),
+          // const SafeArea(
+          //   child: Column(
+          //     children: [
+          //       AdBannerWidget(),
+          //       SizedBox(height: 16),
+          //     ],
+          //   ),
+          // ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),

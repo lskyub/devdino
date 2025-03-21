@@ -6,10 +6,15 @@ import 'package:design_systems/dino/foundations/theme.dart';
 import 'package:travelee/router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  
+  // 광고 초기화
+  await MobileAds.instance.initialize();
+  
   runApp(const ProviderScope(child: MyApp()));
 }
 

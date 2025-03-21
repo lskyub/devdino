@@ -51,6 +51,8 @@ dependencies:
 
   dotted_border: ^2.0.0
 
+  google_mobile_ads: ^4.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
