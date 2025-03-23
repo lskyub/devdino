@@ -8,7 +8,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/core/config/firebase_config.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -20,8 +19,8 @@ void main() async {
   // 수파베이스 초기화
   await SupabaseConfig.initialize();
   
-  // Firebase 초기화
-  await FirebaseConfig.initialize();
+  // // Firebase 초기화
+  // await FirebaseConfig.initialize();
   
   runApp(const ProviderScope(child: MyApp()));
 }

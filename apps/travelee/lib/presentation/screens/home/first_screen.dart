@@ -200,11 +200,11 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                             title: 'Google로 계속하기',
                             onTap: () async {
                               try {
-                                final userCredential = await FirebaseConfig.signInWithGoogle();
+                                // final userCredential = await FirebaseConfig.signInWithGoogle();
                                 
-                                if (userCredential != null && context.mounted) {
-                                  context.go(SavedTravelsScreen.routePath);
-                                }
+                                // if (userCredential != null && context.mounted) {
+                                //   context.go(SavedTravelsScreen.routePath);
+                                // }
                               } catch (e) {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
