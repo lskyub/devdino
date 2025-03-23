@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "780787532259",
+    "project_id": "travelee-75e01",
+    "storage_bucket": "travelee-75e01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780787532259:android:c2ab758842738b9ce960d6",
+        "android_client_info": {
+          "package_name": "com.devdino.travelee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5vP5c9V7bTQVsCQFBwX9fWKvCMshxmdE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

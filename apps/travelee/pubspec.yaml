@@ -53,6 +53,13 @@ dependencies:
 
   google_mobile_ads: ^4.0.0
 
+  supabase_flutter: ^2.3.4
+  flutter_dotenv: ^5.2.1
+
+  google_sign_in: ^6.2.1
+  firebase_auth: ^4.17.4
+  firebase_core: ^2.25.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,7 +80,7 @@ flutter:
     - assets/icons/bytesize_close.svg # 닫기
     - assets/icons/bytesize_plus.svg # 추가
     - assets/icons/back.svg # 캘린더
-
+    - .env # 환경 변수
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -12,7 +12,7 @@ GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();
 final routerProvider = Provider<GoRouter>(
   (ref) {
     return GoRouter(
-      initialLocation: SavedTravelsScreen.routePath,
+      initialLocation: FirstScreen.routePath,
       debugLogDiagnostics: true,
       navigatorKey: mainNavigatorKey,
       observers: [],
