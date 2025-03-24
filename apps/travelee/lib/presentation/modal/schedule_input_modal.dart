@@ -9,7 +9,7 @@ import 'package:travelee/data/models/location/location_data.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/router.dart';
 import 'package:travelee/presentation/modal/time_picker_modal.dart';
-import 'package:travelee/presentation/screens/travel_detail/edit/location_search_screen.dart';
+import 'package:travelee/presentation/screens/travel_detail/location_search_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as dev;
 

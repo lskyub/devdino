@@ -20,8 +20,6 @@ import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
 import 'dart:developer' as dev;
 
 import 'package:travelee/core/utils/travel_dialog_manager.dart';
-import 'package:design_systems/dino/components/buttons/button.variant.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
