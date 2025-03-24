@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/data/controllers/travel_detail_controller.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart'
+import 'package:travelee/providers/travel_state_provider.dart'
     as travel_providers;
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';

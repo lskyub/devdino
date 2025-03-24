@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/data/models/location/country_info.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart';
+import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/modal/edit_travel_dialog.dart';
 
 /// TravelDialogManager

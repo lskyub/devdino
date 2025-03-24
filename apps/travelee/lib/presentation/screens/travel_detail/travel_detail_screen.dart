@@ -11,7 +11,7 @@ import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/data/services/database_helper.dart';
 import 'package:travelee/presentation/modal/country_select_modal.dart';
 import 'package:travelee/presentation/modal/schedule_input_modal.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart'
+import 'package:travelee/providers/travel_state_provider.dart'
     as travel_providers;
 import 'package:travelee/core/utils/result_types.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';

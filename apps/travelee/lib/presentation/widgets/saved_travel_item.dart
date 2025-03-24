@@ -5,7 +5,7 @@ import 'package:design_systems/dino/components/text/text.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart';
+import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/router.dart';
 import 'dart:math' as Math;
 

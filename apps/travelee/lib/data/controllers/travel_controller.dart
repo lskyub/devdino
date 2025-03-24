@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/data/managers/change_manager.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart' as travel_providers;
+import 'package:travelee/providers/travel_state_provider.dart' as travel_providers;
 import 'dart:developer' as dev;
 
 /// 단일화된 데이터 관리를 위한 통합 컨트롤러

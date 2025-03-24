@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:travelee/providers/ad_provider.dart';
 
-class AdBannerWidget extends StatefulWidget {
+class AdBannerWidget extends ConsumerStatefulWidget {
   const AdBannerWidget({super.key});
 
   @override
-  State<AdBannerWidget> createState() => _AdBannerWidgetState();
+  ConsumerState<AdBannerWidget> createState() => _AdBannerWidgetState();
 }
 
-class _AdBannerWidgetState extends State<AdBannerWidget> {
+class _AdBannerWidgetState extends ConsumerState<AdBannerWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 
@@ -46,7 +48,9 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isLoaded) {
+    final showBannerAd = ref.watch(adProvider).showBannerAd;
+    
+    if (!_isLoaded || !showBannerAd) {
       return const SizedBox.shrink();
     }
 

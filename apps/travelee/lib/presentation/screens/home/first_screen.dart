@@ -6,9 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show OAuthProvider;
-import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/core/config/firebase_config.dart';
+import 'package:travelee/presentation/screens/auth/signup_screen.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
@@ -144,17 +142,17 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                             title: '로그인',
                             onTap: () async {
                               try {
-                                final email = _emailController.text;
-                                final password = _passwordController.text;
+                                // final email = _emailController.text;
+                                // final password = _passwordController.text;
                                 
-                                await SupabaseConfig.client.auth.signInWithPassword(
-                                  email: email,
-                                  password: password,
-                                );
+                                // await SupabaseConfig.client.auth.signInWithPassword(
+                                //   email: email,
+                                //   password: password,
+                                // );
                                 
-                                if (context.mounted) {
+                                // if (context.mounted) {
                                   context.go(SavedTravelsScreen.routePath);
-                                }
+                                // }
                               } catch (e) {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +201,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                                 // final userCredential = await FirebaseConfig.signInWithGoogle();
                                 
                                 // if (userCredential != null && context.mounted) {
-                                //   context.go(SavedTravelsScreen.routePath);
+                                  context.go(SavedTravelsScreen.routePath);
                                 // }
                               } catch (e) {
                                 if (context.mounted) {
@@ -215,6 +213,17 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                                   );
                                 }
                               }
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: B2bButton.medium(
+                            type: B2bButtonType.secondary,
+                            title: '회원가입',
+                            onTap: () {
+                              context.push(SignUpScreen.routePath);
                             },
                           ),
                         ),

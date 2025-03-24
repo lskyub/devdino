@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/data/models/location/country_info.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart';
+import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'dart:developer' as dev;
 

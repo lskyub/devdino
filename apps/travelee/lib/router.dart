@@ -6,6 +6,7 @@ import 'package:travelee/presentation/screens/travel_detail/edit/date_screen.dar
 import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/edit/location_search_screen.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
+import 'package:travelee/presentation/screens/auth/signup_screen.dart';
 import 'dart:developer' as dev;
 
 GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();
@@ -68,6 +69,11 @@ final routerProvider = Provider<GoRouter>(
           name: SavedTravelsScreen.routeName,
           path: SavedTravelsScreen.routePath,
           builder: (context, state) => const SavedTravelsScreen(),
+        ),
+        GoRoute(
+          path: SignUpScreen.routePath,
+          name: SignUpScreen.routeName,
+          builder: (context, state) => const SignUpScreen(),
         ),
       ],
     );
