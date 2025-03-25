@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mix/mix.dart';
@@ -12,16 +13,27 @@ import 'package:travelee/core/config/supabase_config.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  
+
+  // // StatusBar 설정
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      // statusBarIconBrightness: Brightness.dark,
+      // systemNavigationBarColor: Colors.white,
+      // systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+    ),
+  );
   // 광고 초기화
   await MobileAds.instance.initialize();
-  
+
   // 수파베이스 초기화
   await SupabaseConfig.initialize();
-  
+
   // // Firebase 초기화
   // await FirebaseConfig.initialize();
-  
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -38,8 +50,7 @@ class MyApp extends ConsumerWidget {
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+          fontFamily: 'Pretendard',
         ),
         supportedLocales: const [
           Locale('ko', 'KR'),

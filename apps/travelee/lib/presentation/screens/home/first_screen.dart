@@ -1,7 +1,6 @@
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
@@ -33,10 +32,8 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           Image.asset(
@@ -48,7 +45,9 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: $dinoToken.color.black.resolve(context),
+            color: $dinoToken.color.black.resolve(context).withAlpha(
+                  (0.5 * 255).toInt(),
+                ),
           ),
           Center(
             child: SingleChildScrollView(
@@ -85,17 +84,23 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                           decoration: InputDecoration(
                             hintText: '이메일',
                             hintStyle: TextStyle(
-                              color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                              color: $dinoToken.color.white
+                                  .resolve(context)
+                                  .withAlpha(128),
                             ),
                             filled: true,
-                            fillColor: $dinoToken.color.white.resolve(context).withAlpha(26),
+                            fillColor: $dinoToken.color.white
+                                .resolve(context)
+                                .withAlpha(26),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide.none,
                             ),
                             prefixIcon: Icon(
                               Icons.email_outlined,
-                              color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                              color: $dinoToken.color.white
+                                  .resolve(context)
+                                  .withAlpha(128),
                             ),
                           ),
                         ),
@@ -109,22 +114,32 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                           decoration: InputDecoration(
                             hintText: '비밀번호',
                             hintStyle: TextStyle(
-                              color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                              color: $dinoToken.color.white
+                                  .resolve(context)
+                                  .withAlpha(128),
                             ),
                             filled: true,
-                            fillColor: $dinoToken.color.white.resolve(context).withAlpha(26),
+                            fillColor: $dinoToken.color.white
+                                .resolve(context)
+                                .withAlpha(26),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide.none,
                             ),
                             prefixIcon: Icon(
                               Icons.lock_outline,
-                              color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                              color: $dinoToken.color.white
+                                  .resolve(context)
+                                  .withAlpha(128),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-                                color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                                _isPasswordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: $dinoToken.color.white
+                                    .resolve(context)
+                                    .withAlpha(128),
                               ),
                               onPressed: () {
                                 setState(() {
@@ -144,20 +159,21 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                               try {
                                 // final email = _emailController.text;
                                 // final password = _passwordController.text;
-                                
+
                                 // await SupabaseConfig.client.auth.signInWithPassword(
                                 //   email: email,
                                 //   password: password,
                                 // );
-                                
+
                                 // if (context.mounted) {
-                                  context.go(SavedTravelsScreen.routePath);
+                                context.go(SavedTravelsScreen.routePath);
                                 // }
                               } catch (e) {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('로그인에 실패했습니다: ${e.toString()}'),
+                                      content:
+                                          Text('로그인에 실패했습니다: ${e.toString()}'),
                                       backgroundColor: Colors.red,
                                     ),
                                   );
@@ -171,21 +187,28 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                           children: [
                             Expanded(
                               child: Divider(
-                                color: $dinoToken.color.white.resolve(context).withAlpha(51),
+                                color: $dinoToken.color.white
+                                    .resolve(context)
+                                    .withAlpha(51),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
                                 '또는',
                                 style: TextStyle(
-                                  color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                                  color: $dinoToken.color.white
+                                      .resolve(context)
+                                      .withAlpha(128),
                                 ),
                               ),
                             ),
                             Expanded(
                               child: Divider(
-                                color: $dinoToken.color.white.resolve(context).withAlpha(51),
+                                color: $dinoToken.color.white
+                                    .resolve(context)
+                                    .withAlpha(51),
                               ),
                             ),
                           ],
@@ -199,15 +222,16 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                             onTap: () async {
                               try {
                                 // final userCredential = await FirebaseConfig.signInWithGoogle();
-                                
+
                                 // if (userCredential != null && context.mounted) {
-                                  context.go(SavedTravelsScreen.routePath);
+                                context.go(SavedTravelsScreen.routePath);
                                 // }
                               } catch (e) {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('구글 로그인에 실패했습니다: ${e.toString()}'),
+                                      content: Text(
+                                          '구글 로그인에 실패했습니다: ${e.toString()}'),
                                       backgroundColor: Colors.red,
                                     ),
                                   );

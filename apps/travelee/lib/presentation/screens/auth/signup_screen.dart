@@ -36,7 +36,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Future<void> _sendVerificationCode() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    
+
     setState(() {
       _emailError = ValidationUtils.validateEmail(email);
       _passwordError = ValidationUtils.validatePassword(password);
@@ -56,9 +56,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Future<void> _verifyAndSignUp() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    
+
     // 최종 확인을 위해 유효성 검사 한번 더 실행
-    if (!ValidationUtils.isEmailValid(email) || !ValidationUtils.isPasswordValid(password)) {
+    if (!ValidationUtils.isEmailValid(email) ||
+        !ValidationUtils.isPasswordValid(password)) {
       return;
     }
 
@@ -80,7 +81,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: $dinoToken.color.black.resolve(context),
+            color: $dinoToken.color.black.resolve(context).withAlpha(
+                  (0.5 * 255).toInt(),
+                ),
           ),
           SafeArea(
             child: SingleChildScrollView(
@@ -110,17 +113,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     decoration: InputDecoration(
                       hintText: '이메일',
                       hintStyle: TextStyle(
-                        color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                        color: $dinoToken.color.white
+                            .resolve(context)
+                            .withAlpha(128),
                       ),
                       filled: true,
-                      fillColor: $dinoToken.color.white.resolve(context).withAlpha(26),
+                      fillColor:
+                          $dinoToken.color.white.resolve(context).withAlpha(26),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
                       prefixIcon: Icon(
                         Icons.email_outlined,
-                        color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                        color: $dinoToken.color.white
+                            .resolve(context)
+                            .withAlpha(128),
                       ),
                       errorText: _emailError,
                       errorStyle: const TextStyle(
@@ -138,22 +146,31 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     decoration: InputDecoration(
                       hintText: '비밀번호 (6자리 이상)',
                       hintStyle: TextStyle(
-                        color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                        color: $dinoToken.color.white
+                            .resolve(context)
+                            .withAlpha(128),
                       ),
                       filled: true,
-                      fillColor: $dinoToken.color.white.resolve(context).withAlpha(26),
+                      fillColor:
+                          $dinoToken.color.white.resolve(context).withAlpha(26),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
                       prefixIcon: Icon(
                         Icons.lock_outline,
-                        color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                        color: $dinoToken.color.white
+                            .resolve(context)
+                            .withAlpha(128),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-                          color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                          _isPasswordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: $dinoToken.color.white
+                              .resolve(context)
+                              .withAlpha(128),
                         ),
                         onPressed: () {
                           setState(() {
@@ -186,17 +203,23 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       decoration: InputDecoration(
                         hintText: '인증번호 입력',
                         hintStyle: TextStyle(
-                          color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                          color: $dinoToken.color.white
+                              .resolve(context)
+                              .withAlpha(128),
                         ),
                         filled: true,
-                        fillColor: $dinoToken.color.white.resolve(context).withAlpha(26),
+                        fillColor: $dinoToken.color.white
+                            .resolve(context)
+                            .withAlpha(26),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
                         prefixIcon: Icon(
                           Icons.verified_user_outlined,
-                          color: $dinoToken.color.white.resolve(context).withAlpha(128),
+                          color: $dinoToken.color.white
+                              .resolve(context)
+                              .withAlpha(128),
                         ),
                       ),
                     ),
@@ -218,4 +241,4 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       ),
     );
   }
-} 
+}
