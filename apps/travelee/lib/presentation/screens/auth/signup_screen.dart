@@ -3,7 +3,7 @@ import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
-import 'package:travelee/core/utils/validation_utils.dart';
+import 'package:utils/utils.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   static const routeName = 'signup';

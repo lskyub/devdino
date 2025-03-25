@@ -1,4 +1,4 @@
-package com.devdino.travelee.travelee
+package com.devdino.travelee
 
 import io.flutter.embedding.android.FlutterActivity
 

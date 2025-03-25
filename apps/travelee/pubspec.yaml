@@ -14,6 +14,7 @@ dependencies:
 
   mix: ^1.5.2
   design_systems: ^1.0.0
+  utils: ^1.0.0
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.9 # SVG 이미지 렌더링
 

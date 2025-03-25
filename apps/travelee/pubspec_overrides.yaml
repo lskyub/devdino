@@ -1,4 +1,6 @@
-# melos_managed_dependency_overrides: design_systems
+# melos_managed_dependency_overrides: design_systems,utils
 dependency_overrides:
   design_systems:
     path: ../../packages/design_systems
+  utils:
+    path: ../../packages/utils

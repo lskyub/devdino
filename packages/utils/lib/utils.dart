@@ -1,3 +1,11 @@
+library;
+
+/// A Calculator.
+class Calculator {
+  /// Returns [value] plus 1.
+  int addOne(int value) => value + 1;
+}
+
 class ValidationUtils {
   static bool isEmailValid(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -21,4 +29,4 @@ class ValidationUtils {
     }
     return isPasswordValid(password) ? null : '비밀번호는 6자리 이상이어야 합니다.';
   }
-} 
+}

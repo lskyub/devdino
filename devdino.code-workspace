@@ -15,6 +15,10 @@
     {
       "name": "design_systems",
       "path": "./packages/design_systems"
+    },
+    {
+      "name": "utils",
+      "path": "./packages/utils"
     }
   ],
   "settings": {
@@ -26,5 +30,4 @@
     "workbench.tree.enableStickyScroll": true,
     "workbench.tree.stickyScrollMaxItemCount": 3
   },
-  "melos.executable.path": "/Users/devdino/.pub-cache/bin/melos"
 }
