@@ -8,6 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
+import 'package:utils/utils.dart';
+import 'dart:developer' as dev;
+import 'package:flutter/services.dart';
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
   static const routeName = 'saved_travels';
@@ -40,16 +43,16 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
 
     // 임시 여행 있으면 로그 출력
     if (tempTravels.isNotEmpty) {
-      print('SavedTravelsScreen - 임시 여행 데이터 삭제: ${tempTravels.length}개');
+      dev.log('SavedTravelsScreen - 임시 여행 데이터 삭제: ${tempTravels.length}개');
 
       // 임시 여행 삭제
       for (final travel in tempTravels) {
-        print(
+        dev.log(
             'SavedTravelsScreen - 임시 여행 삭제: ID=${travel.id}, 목적지=${travel.destination.join(", ")}');
         ref.read(travelsProvider.notifier).removeTravel(travel.id);
       }
     } else {
-      print('SavedTravelsScreen - 임시 여행 데이터 없음');
+      dev.log('SavedTravelsScreen - 임시 여행 데이터 없음');
     }
   }
 
@@ -71,18 +74,18 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     savedTravels.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     // 저장된 여행 목록 로깅 (상세 정보 포함)
-    print(
+    dev.log(
         'SavedTravelsScreen - 저장된 여행 목록: ${savedTravels.length}개 (전체: ${allTravels.length}개)');
     if (savedTravels.isNotEmpty) {
-      print('------- 여행 목록 상세 정보 -------');
+      dev.log('------- 여행 목록 상세 정보 -------');
       for (int i = 0; i < savedTravels.length; i++) {
         final travel = savedTravels[i];
-        print(' • 여행[$i]:');
-        print('   - ID: ${travel.id}');
-        print('   - 목적지: ${travel.destination.join(", ")}');
-        print('   - 기간: ${travel.startDate} ~ ${travel.endDate}');
+        dev.log(' • 여행[$i]:');
+        dev.log('   - ID: ${travel.id}');
+        dev.log('   - 목적지: ${travel.destination.join(", ")}');
+        dev.log('   - 기간: ${travel.startDate} ~ ${travel.endDate}');
       }
-      print('--------------------------------');
+      dev.log('--------------------------------');
     }
 
     return Scaffold(
@@ -135,14 +138,6 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                     },
                   ),
           ),
-          // const SafeArea(
-          //   child: Column(
-          //     children: [
-          //       AdBannerWidget(),
-          //       SizedBox(height: 16),
-          //     ],
-          //   ),
-          // ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),
