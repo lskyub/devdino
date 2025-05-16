@@ -52,7 +52,7 @@ class SavedTravelItem extends ConsumerWidget {
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        child: DinoText(
+                        child: B2bText(
                           type: DinoTextType.bodyM,
                           text: travel.destination.join(', '),
                         ),
@@ -107,7 +107,7 @@ class SavedTravelItem extends ConsumerWidget {
                         color: $dinoToken.color.primary.resolve(context),
                       ),
                       const SizedBox(width: 6),
-                      DinoText(
+                      B2bText(
                         type: DinoTextType.bodyS,
                         text:
                             '${formatDate(travel.startDate)} ~ ${formatDate(travel.endDate)}',
@@ -124,7 +124,7 @@ class SavedTravelItem extends ConsumerWidget {
                         color: $dinoToken.color.blingGray400.resolve(context),
                       ),
                       const SizedBox(width: 6),
-                      DinoText(
+                      B2bText(
                         type: DinoTextType.detailS,
                         text: '생성일: ${formatDate(travel.createdAt)}',
                         color: $dinoToken.color.blingGray400.resolve(context),
@@ -141,7 +141,7 @@ class SavedTravelItem extends ConsumerWidget {
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        child: DinoText(
+                        child: B2bText(
                           type: DinoTextType.detailS,
                           text:
                               'ID: ${travel.id.substring(0, Math.min(travel.id.length, 16))}...',

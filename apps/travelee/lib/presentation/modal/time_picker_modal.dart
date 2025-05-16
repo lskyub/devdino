@@ -69,7 +69,7 @@ class _TimePickerModalState extends State<TimePickerModal> {
         children: [
           Row(
             children: [
-              DinoText(
+              B2bText(
                 type: DinoTextType.bodyM,
                 text: '시간 설정',
                 color: $dinoToken.color.black.resolve(context),
@@ -96,7 +96,7 @@ class _TimePickerModalState extends State<TimePickerModal> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: DinoText(
+                child: B2bText(
                   type: DinoTextType.bodyM,
                   text: ':',
                   color: $dinoToken.color.black.resolve(context),
@@ -157,7 +157,7 @@ class _TimePickerModalState extends State<TimePickerModal> {
             final number = min + index;
             final isSelected = number == value;
             return Center(
-              child: DinoText(
+              child: B2bText(
                 type: DinoTextType.bodyM,
                 text: number.toString().padLeft(2, '0'),
                 color: isSelected

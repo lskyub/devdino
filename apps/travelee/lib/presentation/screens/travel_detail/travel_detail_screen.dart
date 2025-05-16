@@ -126,12 +126,12 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           ),
           title: Column(
             children: [
-              DinoText(
+              B2bText(
                 type: DinoTextType.bodyL,
                 text: travelInfo.destination.join(', '),
                 color: $dinoToken.color.black.resolve(context),
               ),
-              DinoText(
+              B2bText(
                 type: DinoTextType.detailL,
                 text:
                     '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
@@ -157,14 +157,14 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                   width: 70,
                   child: Align(
                     alignment: Alignment.center,
-                    child: DinoText(
+                    child: B2bText(
                       text: 'DATE',
                       type: DinoTextType.bodyS,
                       color: $dinoToken.color.black.resolve(context),
                     ),
                   ),
                 ),
-                DinoText(
+                B2bText(
                   text: 'EVENTS',
                   type: DinoTextType.bodyS,
                   color: $dinoToken.color.black.resolve(context),

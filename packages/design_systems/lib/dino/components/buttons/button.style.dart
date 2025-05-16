@@ -9,15 +9,41 @@ class B2bButtonStyle {
   final B2bButtonType type;
   final B2bButtonSize size;
 
-  Style container(B2bButtonState state) {
-    double horizontal = 24;
-    double vertical = 16;
-    double radius = 12;
+  Style container(
+    B2bButtonState state, {
+    double? horizontalPadding,
+    double? verticalPadding,
+    double? setRadius,
+    double? textSize,
+    double? iconSize,
+    double? textColor,
+    double? iconColor,
+    double? borderColor,
+    double? disabledTextColor,
+    double? disabledIconColor,
+    double? disabledBorderColor,
+    double? pressedTextColor,
+    double? pressedIconColor,
+    double? pressedBorderColor,
+    Color? backgroundColor,
+    Color? disabledBackgroundColor,
+    Color? pressedBackgroundColor,
+    Color? startColor,
+    Color? endColor,
+    Color? disabledStartColor,
+    Color? disabledEndColor,
+    Color? pressedStartColor,
+    Color? pressedEndColor,
+  }) {
+    double horizontal = horizontalPadding ?? 32;
+    double vertical = verticalPadding ?? 20;
+    double radius = setRadius ?? 12;
+
     TextStyleToken textStyleToken = $dinoToken.typography.bodyXL;
     switch (size) {
       case B2bButtonSize.large:
-        horizontal = 24;
-        vertical = 14;
+        horizontal = 32;
+        vertical = 20;
         textStyleToken = $dinoToken.typography.bodyL;
         break;
       case B2bButtonSize.medium:

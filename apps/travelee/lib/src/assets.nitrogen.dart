@@ -98,6 +98,27 @@ class $AssetsIcons {
         'assets/icons/logo.svg',
       );
 
+  /// The `assets/icons/add_schedule.svg`.
+  SvgAsset get addSchedule => const SvgAsset(
+        null,
+        'add_schedule',
+        'assets/icons/add_schedule.svg',
+      );
+
+  /// The `assets/icons/airplane.svg`.
+  SvgAsset get airplane => const SvgAsset(
+        null,
+        'airplane',
+        'assets/icons/airplane.svg',
+      );
+
+  /// The `assets/icons/topappbar_back.svg`.
+  SvgAsset get topappbarBack => const SvgAsset(
+        null,
+        'topappbar_back',
+        'assets/icons/topappbar_back.svg',
+      );
+
   /// The contents of this directory.
   Map<String, Asset> get contents => const {
         'back': const SvgAsset(
@@ -124,6 +145,21 @@ class $AssetsIcons {
           null,
           'logo',
           'assets/icons/logo.svg',
+        ),
+        'add_schedule': const SvgAsset(
+          null,
+          'logo',
+          'assets/icons/add_schedule.svg',
+        ),
+        'airplane': const SvgAsset(
+          null,
+          'logo',
+          'assets/icons/airplane.svg',
+        ),
+        'topappbar_back': const SvgAsset(
+          null,
+          'logo',
+          'assets/icons/topappbar_back.svg',
         ),
       };
 }

@@ -177,7 +177,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DinoText(
+                B2bText(
                   type: DinoTextType.bodyXL,
                   text: isEditMode ? '일정 수정' : '일정 추가',
                   color: $dinoToken.color.black.resolve(context),
@@ -198,7 +198,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DinoText(
+                      B2bText(
                         type: DinoTextType.bodyM,
                         text: '시간',
                         color: $dinoToken.color.black.resolve(context),
@@ -220,7 +220,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                           ),
                           child: Row(
                             children: [
-                              DinoText(
+                              B2bText(
                                 type: DinoTextType.bodyM,
                                 text:
                                     '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
@@ -243,7 +243,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DinoText(
+                      B2bText(
                         type: DinoTextType.bodyM,
                         text: '위치',
                         color: $dinoToken.color.black.resolve(context),
@@ -265,7 +265,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
                           ),
                           child: Row(
                             children: [
-                              const DinoText(
+                              const B2bText(
                                 type: DinoTextType.bodyM,
                                 text: '지도',
                               ),
@@ -285,7 +285,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
               ],
             ),
             const SizedBox(height: 16),
-            DinoText(
+            B2bText(
               type: DinoTextType.bodyM,
               text: '장소',
               color: $dinoToken.color.black.resolve(context),
@@ -304,7 +304,7 @@ class _ScheduleInputModalState extends ConsumerState<ScheduleInputModal> {
               },
             ),
             const SizedBox(height: 16),
-            DinoText(
+            B2bText(
               type: DinoTextType.bodyM,
               text: '메모',
               color: $dinoToken.color.black.resolve(context),

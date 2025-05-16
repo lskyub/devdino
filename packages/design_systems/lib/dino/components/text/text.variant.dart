@@ -22,3 +22,11 @@ class DinoTextType extends Variant {
   static const detailM = DinoTextType._('dino.text.type.detailM');
   static const detailS = DinoTextType._('dino.text.type.detailS');
 }
+
+class DinoTextAlign extends Variant {
+  const DinoTextAlign._(super.name);
+
+  static const left = DinoTextAlign._('dino.text.align.left');
+  static const right = DinoTextAlign._('dino.text.align.right');
+  static const center = DinoTextAlign._('dino.text.align.center');
+}

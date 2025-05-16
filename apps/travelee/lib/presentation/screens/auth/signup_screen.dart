@@ -99,7 +99,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  DinoText(
+                  B2bText(
                     type: DinoTextType.headingXL,
                     text: '회원가입',
                     color: $dinoToken.color.white.resolve(context),

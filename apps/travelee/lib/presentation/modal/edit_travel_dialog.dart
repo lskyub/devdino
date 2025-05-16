@@ -77,7 +77,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            DinoText(
+            B2bText(
               type: DinoTextType.bodyM,
               text: '여행 목적지',
               color: $dinoToken.color.black.resolve(context),
@@ -159,7 +159,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: DinoText(
+              child: B2bText(
                 type: DinoTextType.bodyM,
                 text: '여행 목적지를 추가해주세요',
                 color: $dinoToken.color.blingGray400.resolve(context),
@@ -194,7 +194,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                             style: const TextStyle(fontSize: 20),
                           ),
                           const SizedBox(width: 8),
-                          DinoText(
+                          B2bText(
                             type: DinoTextType.bodyM,
                             text: country,
                           ),
@@ -230,7 +230,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DinoText(
+        B2bText(
           type: DinoTextType.bodyM,
           text: '여행 기간',
           color: $dinoToken.color.black.resolve(context),
@@ -350,7 +350,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DinoText(
+                    B2bText(
                       type: DinoTextType.bodyM,
                       text: '여행 정보 수정',
                       color: $dinoToken.color.black.resolve(context),

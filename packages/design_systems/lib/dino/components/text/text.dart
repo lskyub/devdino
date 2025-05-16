@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
 import 'package:design_systems/dino/foundations/theme.dart';
 
-class DinoText extends StatelessWidget {
+class B2bText extends StatelessWidget {
   final String? text;
   final Color? color;
   final DinoTextType type;
-  const DinoText({
+
+  const B2bText({
     required this.type,
     this.text,
     this.color,

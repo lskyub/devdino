@@ -61,7 +61,7 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DinoText(
+              B2bText(
                 type: DinoTextType.bodyL,
                 text: '국가 선택',
                 color: $dinoToken.color.black.resolve(context),
@@ -80,7 +80,7 @@ class _CountrySelectModalState extends ConsumerState<CountrySelectModal> {
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32.0),
-                      child: DinoText(
+                      child: B2bText(
                         type: DinoTextType.bodyM,
                         text: '이 여행에 추가된 국가가 없습니다',
                         color: $dinoToken.color.blingGray400.resolve(context),

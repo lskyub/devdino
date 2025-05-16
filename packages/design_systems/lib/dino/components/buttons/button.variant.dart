@@ -1,6 +1,5 @@
 import 'package:mix/mix.dart';
 
-
 class B2bButtonType extends Variant {
   const B2bButtonType._(super.name);
 
@@ -11,25 +10,31 @@ class B2bButtonType extends Variant {
   static const primaryLight = B2bButtonType._('b2b.button.type.primary.light');
 
   /// Primary - Outlined
-  static const primaryOutlined = B2bButtonType._('b2b.button.type.primary.outlined');
+  static const primaryOutlined =
+      B2bButtonType._('b2b.button.type.primary.outlined');
 
   /// Secondary
   static const secondary = B2bButtonType._('b2b.button.type.secondary');
 
   /// Secondary - Round
-  static const secondaryRound = B2bButtonType._('b2b.button.type.secondary.round');
+  static const secondaryRound =
+      B2bButtonType._('b2b.button.type.secondary.round');
 
   /// Tertiary - Negative
-  static const tertiaryNegative = B2bButtonType._('b2b.button.type.tertiary.negative');
+  static const tertiaryNegative =
+      B2bButtonType._('b2b.button.type.tertiary.negative');
 
   /// Tertiary - Light Negative
-  static const tertiaryNegativeLight = B2bButtonType._('b2b.button.type.tertiary.negative.light');
+  static const tertiaryNegativeLight =
+      B2bButtonType._('b2b.button.type.tertiary.negative.light');
 
   /// Tertiary - Line Negative
-  static const tertiaryNegativeOutlined = B2bButtonType._('b2b.button.type.tertiary.negative.outlined');
-  
+  static const tertiaryNegativeOutlined =
+      B2bButtonType._('b2b.button.type.tertiary.negative.outlined');
+
   /// Tertiary - Postive
-  static const tertiaryPostive = B2bButtonType._('b2b.button.type.tertiary.postive');
+  static const tertiaryPostive =
+      B2bButtonType._('b2b.button.type.tertiary.postive');
 }
 
 class B2bButtonSize extends Variant {
@@ -46,4 +51,17 @@ class B2bButtonState extends Variant {
   // static const active = B2bButtonState._('b2b.button.state.active');
   static const pressed = B2bButtonState._('b2b.button.state.pressed');
   static const disabled = B2bButtonState._('b2b.button.state.disabled');
+}
+
+class DinoButtonType extends Variant {
+  const DinoButtonType._(super.name);
+  static const solid = DinoButtonType._('dino.button.type.solid');
+  static const outline = DinoButtonType._('dino.button.type.outline');
+}
+
+class DinoButtonState extends Variant {
+  const DinoButtonState._(super.name);
+  static const base = DinoButtonState._('dino.button.state.base');
+  static const pressed = DinoButtonState._('dino.button.state.pressed');
+  static const disabled = DinoButtonState._('dino.button.state.disabled');
 }

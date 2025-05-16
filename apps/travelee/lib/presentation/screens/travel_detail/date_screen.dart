@@ -84,7 +84,7 @@ class DateScreen extends ConsumerWidget {
                 color: $dinoToken.color.primary.resolve(context),
               ),
               const SizedBox(height: 16),
-              const DinoText(
+              const B2bText(
                 type: DinoTextType.bodyM,
                 text: '새 여행 생성 중...',
               ),
@@ -101,7 +101,7 @@ class DateScreen extends ConsumerWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: Colors.transparent, // 자동 색상 변
-        title: DinoText(
+        title: B2bText(
           type: DinoTextType.bodyXL,
           text: '여행 기간',
           color: $dinoToken.color.black.resolve(context),
@@ -144,7 +144,7 @@ class DateScreen extends ConsumerWidget {
               top: 16,
               bottom: 8,
             ),
-            child: DinoText(
+            child: B2bText(
               type: DinoTextType.bodyM,
               text: '여행 목적지를 추가 하세요.',
               color: $dinoToken.color.black.resolve(context),
@@ -181,7 +181,7 @@ class DateScreen extends ConsumerWidget {
                           style: const TextStyle(fontSize: 20),
                         ),
                         const SizedBox(width: 8),
-                        DinoText(
+                        B2bText(
                           type: DinoTextType.detailL,
                           text: data,
                         ),
@@ -312,7 +312,7 @@ class DateScreen extends ConsumerWidget {
               right: 16,
               top: 16,
             ),
-            child: DinoText(
+            child: B2bText(
               type: DinoTextType.bodyM,
               text: '여행 기간을 선택하세요.',
               color: $dinoToken.color.black.resolve(context),

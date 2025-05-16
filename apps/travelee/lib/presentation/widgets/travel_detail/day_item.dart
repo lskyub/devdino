@@ -57,7 +57,7 @@ class _DayItemState extends ConsumerState<DayItem> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DinoText(
+                  B2bText(
                     type: DinoTextType.bodyM,
                     text: widget.dayData.date.day.toString().padLeft(2, '0'),
                     color: $dinoToken.color.black.resolve(context),
@@ -159,7 +159,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                                         ),
                                         child: const Icon(Icons.add),
                                       ),
-                                      DinoText(
+                                      B2bText(
                                         text: '일정 추가 하기',
                                         type: DinoTextType.detailL,
                                         color: $dinoToken.color.blingGray400

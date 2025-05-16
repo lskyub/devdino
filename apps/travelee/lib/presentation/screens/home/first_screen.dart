@@ -66,7 +66,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                     width: 281,
                   ),
                   const SizedBox(height: 25),
-                  DinoText(
+                  B2bText(
                     type: DinoTextType.bodyL,
                     text: '여행의 꿈에 뛰어들어\n오늘부터 계획을 세우세요!',
                     color: $dinoToken.color.white.resolve(context),

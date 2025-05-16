@@ -1,16 +1,16 @@
+import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:design_systems/dino/foundations/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:design_systems/dino/components/text/text.dart';
+import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
+import 'package:design_systems/dino/components/buttons/button.dino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
-import 'package:utils/utils.dart';
 import 'dart:developer' as dev;
-import 'package:flutter/services.dart';
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
   static const routeName = 'saved_travels';
@@ -93,12 +93,12 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         leading: null,
-        title: SvgPicture.asset(
-          'assets/icons/logo.svg',
-          width: 120,
-          colorFilter: ColorFilter.mode(
-            $dinoToken.color.primary.resolve(context),
-            BlendMode.srcIn,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: DinoText.custom(
+            fontSize: 25.63,
+            text: '트래블리 로고',
+            fontWeight: FontWeight.w700,
           ),
         ),
         backgroundColor: Colors.white,
@@ -112,17 +112,59 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.flight,
-                          size: 48,
-                          color: $dinoToken.color.blingGray400.resolve(context),
+                        SvgPicture.asset(
+                          'assets/icons/airplane.svg',
                         ),
-                        const SizedBox(height: 16),
-                        DinoText(
-                          type: DinoTextType.bodyL,
-                          text: '저장된 여행이 없습니다',
-                          color: $dinoToken.color.blingGray400.resolve(context),
+                        const SizedBox(height: 24),
+                        DinoText.custom(
+                          fontSize: 25.63,
+                          text: '어디로 떠나시나요?',
+                          color: $dinoToken.color.blingGray800,
+                          fontWeight: FontWeight.w700,
+                          textAlign: DinoTextAlign.center,
                         ),
+                        DinoText.custom(
+                          fontSize: 16,
+                          text: '여행지를 추가하고 일정을 정리하여\n완벽한 휴가를 즐겨보세요. ',
+                          color: $dinoToken.color.blingGray500,
+                          textAlign: DinoTextAlign.center,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        const SizedBox(height: 24),
+                        DinoButton.custom(
+                          type: DinoButtonType.solid,
+                          title: '여행 추가하기',
+                          leading: Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: SvgPicture.asset(
+                              'assets/icons/add_schedule.svg',
+                              width: 20,
+                              height: 20,
+                              colorFilter: ColorFilter.mode(
+                                $dinoToken.color.white.resolve(context),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                          textSize: 16,
+                          radius: 28,
+                          textColor: $dinoToken.color.white,
+                          backgroundColor: $dinoToken.color.primary,
+                          gradient: LinearGradient(
+                            colors: [
+                              $dinoToken.color.brandBlingPlum700
+                                  .resolve(context),
+                              $dinoToken.color.brandBlingPurple700
+                                  .resolve(context),
+                            ],
+                          ),
+                          onTap: () {
+                            ref.read(currentTravelIdProvider.notifier).state =
+                                '';
+                            context.push(DateScreen.routePath);
+                          },
+                        ),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   )
@@ -138,41 +180,43 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                     },
                   ),
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                onPressed: () {
-                  ref.read(currentTravelIdProvider.notifier).state = '';
-                  context.push(DateScreen.routePath);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: $dinoToken.color.primary.resolve(context),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/bytesize_plus.svg',
+          if (savedTravels.isNotEmpty) ...[
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: DinoButton.custom(
+                  type: DinoButtonType.solid,
+                  title: '여행 추가하기',
+                  leading: Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: SvgPicture.asset(
+                      'assets/icons/add_schedule.svg',
                       width: 20,
                       height: 20,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
+                      colorFilter: ColorFilter.mode(
+                        $dinoToken.color.white.resolve(context),
                         BlendMode.srcIn,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    const Text('여행 추가하기'),
-                  ],
+                  ),
+                  textSize: 16,
+                  radius: 28,
+                  textColor: $dinoToken.color.white,
+                  backgroundColor: $dinoToken.color.primary,
+                  gradient: LinearGradient(
+                    colors: [
+                      $dinoToken.color.brandBlingPlum700.resolve(context),
+                      $dinoToken.color.brandBlingPurple700.resolve(context),
+                    ],
+                  ),
+                  onTap: () {
+                    ref.read(currentTravelIdProvider.notifier).state = '';
+                    context.push(DateScreen.routePath);
+                  },
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

@@ -20,18 +20,18 @@ class TravelDialogManager {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const DinoText(
+        title: const B2bText(
           type: DinoTextType.bodyXL,
           text: '날짜 삭제 확인',
         ),
-        content: const DinoText(
+        content: const B2bText(
           type: DinoTextType.bodyL,
           text: '해당 날짜의 모든 일정이 삭제됩니다.\n계속하시겠습니까?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: DinoText(
+            child: B2bText(
               type: DinoTextType.bodyL,
               text: '취소',
               color: $dinoToken.color.blingGray400.resolve(context),
@@ -39,7 +39,7 @@ class TravelDialogManager {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const DinoText(
+            child: const B2bText(
               type: DinoTextType.bodyXL,
               text: '삭제',
               color: Colors.red,

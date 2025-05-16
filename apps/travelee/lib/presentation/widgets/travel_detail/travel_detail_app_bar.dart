@@ -33,13 +33,13 @@ class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DinoText(
+          B2bText(
               type: DinoTextType.bodyM,
               text:
                   '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}'),
           Row(
             children: [
-              DinoText(
+              B2bText(
                 type: DinoTextType.detailL,
                 text: travelInfo.destination.join(', '),
                 color: $dinoToken.color.blingGray500.resolve(context),

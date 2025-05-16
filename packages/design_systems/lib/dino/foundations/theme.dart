@@ -101,7 +101,7 @@ final dinoTheme = MixThemeData(
       // height: DinoLineHeightToken.lineHeight200,
     ),
     $dinoToken.typography.detailXL: const TextStyle(
-      fontSize: DinoTextSizeToken.text100,
+      fontSize: DinoTextSizeToken.text200,
       fontWeight: FontWeight.w400,
       fontFamily: 'Pretendard',
       // height: DinoLineHeightToken.lineHeight100,
