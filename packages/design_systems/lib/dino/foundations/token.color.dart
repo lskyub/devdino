@@ -4,7 +4,7 @@ class DinoColorToken {
   const DinoColorToken();
   ColorToken get black => const ColorToken('black');
   ColorToken get white => const ColorToken('white');
-
+  ColorToken get transparent => const ColorToken('transparent');
   ColorToken get shadow00s => const ColorToken('shadow00s');
   ColorToken get shadow04s => const ColorToken('shadow04s');
   ColorToken get shadow08s => const ColorToken('shadow08s');

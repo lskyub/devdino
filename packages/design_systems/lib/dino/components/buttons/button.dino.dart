@@ -28,6 +28,7 @@ class DinoButton extends StatelessWidget {
   final LinearGradient? gradient;
   final Widget? leading;
   final Widget? trailing;
+  final DinoButtonSize size;
 
   const DinoButton(
       {super.key,
@@ -42,6 +43,7 @@ class DinoButton extends StatelessWidget {
       this.width,
       required this.title,
       this.state = DinoButtonState.base,
+      this.size = DinoButtonSize.wrap,
       this.textSize,
       this.textMaxLines,
       this.iconSize,
@@ -56,7 +58,7 @@ class DinoButton extends StatelessWidget {
       this.pressedBackgroundColor,
       this.gradient});
 
-  DinoButtonStyle get $style => DinoButtonStyle(type);
+  DinoButtonStyle get $style => DinoButtonStyle(type, size);
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +101,7 @@ class DinoButton extends StatelessWidget {
   factory DinoButton.custom({
     required String title,
     required DinoButtonType type,
+    DinoButtonSize? size,
     Widget? leading,
     Widget? trailing,
     double? radius,
@@ -107,8 +110,6 @@ class DinoButton extends StatelessWidget {
     double? textSize,
     int? textMaxLines,
     double? iconSize,
-    double? height,
-    double? width,
     ColorToken? textColor,
     ColorToken? borderColor,
     ColorToken? disabledTextColor,
@@ -127,9 +128,8 @@ class DinoButton extends StatelessWidget {
       onTap: onTap,
       type: type,
       state: state,
+      size: size ?? DinoButtonSize.wrap,
       radius: radius,
-      height: height,
-      width: width,
       leading: leading,
       trailing: trailing,
       horizontalPadding: horizontalPadding,

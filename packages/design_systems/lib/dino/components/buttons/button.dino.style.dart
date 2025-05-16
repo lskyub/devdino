@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
 
 class DinoButtonStyle {
-  DinoButtonStyle(this.type);
+  DinoButtonStyle(this.type, this.size);
 
   final DinoButtonType type;
-
+  final DinoButtonSize size;
   Style container(
     DinoButtonState state, {
     double? horizontalPadding,
@@ -31,10 +31,8 @@ class DinoButtonStyle {
     double horizontal = horizontalPadding ?? 35;
     double vertical = verticalPadding ?? 16;
     double radius = setRadius ?? 12;
+    print(size);
     return Style(
-      $flex.chain
-        ..mainAxisAlignment.center()
-        ..mainAxisSize.min(),
       $box.chain
         ..padding.horizontal(horizontal)
         ..padding.vertical(vertical)
@@ -53,18 +51,30 @@ class DinoButtonStyle {
         ..decoration.none()
         ..style.fontFamily('Pretendard')
         ..style.color.ref(textColor ?? $dinoToken.color.white),
+      DinoButtonSize.full(
+        $flex.chain
+          ..mainAxisAlignment.center()
+          ..mainAxisSize.max(),
+      ),
+      DinoButtonSize.wrap(
+        $flex.chain
+          ..mainAxisAlignment.center()
+          ..mainAxisSize.min(),
+      ),
       DinoButtonType.solid(
         $on.press(
           $box.color.ref(state == B2bButtonState.pressed
               ? pressedBackgroundColor ?? $dinoToken.color.brandBlingPink400
               : backgroundColor ?? $dinoToken.color.blingGray100),
-          $text.style.color.ref(pressedTextColor ?? $dinoToken.color.blingGray100),
+          $text.style.color
+              .ref(pressedTextColor ?? $dinoToken.color.blingGray100),
         ),
         $on.disabled(
           $box.color.ref(state == B2bButtonState.disabled
               ? disabledBackgroundColor ?? $dinoToken.color.brandBlingPink500
               : backgroundColor ?? $dinoToken.color.brandBlingPink500),
-          $text.style.color.ref(disabledTextColor ?? $dinoToken.color.blingGray100),
+          $text.style.color
+              .ref(disabledTextColor ?? $dinoToken.color.blingGray100),
         ),
       ),
       DinoButtonType.outline(
@@ -78,7 +88,8 @@ class DinoButtonStyle {
           $box.color.ref(state == B2bButtonState.pressed
               ? pressedBackgroundColor ?? $dinoToken.color.brandBlingPink400
               : backgroundColor ?? $dinoToken.color.blingGray100),
-          $text.style.color.ref(pressedTextColor ?? $dinoToken.color.blingGray100),
+          $text.style.color
+              .ref(pressedTextColor ?? $dinoToken.color.blingGray100),
         ),
         $on.disabled(
           $box.border(
@@ -90,9 +101,22 @@ class DinoButtonStyle {
           $box.color.ref(state == B2bButtonState.disabled
               ? disabledBackgroundColor ?? $dinoToken.color.brandBlingPink500
               : backgroundColor ?? $dinoToken.color.blingGray100),
-          $text.style.color.ref(disabledTextColor ?? $dinoToken.color.blingGray100),
+          $text.style.color
+              .ref(disabledTextColor ?? $dinoToken.color.blingGray100),
         ),
       ),
-    ).applyVariants([type]);
+      DinoButtonType.empty(
+        $on.press(
+          $box.color.ref($dinoToken.color.transparent),
+          $text.style.color
+              .ref(pressedTextColor ?? $dinoToken.color.blingGray100),
+        ),
+        $on.disabled(
+          $box.color.ref($dinoToken.color.transparent),
+          $text.style.color
+              .ref(disabledTextColor ?? $dinoToken.color.blingGray100),
+        ),
+      ),
+    ).applyVariants([type, size]);
   }
 }

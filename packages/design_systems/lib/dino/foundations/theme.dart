@@ -128,6 +128,7 @@ final dinoTheme = MixThemeData(
   colors: {
     $dinoToken.color.black: const Color(0xFF000000),
     $dinoToken.color.white: const Color(0xFFFFFFFF),
+    $dinoToken.color.transparent: const Color(0x00000000),
     $dinoToken.color.shadow00s: const Color(0x6D758305),
     $dinoToken.color.shadow04s: const Color(0x6D75830A),
     $dinoToken.color.shadow08s: const Color(0x6D758314),

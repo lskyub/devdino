@@ -57,6 +57,7 @@ class DinoButtonType extends Variant {
   const DinoButtonType._(super.name);
   static const solid = DinoButtonType._('dino.button.type.solid');
   static const outline = DinoButtonType._('dino.button.type.outline');
+  static const empty = DinoButtonType._('dino.button.type.outline.empty');
 }
 
 class DinoButtonState extends Variant {
@@ -64,4 +65,10 @@ class DinoButtonState extends Variant {
   static const base = DinoButtonState._('dino.button.state.base');
   static const pressed = DinoButtonState._('dino.button.state.pressed');
   static const disabled = DinoButtonState._('dino.button.state.disabled');
+}
+
+class DinoButtonSize extends Variant {
+  const DinoButtonSize._(super.name);
+  static const full = DinoButtonSize._('dino.button.size.full');
+  static const wrap = DinoButtonSize._('dino.button.size.wrap');
 }
