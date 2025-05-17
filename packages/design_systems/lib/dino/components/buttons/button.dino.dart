@@ -67,7 +67,7 @@ class DinoButton extends StatelessWidget {
       onPress: onTap,
       child: HBox(
         style: $style.container(
-          state,
+          state: state,
           horizontalPadding: horizontalPadding,
           verticalPadding: verticalPadding,
           setRadius: radius,

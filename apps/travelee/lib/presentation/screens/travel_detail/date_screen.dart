@@ -105,9 +105,6 @@ class _DateScreenState extends ConsumerState<DateScreen> {
       );
     }
 
-    final startDate = _formatDate(travelInfo.startDate);
-    final endDate = _formatDate(travelInfo.endDate);
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -182,6 +179,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                   horizontalPadding: 0,
                   textColor: $dinoToken.color.brandBlingBlue700,
                   backgroundColor: $dinoToken.color.transparent,
+                  pressedTextColor: $dinoToken.color.brandBlingBlue700,
                   radius: 28,
                   textSize: 12.64,
                   trailing: Padding(
@@ -208,22 +206,36 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                         bottomSheetHeight:
                             MediaQuery.of(context).size.height * 0.7,
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16.0),
-                          topRight: Radius.circular(16.0),
+                          topLeft: Radius.circular(24.0),
+                          topRight: Radius.circular(24.0),
                         ),
                         inputDecoration: InputDecoration(
-                          labelText: '국가 검색',
-                          hintText: '국가 이름을 입력하세요',
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: $dinoToken.color.black.resolve(context),
+                            hintText: '국가 이름을 검색해주세요',
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              color: $dinoToken.color.blingGray400
+                                  .resolve(context),
+                              fontWeight: FontWeight.w400,
                             ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8.0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: SvgPicture.asset(
+                                'assets/icons/search.svg',
+                              ),
                             ),
-                          ),
-                        ),
+                            prefixIconConstraints: const BoxConstraints(
+                              maxHeight: 48,
+                              maxWidth: 48,
+                            ),
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(12.0),
+                              ),
+                            ),
+                            filled: true,
+                            fillColor:
+                                $dinoToken.color.blingGray75.resolve(context)),
                       ),
                       onSelect: (Country country) {
                         // Country 객체 정보와 함께 저장
@@ -483,7 +495,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       Widget dayText = DinoText.custom(
                         fontSize: 16,
                         text: date.day.toString(),
-                        color: isStart || isEnd
+                        color: isStart || isEnd 
                             ? $dinoToken.color.white
                             : date.weekday == DateTime.sunday
                                 ? $dinoToken.color.brandBlingRed800
@@ -594,7 +606,14 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                   type: DinoButtonType.solid,
                   size: DinoButtonSize.full,
                   title: '여행 정보 등록하기',
+                  state: travelInfo.startDate == null ||
+                          travelInfo.endDate == null ||
+                          travelInfo.destination.isEmpty
+                      ? DinoButtonState.disabled
+                      : DinoButtonState.base,
                   backgroundColor: $dinoToken.color.brandBlingPurple600,
+                  disabledBackgroundColor: $dinoToken.color.blingGray300,
+                  textColor: $dinoToken.color.white,
                   onTap: () {
                     if (travelInfo.startDate == null ||
                         travelInfo.endDate == null ||

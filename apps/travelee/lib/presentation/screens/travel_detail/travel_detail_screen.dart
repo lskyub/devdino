@@ -1,3 +1,4 @@
+import 'package:country_icons/country_icons.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ import 'dart:developer' as dev;
 
 import 'package:travelee/core/utils/travel_dialog_manager.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:design_systems/dino/components/text/text.dino.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -113,116 +116,130 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent, // 자동 색상 변화 방지
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () => _handleBackNavigation(context),
-            icon: Icon(
-              Icons.home,
-              color: $dinoToken.color.blingGray600.resolve(context),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // 위쪽 정렬
+                children: [
+                  GestureDetector(
+                    onTap: () => _handleBackNavigation(context),
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 24, top: 8),
+                      child: SvgPicture.asset(
+                        'assets/icons/home.svg',
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CountryIcons.getSvgFlag(
+                              travelInfo.countryInfos.first.countryCode),
+                          const SizedBox(width: 8),
+                          DinoText.custom(
+                            fontSize: 17,
+                            text: travelInfo.destination.join(', '),
+                            color: $dinoToken.color.blingGray900,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                      DinoText.custom(
+                        fontSize: 11.24,
+                        text:
+                            '여행기간: ${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
+                        color: $dinoToken.color.blingGray400,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: _refreshAllData,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16, top: 2),
+                      child: SvgPicture.asset(
+                        'assets/icons/setting.svg',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          title: Column(
-            children: [
-              B2bText(
-                type: DinoTextType.bodyL,
-                text: travelInfo.destination.join(', '),
-                color: $dinoToken.color.black.resolve(context),
-              ),
-              B2bText(
-                type: DinoTextType.detailL,
-                text:
-                    '${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
-                color: $dinoToken.color.blingGray600.resolve(context),
-              )
-            ],
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.settings,
-                color: $dinoToken.color.blingGray600.resolve(context),
-              ),
-              onPressed: _refreshAllData,
-            ),
-          ],
         ),
         body: Column(
           children: [
-            Row(
-              children: [
-                SizedBox(
-                  width: 70,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: B2bText(
-                      text: 'DATE',
-                      type: DinoTextType.bodyS,
-                      color: $dinoToken.color.black.resolve(context),
-                    ),
-                  ),
-                ),
-                B2bText(
-                  text: 'EVENTS',
-                  type: DinoTextType.bodyS,
-                  color: $dinoToken.color.black.resolve(context),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: isEdit
-                      ? Icon(
-                          Icons.visibility,
-                          color: $dinoToken.color.blingGray600.resolve(context),
-                        )
-                      : Icon(
-                          Icons.edit,
-                          color: $dinoToken.color.blingGray600.resolve(context),
-                        ),
-                  onPressed: () {
-                    setState(() {
-                      isEdit = !isEdit;
-                    });
-                  },
-                ),
-              ],
+            // Row(
+            //   children: [
+            //     SizedBox(
+            //       width: 70,
+            //       child: Align(
+            //         alignment: Alignment.center,
+            //         child: B2bText(
+            //           text: 'DATE',
+            //           type: DinoTextType.bodyS,
+            //           color: $dinoToken.color.black.resolve(context),
+            //         ),
+            //       ),
+            //     ),
+            //     B2bText(
+            //       text: 'EVENTS',
+            //       type: DinoTextType.bodyS,
+            //       color: $dinoToken.color.black.resolve(context),
+            //     ),
+            //     const Spacer(),
+            //     IconButton(
+            //       icon: isEdit
+            //           ? Icon(
+            //               Icons.visibility,
+            //               color: $dinoToken.color.blingGray600.resolve(context),
+            //             )
+            //           : Icon(
+            //               Icons.edit,
+            //               color: $dinoToken.color.blingGray600.resolve(context),
+            //             ),
+            //       onPressed: () {
+            //         setState(() {
+            //           isEdit = !isEdit;
+            //         });
+            //       },
+            //     ),
+            //   ],
+            // ),
+            Divider(
+              color: $dinoToken.color.blingGray75.resolve(context),
             ),
+            const SizedBox(height: 20),
             Expanded(
               child: Stack(
                 children: [
                   ListView.builder(
                     itemCount: daySchedules.length,
                     itemBuilder: (context, index) {
+                      var colorIndex = 0;
+                      for (var i = 0; i < index; i++) {
+                        colorIndex += daySchedules[i].schedules.length;
+                      }
                       return DayItem(
                         index: index,
                         isEdit: isEdit,
                         dayData: daySchedules[index],
                         onScheduleTap: _editSchedule,
                         onScheduleDrop: _onScheduleDrop,
-                        getScheduleColor: _getScheduleColor,
                         onSelectCountry: _selectCountry,
                         addSchedule: _addSchedule,
                         deleteSchedule: _deleteSchedule,
+                        colorStartIndex: colorIndex,
                       );
                     },
                   ),
-                  Container(
-                    height: 4,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          $dinoToken.color.blingGray200
-                              .resolve(context)
-                              .withAlpha((0.2 * 255).toInt()),
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -238,19 +255,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         ),
       ),
     );
-  }
-
-  Color _getScheduleColor(String location) {
-    // 간단한 해시 기반 색상 선택
-    final colors = [
-      Colors.blue.shade400,
-      Colors.teal.shade400,
-      Colors.pink.shade300,
-      Colors.purple.shade300,
-      Colors.orange.shade300,
-    ];
-
-    return colors[location.hashCode % colors.length];
   }
 
   List<DayScheduleData> _buildDaySchedulesFromDates(

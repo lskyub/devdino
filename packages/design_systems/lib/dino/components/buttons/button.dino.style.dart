@@ -8,8 +8,9 @@ class DinoButtonStyle {
 
   final DinoButtonType type;
   final DinoButtonSize size;
-  Style container(
-    DinoButtonState state, {
+
+  Style container({
+    DinoButtonState? state,
     double? horizontalPadding,
     double? verticalPadding,
     double? setRadius,
@@ -31,7 +32,6 @@ class DinoButtonStyle {
     double horizontal = horizontalPadding ?? 35;
     double vertical = verticalPadding ?? 16;
     double radius = setRadius ?? 12;
-    print(size);
     return Style(
       $box.chain
         ..padding.horizontal(horizontal)
@@ -63,14 +63,14 @@ class DinoButtonStyle {
       ),
       DinoButtonType.solid(
         $on.press(
-          $box.color.ref(state == B2bButtonState.pressed
+          $box.color.ref(state == DinoButtonState.pressed
               ? pressedBackgroundColor ?? $dinoToken.color.brandBlingPink400
               : backgroundColor ?? $dinoToken.color.blingGray100),
           $text.style.color
               .ref(pressedTextColor ?? $dinoToken.color.blingGray100),
         ),
         $on.disabled(
-          $box.color.ref(state == B2bButtonState.disabled
+          $box.color.ref(state == DinoButtonState.disabled
               ? disabledBackgroundColor ?? $dinoToken.color.brandBlingPink500
               : backgroundColor ?? $dinoToken.color.brandBlingPink500),
           $text.style.color
@@ -85,7 +85,7 @@ class DinoButtonStyle {
             width: 1,
             strokeAlign: BorderSide.strokeAlignOutside,
           ),
-          $box.color.ref(state == B2bButtonState.pressed
+          $box.color.ref(state == DinoButtonState.pressed
               ? pressedBackgroundColor ?? $dinoToken.color.brandBlingPink400
               : backgroundColor ?? $dinoToken.color.blingGray100),
           $text.style.color
@@ -98,7 +98,7 @@ class DinoButtonStyle {
             width: 1,
             strokeAlign: BorderSide.strokeAlignOutside,
           ),
-          $box.color.ref(state == B2bButtonState.disabled
+          $box.color.ref(state == DinoButtonState.disabled
               ? disabledBackgroundColor ?? $dinoToken.color.brandBlingPink500
               : backgroundColor ?? $dinoToken.color.blingGray100),
           $text.style.color
