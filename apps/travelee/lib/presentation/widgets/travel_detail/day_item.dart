@@ -59,8 +59,8 @@ class _DayItemState extends ConsumerState<DayItem> {
   @override
   Widget build(BuildContext context) {
     var color = widget.dayData.schedules.isEmpty
-        ? $dinoToken.color.blingGray300.resolve(context)
-        : $dinoToken.color.brandBlingPurple600.resolve(context);
+        ? $dinoToken.color.blingGray300
+        : $dinoToken.color.brandBlingPurple600;
 
     return IntrinsicHeight(
       child: Row(
@@ -87,10 +87,10 @@ class _DayItemState extends ConsumerState<DayItem> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: color,
+                            color: color.resolve(context),
                             width: 0.5,
                           ),
-                          color: color,
+                          color: color.resolve(context),
                         ),
                         child: ClipOval(
                           child: Center(
@@ -105,11 +105,12 @@ class _DayItemState extends ConsumerState<DayItem> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 4),
                       DinoText.custom(
                         text: 'day ${widget.index + 1}',
-                        color: $dinoToken.color.blingGray400,
+                        color: color,
                         fontSize: 9.99,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w700,
                       )
                     ],
                   ),
@@ -120,10 +121,9 @@ class _DayItemState extends ConsumerState<DayItem> {
                   constraints: const BoxConstraints(
                     minHeight: 30,
                   ),
-                  padding: const EdgeInsets.only(top: 5, bottom: 10),
+                  padding: const EdgeInsets.only(top: 8, bottom: 10),
                   child: VerticalDivider(
-                    color: $dinoToken.color.blingGray300.resolve(context),
-                    width: 0.5,
+                    color: color.resolve(context),
                     thickness: 0.5,
                   ),
                 ),
@@ -176,7 +176,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                             borderType: BorderType.RRect,
                             radius: const Radius.circular(10), // 둥근 사각형
                             child: SizedBox(
-                              height: 40,
+                              height: 44,
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Row(
@@ -192,11 +192,12 @@ class _DayItemState extends ConsumerState<DayItem> {
                                         'assets/icons/add_plan.svg',
                                       ),
                                     ),
+                                    const SizedBox(width: 4),
                                     DinoText.custom(
                                       text: '일정 추가 하기',
                                       color: $dinoToken.color.blingGray400,
                                       fontSize: 14.22,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w600,
                                     )
                                   ],
                                 ),

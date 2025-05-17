@@ -525,7 +525,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                       ? Alignment.centerRight
                                       : Alignment.centerLeft,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFF3E7FC), // 연보라색
+                                    color: Color(0xFFE9DDFB), // 연보라색
                                     shape: BoxShape.rectangle,
                                   ),
                                 ),

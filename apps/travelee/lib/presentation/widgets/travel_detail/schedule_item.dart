@@ -25,12 +25,13 @@ class ScheduleItem extends ConsumerWidget {
       maxSimultaneousDrags: isEdit ? 1 : 0,
       feedback: Material(
         elevation: 4.0,
+        color: Colors.transparent,
         child: Container(
           width: MediaQuery.of(context).size.width - 80,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
@@ -73,10 +74,10 @@ class ScheduleItem extends ConsumerWidget {
         return deleteSchedule(schedule);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
