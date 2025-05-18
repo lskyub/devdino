@@ -80,6 +80,12 @@ root/
 - PR 제출 전, 코딩 컨벤션 및 린트 규칙 준수
 - 커밋 메시지는 명확하게 작성
 
+
+![Image](https://github.com/user-attachments/assets/8771a3d7-5b41-48eb-b998-2a7df07c61bf)
+
+![Image](https://github.com/user-attachments/assets/7a1c259b-3cf3-4f22-b0e3-5b34492a422b)
+
+![Image](https://github.com/user-attachments/assets/c6e0db59-5520-4063-8d3e-adba48587eb7)
 ---
 
 ## 라이선스
