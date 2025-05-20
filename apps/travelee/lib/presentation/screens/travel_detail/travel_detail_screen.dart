@@ -1,17 +1,14 @@
-import 'package:country_icons/country_icons.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travelee/data/controllers/schedule_detail_controller.dart';
-import 'package:travelee/data/controllers/travel_detail_controller.dart';
 import 'package:travelee/data/controllers/travel_controller.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/data/services/database_helper.dart';
 import 'package:travelee/presentation/modal/country_select_modal.dart';
-import 'package:travelee/presentation/modal/schedule_input_modal.dart';
+import 'package:travelee/presentation/screens/travel_detail/schedule_input_screen.dart';
 import 'package:travelee/providers/travel_state_provider.dart'
     as travel_providers;
 import 'package:travelee/core/utils/result_types.dart';
@@ -24,6 +21,8 @@ import 'package:travelee/core/utils/travel_dialog_manager.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
+import 'package:travelee/router.dart';
+import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -128,19 +127,20 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                     onTap: () => _handleBackNavigation(context),
                     child: Padding(
                       padding:
-                          const EdgeInsets.only(left: 16, right: 24, top: 8),
+                          const EdgeInsets.only(left: 16, right: 24, top: 12),
                       child: SvgPicture.asset(
                         'assets/icons/home.svg',
                       ),
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Stack(
                     children: [
                       Row(
                         children: [
-                          CountryIcons.getSvgFlag(
-                              travelInfo.countryInfos.first.countryCode),
+                          Text(
+                            travelInfo.countryInfos.first.flagEmoji,
+                            style: const TextStyle(fontSize: 24),
+                          ),
                           const SizedBox(width: 8),
                           DinoText.custom(
                             fontSize: 17,
@@ -150,20 +150,23 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                           ),
                         ],
                       ),
-                      DinoText.custom(
-                        fontSize: 11.24,
-                        text:
-                            '여행기간: ${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
-                        color: $dinoToken.color.blingGray400,
-                        fontWeight: FontWeight.w500,
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: DinoText.custom(
+                          fontSize: 11.24,
+                          text:
+                              '여행기간: ${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
+                          color: $dinoToken.color.blingGray400,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: _refreshAllData,
+                    onTap: _updateSchedule,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 16, top: 2),
+                      padding: const EdgeInsets.only(right: 16, top: 6),
                       child: SvgPicture.asset(
                         'assets/icons/setting.svg',
                       ),
@@ -371,8 +374,38 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
     if (saveResult == SaveResult.save) {
       // 변경 사항 저장
-      dev.log('TravelDetailScreen - 변경사항 저장 후 나가기');
       ref.read(travel_providers.travelsProvider.notifier).commitChanges();
+
+      // 날짜 범위 밖의 일정 삭제 로직 추가
+      final updatedTravel = ref.read(travel_providers.currentTravelProvider);
+      if (updatedTravel != null) {
+        final start = updatedTravel.startDate;
+        final end = updatedTravel.endDate;
+        if (start != null && end != null) {
+          final validDates = <String>{};
+          DateTime cursor = start;
+          while (!cursor.isAfter(end)) {
+            validDates.add(_formatDateKey(cursor));
+            cursor = cursor.add(const Duration(days: 1));
+          }
+
+          // 날짜 범위 밖의 일정 찾기
+          final schedulesToRemove = updatedTravel.schedules.where((schedule) {
+            final key = _formatDateKey(schedule.date);
+            return !validDates.contains(key);
+          }).toList();
+
+          if (schedulesToRemove.isNotEmpty) {
+            for (final schedule in schedulesToRemove) {
+              ref
+                  .read(travel_providers.travelsProvider.notifier)
+                  .removeSchedule(updatedTravel.id, schedule.id);
+            }
+            // 변경사항 저장
+            ref.read(travel_providers.travelsProvider.notifier).commitChanges();
+          }
+        }
+      }
 
       // 저장 후 변경사항 플래그 초기화
       controller.hasChanges = false;
@@ -518,10 +551,15 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         date1.day == date2.day;
   }
 
+  /// 업데이트 일정 함수
+  void _updateSchedule() {
+    ref.read(routerProvider).push(
+          DateScreen.routePath,
+        );
+  }
+
   void _refreshAllData() async {
-    final controller = ref.watch(travelDetailControllerProvider);
     await TravelDialogManager.showEditTravelDialog(context, ref);
-    controller.setModified(); // 여행 정보 편집 후 수정 플래그 설정
   }
 
   String _formatDateKey(DateTime date) {
@@ -630,28 +668,18 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         .read(unifiedControllerProvider)
         .getDayNumber(currentTravel.startDate!, dayData.date);
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: ScheduleInputModal(
-          initialTime: TimeOfDay.now(),
-          initialLocation: '',
-          initialMemo: '',
-          initialLatitude: 0,
-          initialLongitude: 0,
-          date: dayData.date,
-          dayNumber: dayNumber,
-        ),
-      ),
-    ).then((_) {
-      if (mounted) {
-        ref.read(scheduleDetailControllerProvider).hasChanges = true;
-      }
-    });
+    ref.read(routerProvider).push(
+      ScheduleInputScreen.routePath,
+      extra: {
+        'initialTime': TimeOfDay.now(),
+        'initialLocation': '',
+        'initialMemo': '',
+        'initialLatitude': 0.0,
+        'initialLongitude': 0.0,
+        'date': dayData.date,
+        'dayNumber': dayNumber,
+      },
+    );
   }
 
   /// 일정 수정
@@ -667,29 +695,19 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         .read(unifiedControllerProvider)
         .getDayNumber(currentTravel.startDate!, dayData.date);
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: ScheduleInputModal(
-          initialTime: schedule.time,
-          initialLocation: schedule.location,
-          initialMemo: schedule.memo,
-          initialLatitude: schedule.latitude ?? 0,
-          initialLongitude: schedule.longitude ?? 0,
-          date: dayData.date,
-          dayNumber: dayNumber,
-          scheduleId: schedule.id,
-        ),
-      ),
-    ).then((_) {
-      if (mounted) {
-        ref.read(scheduleDetailControllerProvider).hasChanges = true;
-      }
-    });
+    ref.read(routerProvider).push(
+      ScheduleInputScreen.routePath,
+      extra: {
+        'initialTime': schedule.time,
+        'initialLocation': schedule.location,
+        'initialMemo': schedule.memo,
+        'initialLatitude': schedule.latitude ?? 0.0,
+        'initialLongitude': schedule.longitude ?? 0.0,
+        'date': dayData.date,
+        'dayNumber': dayNumber,
+        'scheduleId': schedule.id,
+      },
+    );
   }
 
   /// 일정 삭제

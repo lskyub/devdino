@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
+import 'package:travelee/presentation/screens/travel_detail/schedule_input_screen.dart';
 import 'package:travelee/presentation/screens/travel_detail/location_search_screen.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:travelee/presentation/screens/auth/signup_screen.dart';
@@ -74,6 +75,33 @@ final routerProvider = Provider<GoRouter>(
           path: SignUpScreen.routePath,
           name: SignUpScreen.routeName,
           builder: (context, state) => const SignUpScreen(),
+        ),
+        GoRoute(
+          path: ScheduleInputScreen.routePath,
+          name: ScheduleInputScreen.routeName,
+          builder: (context, state) {
+            final Map<String, dynamic> extraData =
+                state.extra as Map<String, dynamic>;
+            final initialTime = extraData['initialTime'] as TimeOfDay;
+            final initialLocation = extraData['initialLocation'] as String;
+            final initialMemo = extraData['initialMemo'] as String;
+            final date = extraData['date'] as DateTime;
+            final dayNumber = extraData['dayNumber'] as int;
+            final initialLatitude = extraData['initialLatitude'] as double;
+            final initialLongitude = extraData['initialLongitude'] as double;
+            final scheduleId = extraData['scheduleId'] as String?;
+
+            return ScheduleInputScreen(
+              initialTime: initialTime,
+              initialLocation: initialLocation,
+              initialMemo: initialMemo,
+              date: date,
+              dayNumber: dayNumber,
+              initialLatitude: initialLatitude,
+              initialLongitude: initialLongitude,
+              scheduleId: scheduleId,
+            );
+          },
         ),
       ],
     );

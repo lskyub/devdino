@@ -163,6 +163,10 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
       return travel.id == updatedTravel.id ? updatedTravel : travel;
     }).toList();
 
+    print('state: ${state.length}');
+    for (final travel in state) {
+      print('travel: ${travel.id}, ${travel.startDate}, ${travel.endDate}');
+    }
     // 로깅 추가
     dev.log('TravelNotifier - 여행 정보 업데이트: ${updatedTravel.id}');
 

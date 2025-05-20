@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

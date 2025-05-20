@@ -34,6 +34,8 @@ class DateScreen extends ConsumerStatefulWidget {
 
 class _DateScreenState extends ConsumerState<DateScreen> {
   final DateRangePickerController _controller = DateRangePickerController();
+  DateTime? _tempStartDate;
+  DateTime? _tempEndDate;
 
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
@@ -105,6 +107,17 @@ class _DateScreenState extends ConsumerState<DateScreen> {
       );
     }
 
+    // 임시 상태가 없으면 travelInfo의 날짜로 초기화
+    _tempStartDate ??= travelInfo.startDate;
+    _tempEndDate ??= travelInfo.endDate;
+
+    if (_tempStartDate != null && _tempEndDate != null) {
+      _controller.selectedRange = PickerDateRange(
+        _tempStartDate!,
+        _tempEndDate!,
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -113,7 +126,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
           alignment: Alignment.centerLeft,
           child: DinoText.custom(
             fontSize: 17,
-            text: '여행 정보 등록',
+            text: travelInfo.id.startsWith('temp_') ? '여행 정보 등록' : '여행 정보 수정',
             color: $dinoToken.color.blingGray900,
             fontWeight: FontWeight.w500,
           ),
@@ -140,13 +153,17 @@ class _DateScreenState extends ConsumerState<DateScreen> {
             }
             Navigator.pop(context);
           },
-          icon: SvgPicture.asset(
-            'assets/icons/topappbar_back.svg',
-            colorFilter: ColorFilter.mode(
-              $dinoToken.color.blingGray900.resolve(context),
-              BlendMode.srcIn,
-            ),
-          ),
+          icon: travelInfo.id.startsWith('temp_')
+              ? SvgPicture.asset(
+                  'assets/icons/topappbar_back.svg',
+                  colorFilter: ColorFilter.mode(
+                    $dinoToken.color.blingGray900.resolve(context),
+                    BlendMode.srcIn,
+                  ),
+                )
+              : SvgPicture.asset(
+                  'assets/icons/appbar_close.svg',
+                ),
         ),
       ),
       body: Column(
@@ -495,7 +512,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       Widget dayText = DinoText.custom(
                         fontSize: 16,
                         text: date.day.toString(),
-                        color: isStart || isEnd 
+                        color: isStart || isEnd
                             ? $dinoToken.color.white
                             : date.weekday == DateTime.sunday
                                 ? $dinoToken.color.brandBlingRed800
@@ -577,13 +594,10 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 selectionColor: Colors.transparent,
                 onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                   if (args.value is PickerDateRange) {
-                    final updatedTravel = travelInfo.copyWith(
-                      startDate: args.value.startDate,
-                      endDate: args.value.endDate,
-                    );
-                    ref
-                        .read(travel_providers.travelsProvider.notifier)
-                        .updateTravel(updatedTravel);
+                    setState(() {
+                      _tempStartDate = args.value.startDate;
+                      _tempEndDate = args.value.endDate ?? args.value.startDate;
+                    });
                   }
                 },
                 selectionMode: DateRangePickerSelectionMode.range,
@@ -605,7 +619,9 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 DinoButton.custom(
                   type: DinoButtonType.solid,
                   size: DinoButtonSize.full,
-                  title: '여행 정보 등록하기',
+                  title: travelInfo.id.startsWith('temp_')
+                      ? '여행 정보 등록하기'
+                      : '여행 정보 수정하기',
                   state: travelInfo.startDate == null ||
                           travelInfo.endDate == null ||
                           travelInfo.destination.isEmpty
@@ -615,85 +631,96 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                   disabledBackgroundColor: $dinoToken.color.blingGray300,
                   textColor: $dinoToken.color.white,
                   onTap: () {
-                    if (travelInfo.startDate == null ||
-                        travelInfo.endDate == null ||
-                        travelInfo.destination.isEmpty) {
-                      return;
-                    }
-
-                    // 선택한 날짜 범위에 대해 dayDataMap 초기화
-                    final start = travelInfo.startDate!;
-                    final end = travelInfo.endDate!;
-
-                    // 날짜 범위 내의 모든 날짜 생성
-                    final dayDifference = end.difference(start).inDays;
-                    Map<String, DayData> initialDayDataMap = {};
-
-                    // 기본 국가 정보 (첫 번째 국가 사용)
-                    String defaultCountryName = '';
-                    String defaultFlagEmoji = '🏳️';
-                    String defaultCountryCode = '';
-
-                    if (travelInfo.countryInfos.isNotEmpty) {
-                      defaultCountryName = travelInfo.countryInfos.first.name;
-                      defaultFlagEmoji =
-                          travelInfo.countryInfos.first.flagEmoji;
-                      defaultCountryCode =
-                          travelInfo.countryInfos.first.countryCode;
-                    } else if (travelInfo.destination.isNotEmpty) {
-                      defaultCountryName = travelInfo.destination.first;
-                    }
-
-                    // 각 날짜에 대한 DayData 생성
-                    for (int i = 0; i <= dayDifference; i++) {
-                      final currentDate = start.add(Duration(days: i));
-                      final dateKey =
-                          TravelDateFormatter.formatDate(currentDate);
-
-                      // 비어있는 DayData 생성
-                      initialDayDataMap[dateKey] = DayData(
-                        date: currentDate,
-                        dayNumber: i + 1,
-                        countryName: defaultCountryName,
-                        flagEmoji: defaultFlagEmoji,
-                        countryCode: defaultCountryCode,
-                        schedules: [],
-                      );
-                    }
-
-                    // 업데이트된 여행 정보 저장
                     final updatedTravel = travelInfo.copyWith(
-                      dayDataMap: initialDayDataMap,
+                      startDate: _tempStartDate,
+                      endDate: _tempEndDate,
                     );
+                    ref.read(travel_providers.travelsProvider.notifier).updateTravel(updatedTravel);
+                    if (!travelInfo.id.startsWith('temp_')) {
+                      Navigator.pop(context);
+                    } else {
+                      if (travelInfo.startDate == null ||
+                          travelInfo.endDate == null ||
+                          travelInfo.destination.isEmpty) {
+                        return;
+                      }
 
-                    // 여행 정보 업데이트
-                    ref
-                        .read(travel_providers.travelsProvider.notifier)
-                        .updateTravel(updatedTravel);
+                      // 선택한 날짜 범위에 대해 dayDataMap 초기화
+                      final start = travelInfo.startDate!;
+                      final end = travelInfo.endDate!;
 
-                    // 임시 ID로 된 여행을 영구 저장
-                    final travelId = travelInfo.id;
-                    final controller = ref.read(travelDetailControllerProvider);
-                    final newId = controller.saveTempTravel(travelId);
+                      // 날짜 범위 내의 모든 날짜 생성
+                      final dayDifference = end.difference(start).inDays;
+                      Map<String, DayData> initialDayDataMap = {};
 
-                    if (newId != null) {
-                      // 데이터베이스에 저장
-                      dev.log('DateScreen - 임시 여행 ID 변경됨: $travelId -> $newId');
+                      // 기본 국가 정보 (첫 번째 국가 사용)
+                      String defaultCountryName = '';
+                      String defaultFlagEmoji = '🏳️';
+                      String defaultCountryCode = '';
 
-                      // 현재 ID 업데이트
+                      if (travelInfo.countryInfos.isNotEmpty) {
+                        defaultCountryName = travelInfo.countryInfos.first.name;
+                        defaultFlagEmoji =
+                            travelInfo.countryInfos.first.flagEmoji;
+                        defaultCountryCode =
+                            travelInfo.countryInfos.first.countryCode;
+                      } else if (travelInfo.destination.isNotEmpty) {
+                        defaultCountryName = travelInfo.destination.first;
+                      }
+
+                      // 각 날짜에 대한 DayData 생성
+                      for (int i = 0; i <= dayDifference; i++) {
+                        final currentDate = start.add(Duration(days: i));
+                        final dateKey =
+                            TravelDateFormatter.formatDate(currentDate);
+
+                        // 비어있는 DayData 생성
+                        initialDayDataMap[dateKey] = DayData(
+                          date: currentDate,
+                          dayNumber: i + 1,
+                          countryName: defaultCountryName,
+                          flagEmoji: defaultFlagEmoji,
+                          countryCode: defaultCountryCode,
+                          schedules: [],
+                        );
+                      }
+
+                      // 업데이트된 여행 정보 저장
+                      final updatedTravel = travelInfo.copyWith(
+                        dayDataMap: initialDayDataMap,
+                      );
+
+                      // 여행 정보 업데이트
                       ref
-                          .read(
-                              travel_providers.currentTravelIdProvider.notifier)
-                          .state = newId;
+                          .read(travel_providers.travelsProvider.notifier)
+                          .updateTravel(updatedTravel);
 
-                      // 백업 다시 생성
-                      controller.createBackup();
+                      // 임시 ID로 된 여행을 영구 저장
+                      final travelId = travelInfo.id;
+                      final controller =
+                          ref.read(travelDetailControllerProvider);
+                      final newId = controller.saveTempTravel(travelId);
 
-                      // 변경 플래그 초기화
-                      controller.hasChanges = false;
+                      if (newId != null) {
+                        // 데이터베이스에 저장
+                        dev.log(
+                            'DateScreen - 임시 여행 ID 변경됨: $travelId -> $newId');
 
-                      // 여행 상세 화면으로 이동 (replace 사용)
-                      context.replace('/travel_detail/$newId');
+                        // 현재 ID 업데이트
+                        ref
+                            .read(travel_providers
+                                .currentTravelIdProvider.notifier)
+                            .state = newId;
+
+                        // 백업 다시 생성
+                        controller.createBackup();
+
+                        // 변경 플래그 초기화
+                        controller.hasChanges = false;
+
+                        // 여행 상세 화면으로 이동 (replace 사용)
+                        context.replace('/travel_detail/$newId');
+                      }
                     }
                   },
                 ),
