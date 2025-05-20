@@ -23,7 +23,6 @@ class FirstScreen extends ConsumerStatefulWidget {
 class _FirstScreenState extends ConsumerState<FirstScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final bool _isPasswordVisible = false;
 
   @override
   void dispose() {
