@@ -622,9 +622,9 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                   title: travelInfo.id.startsWith('temp_')
                       ? '여행 정보 등록하기'
                       : '여행 정보 수정하기',
-                  state: travelInfo.startDate == null ||
-                          travelInfo.endDate == null ||
-                          travelInfo.destination.isEmpty
+                  state: _tempStartDate == null ||
+                         _tempEndDate == null ||
+                         travelInfo.destination.isEmpty
                       ? DinoButtonState.disabled
                       : DinoButtonState.base,
                   backgroundColor: $dinoToken.color.brandBlingPurple600,
@@ -639,8 +639,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                     if (!travelInfo.id.startsWith('temp_')) {
                       Navigator.pop(context);
                     } else {
-                      if (travelInfo.startDate == null ||
-                          travelInfo.endDate == null ||
+                      if (_tempStartDate == null ||
+                          _tempEndDate == null ||
                           travelInfo.destination.isEmpty) {
                         return;
                       }
