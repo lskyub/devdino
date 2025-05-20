@@ -1,3 +1,4 @@
+import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travelee/presentation/screens/auth/signup_screen.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
   static const routeName = 'inital';
@@ -21,7 +23,7 @@ class FirstScreen extends ConsumerStatefulWidget {
 class _FirstScreenState extends ConsumerState<FirstScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+  final bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -30,8 +32,41 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     super.dispose();
   }
 
+  // 구글 로그인
+  Future<bool> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return false;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final response = await Supabase.instance.client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: googleAuth.idToken!,
+      accessToken: googleAuth.accessToken,
+    );
+    return response.user != null;
+  }
+
+  // 로그아웃
+  Future<void> signOut() async {
+    await Supabase.instance.client.auth.signOut();
+    await GoogleSignIn().signOut();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go(SavedTravelsScreen.routePath);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = Supabase.instance.client.auth.currentUser;
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -49,10 +84,12 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                   (0.5 * 255).toInt(),
                 ),
           ),
-          Center(
-            child: SingleChildScrollView(
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 200),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Opacity(
                     opacity: 0.5,
@@ -66,195 +103,41 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                     width: 281,
                   ),
                   const SizedBox(height: 25),
-                  B2bText(
-                    type: DinoTextType.bodyL,
+                  DinoText.custom(
                     text: '여행의 꿈에 뛰어들어\n오늘부터 계획을 세우세요!',
-                    color: $dinoToken.color.white.resolve(context),
-                  ),
-                  const SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _emailController,
-                          style: TextStyle(
-                            color: $dinoToken.color.white.resolve(context),
-                          ),
-                          decoration: InputDecoration(
-                            hintText: '이메일',
-                            hintStyle: TextStyle(
-                              color: $dinoToken.color.white
-                                  .resolve(context)
-                                  .withAlpha(128),
-                            ),
-                            filled: true,
-                            fillColor: $dinoToken.color.white
-                                .resolve(context)
-                                .withAlpha(26),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.email_outlined,
-                              color: $dinoToken.color.white
-                                  .resolve(context)
-                                  .withAlpha(128),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: _passwordController,
-                          obscureText: !_isPasswordVisible,
-                          style: TextStyle(
-                            color: $dinoToken.color.white.resolve(context),
-                          ),
-                          decoration: InputDecoration(
-                            hintText: '비밀번호',
-                            hintStyle: TextStyle(
-                              color: $dinoToken.color.white
-                                  .resolve(context)
-                                  .withAlpha(128),
-                            ),
-                            filled: true,
-                            fillColor: $dinoToken.color.white
-                                .resolve(context)
-                                .withAlpha(26),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.lock_outline,
-                              color: $dinoToken.color.white
-                                  .resolve(context)
-                                  .withAlpha(128),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _isPasswordVisible
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: $dinoToken.color.white
-                                    .resolve(context)
-                                    .withAlpha(128),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          width: double.infinity,
-                          child: B2bButton.medium(
-                            type: B2bButtonType.primary,
-                            title: '로그인',
-                            onTap: () async {
-                              try {
-                                // final email = _emailController.text;
-                                // final password = _passwordController.text;
-
-                                // await SupabaseConfig.client.auth.signInWithPassword(
-                                //   email: email,
-                                //   password: password,
-                                // );
-
-                                // if (context.mounted) {
-                                context.go(SavedTravelsScreen.routePath);
-                                // }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text('로그인에 실패했습니다: ${e.toString()}'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color: $dinoToken.color.white
-                                    .resolve(context)
-                                    .withAlpha(51),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Text(
-                                '또는',
-                                style: TextStyle(
-                                  color: $dinoToken.color.white
-                                      .resolve(context)
-                                      .withAlpha(128),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: $dinoToken.color.white
-                                    .resolve(context)
-                                    .withAlpha(51),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: B2bButton.medium(
-                            type: B2bButtonType.secondary,
-                            title: 'Google로 계속하기',
-                            onTap: () async {
-                              try {
-                                // final userCredential = await FirebaseConfig.signInWithGoogle();
-
-                                // if (userCredential != null && context.mounted) {
-                                context.go(SavedTravelsScreen.routePath);
-                                // }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          '구글 로그인에 실패했습니다: ${e.toString()}'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: B2bButton.medium(
-                            type: B2bButtonType.secondary,
-                            title: '회원가입',
-                            onTap: () {
-                              context.push(SignUpScreen.routePath);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                    textAlign: DinoTextAlign.center,
+                    color: $dinoToken.color.white,
                   ),
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: DinoButton.custom(
+                  type: DinoButtonType.solid,
+                  size: DinoButtonSize.full,
+                  title: 'Google로 계속하기',
+                  radius: 12,
+                  backgroundColor: $dinoToken.color.brandBlingPurple600,
+                  onTap: () async {
+                    final success = await signInWithGoogle();
+                    print('success: $success');
+                    if (success) {
+                      if (!mounted) return;
+                      context.go(SavedTravelsScreen.routePath);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('구글 로그인에 실패했습니다.')),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ),
