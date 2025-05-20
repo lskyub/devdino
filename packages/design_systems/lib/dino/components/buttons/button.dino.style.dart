@@ -18,6 +18,7 @@ class DinoButtonStyle {
     double? height,
     double? width,
     int? textMaxLines,
+    FontWeight? fontWeight,
     ColorToken? textColor,
     ColorToken? borderColor,
     ColorToken? disabledTextColor,
@@ -47,7 +48,7 @@ class DinoButtonStyle {
         ..textAlign.center()
         ..maxLines(textMaxLines ?? 1)
         ..style.fontSize(textSize ?? 16)
-        ..style.fontWeight(FontWeight.w600)
+        ..style.fontWeight(fontWeight ?? FontWeight.w600)
         ..decoration.none()
         ..style.fontFamily('Pretendard')
         ..style.color.ref(textColor ?? $dinoToken.color.white),

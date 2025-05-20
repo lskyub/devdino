@@ -40,3 +40,31 @@ class B2bTextFieldBoder extends Variant {
   static const underline = B2bTextFieldBoder._('b2b.textfield.border.underline');
   static const box = B2bTextFieldBoder._('b2b.textfield.border.box');
 }
+
+class DinoTextFieldBorder extends Variant {
+  const DinoTextFieldBorder._(super.name);
+
+  static const values = [
+    DinoTextFieldBorder.none,
+    DinoTextFieldBorder.underline,
+    DinoTextFieldBorder.box,
+  ];
+
+  static const none = DinoTextFieldBorder._('dino.textfield.border.none');
+  static const underline = DinoTextFieldBorder._('dino.textfield.border.underline');
+  static const box = DinoTextFieldBorder._('dino.textfield.border.box');
+}
+
+class DinoFieldStatus extends Variant {
+  const DinoFieldStatus._(super.name);
+
+  static const values = [
+    DinoFieldStatus.none,
+    DinoFieldStatus.disabled,
+    DinoFieldStatus.error,
+  ];
+
+  static const none = DinoFieldStatus._('dino.textfield.status.none');
+  static const disabled = DinoFieldStatus._('dino.textfield.status.disabled');
+  static const error = DinoFieldStatus._('dino.textfield.status.error');
+}

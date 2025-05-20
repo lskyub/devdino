@@ -29,7 +29,7 @@ class DinoButton extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final DinoButtonSize size;
-
+  final FontWeight? fontWeight;
   const DinoButton(
       {super.key,
       required this.type,
@@ -45,6 +45,7 @@ class DinoButton extends StatelessWidget {
       this.state = DinoButtonState.base,
       this.size = DinoButtonSize.wrap,
       this.textSize,
+      this.fontWeight,
       this.textMaxLines,
       this.iconSize,
       this.textColor,
@@ -74,6 +75,7 @@ class DinoButton extends StatelessWidget {
           textSize: textSize,
           height: height,
           width: width,
+          fontWeight: fontWeight,
           textColor: textColor,
           borderColor: borderColor,
           disabledTextColor: disabledTextColor,
@@ -108,6 +110,7 @@ class DinoButton extends StatelessWidget {
     double? horizontalPadding,
     double? verticalPadding,
     double? textSize,
+    FontWeight? fontWeight,
     int? textMaxLines,
     double? iconSize,
     ColorToken? textColor,
@@ -130,6 +133,7 @@ class DinoButton extends StatelessWidget {
       state: state,
       size: size ?? DinoButtonSize.wrap,
       radius: radius,
+      fontWeight: fontWeight,
       leading: leading,
       trailing: trailing,
       horizontalPadding: horizontalPadding,
