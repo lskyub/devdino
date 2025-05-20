@@ -52,12 +52,12 @@ dependencies:
 
   dotted_border: ^2.0.0
 
-  google_mobile_ads: ^4.0.0
+  google_mobile_ads: ^6.0.0
 
   supabase_flutter: ^2.3.4
   flutter_dotenv: ^5.2.1
 
-  # google_sign_in: ^6.2.1
+  google_sign_in: ^6.3.0
   # firebase_auth: ^4.17.4
   # firebase_core: ^2.25.4
 

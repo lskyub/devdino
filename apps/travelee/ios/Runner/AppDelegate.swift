@@ -9,8 +9,8 @@ import GoogleMobileAds
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     // Google Mobile Ads 초기화
-    GADMobileAds.sharedInstance().start(completionHandler: nil)
-    
+    MobileAds.shared.start(completionHandler: nil)
+      
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
