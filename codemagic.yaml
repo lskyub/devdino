@@ -8,6 +8,8 @@ workflows:
     cache:
       cache_paths:
         - ~/.pub-cache
+        - ~/.gradle
+        - ~/.cocoapods
         - pubspec.lock
     triggering:
       events:
