@@ -2,7 +2,7 @@ workflows:
   flutter-app:
     name: Flutter App
     environment:
-      flutter: stable
+      flutter: 3.29.1
       xcode: latest
       cocoapods: default
     cache:
