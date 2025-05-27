@@ -8,6 +8,9 @@ import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/buttons/button.dino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
@@ -62,6 +65,13 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
   }
 
+  Future<void> signOut() async {
+    await Supabase.instance.client.auth.signOut();
+    await GoogleSignIn().signOut();
+    if (!mounted) return;
+    context.go(FirstScreen.routePath); // 또는 원하는 라우트로 이동
+  }
+
   @override
   Widget build(BuildContext context) {
     // 저장된 여행 불러오기
@@ -89,28 +99,20 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       dev.log('--------------------------------');
     }
 
-    /// savedTravels 여행 정렬 변경 시작 종료 날짜와 오늘 날짜를 비교하여 오늘 날짜가 시작 종료 날짜 사이에 있으면 위로 오도록 정렬, 날짜가 지났으면 아래로 가도록 정렬
+    // savedTravels 여행 정렬 변경 시작 종료 날짜와 오늘 날짜를 비교하여 오늘 날짜가 시작 종료 날짜 사이에 있으면 위로 오도록 정렬, 날짜가 지났으면 아래로 가도록 정렬
     savedTravels.sort((a, b) {
       final today = DateTime.now();
-      final aStart = a.startDate!;
-      final aEnd = a.endDate!;
-      final bStart = b.startDate!;
-      final bEnd = b.endDate!;
+      final aStartDate = a.startDate!;
+      final aEndDate = a.endDate!;
+      final bStartDate = b.startDate!;
+      final bEndDate = b.endDate!;
 
-      int getStatus(DateTime start, DateTime end) {
-        if (today.isBefore(start)) return 1; // 예정
-        if (today.isAfter(end)) return 2;    // 완료
-        return 0;                            // 진행 중
+      if (today.isAfter(aStartDate) && today.isBefore(aEndDate)) {
+        return -1;
+      } else if (today.isAfter(bStartDate) && today.isBefore(bEndDate)) {
+        return 1;
       }
-
-      final aStatus = getStatus(aStart, aEnd);
-      final bStatus = getStatus(bStart, bEnd);
-
-      if (aStatus != bStatus) {
-        return aStatus.compareTo(bStatus);
-      }
-      // 같은 상태면 시작일이 빠른 순
-      return aStart.compareTo(bStart);
+      return 0;
     });
 
     return Scaffold(
@@ -126,6 +128,15 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // 로그인 정보 삭제 후 로그인 화면으로 이동
+              signOut();
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
         backgroundColor: Colors.white,
         elevation: 0,
       ),

@@ -45,13 +45,6 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     return response.user != null;
   }
 
-  // 로그아웃
-  Future<void> signOut() async {
-    await Supabase.instance.client.auth.signOut();
-    await GoogleSignIn().signOut();
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();
@@ -63,9 +56,15 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     }
   }
 
+  Future<void> signOut() async {
+    await Supabase.instance.client.auth.signOut();
+    await GoogleSignIn().signOut();
+    if (!mounted) return;
+    context.go(FirstScreen.routePath); // 또는 원하는 라우트로 이동
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = Supabase.instance.client.auth.currentUser;
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -126,9 +125,8 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                   backgroundColor: $dinoToken.color.brandBlingPurple600,
                   onTap: () async {
                     final success = await signInWithGoogle();
-                    print('success: $success');
+                    if (!mounted) return;
                     if (success) {
-                      if (!mounted) return;
                       context.go(SavedTravelsScreen.routePath);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
