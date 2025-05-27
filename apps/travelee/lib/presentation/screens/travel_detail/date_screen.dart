@@ -623,20 +623,22 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       ? '여행 정보 등록하기'
                       : '여행 정보 수정하기',
                   state: _tempStartDate == null ||
-                         _tempEndDate == null ||
-                         travelInfo.destination.isEmpty
+                          _tempEndDate == null ||
+                          travelInfo.destination.isEmpty
                       ? DinoButtonState.disabled
                       : DinoButtonState.base,
                   backgroundColor: $dinoToken.color.brandBlingPurple600,
                   disabledBackgroundColor: $dinoToken.color.blingGray300,
                   textColor: $dinoToken.color.white,
                   onTap: () {
-                    final updatedTravel = travelInfo.copyWith(
-                      startDate: _tempStartDate,
-                      endDate: _tempEndDate,
-                    );
-                    ref.read(travel_providers.travelsProvider.notifier).updateTravel(updatedTravel);
                     if (!travelInfo.id.startsWith('temp_')) {
+                      final updatedTravel = travelInfo.copyWith(
+                        startDate: _tempStartDate,
+                        endDate: _tempEndDate,
+                      );
+                      ref
+                          .read(travel_providers.travelsProvider.notifier)
+                          .updateTravel(updatedTravel);
                       Navigator.pop(context);
                     } else {
                       if (_tempStartDate == null ||
@@ -646,8 +648,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       }
 
                       // 선택한 날짜 범위에 대해 dayDataMap 초기화
-                      final start = travelInfo.startDate!;
-                      final end = travelInfo.endDate!;
+                      final start = _tempStartDate!;
+                      final end = _tempEndDate!;
 
                       // 날짜 범위 내의 모든 날짜 생성
                       final dayDifference = end.difference(start).inDays;
@@ -688,6 +690,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       // 업데이트된 여행 정보 저장
                       final updatedTravel = travelInfo.copyWith(
                         dayDataMap: initialDayDataMap,
+                        startDate: _tempStartDate,
+                        endDate: _tempEndDate,
                       );
 
                       // 여행 정보 업데이트

@@ -1,5 +1,6 @@
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:design_systems/dino/foundations/theme.dart';
+import 'package:design_systems/dino/foundations/token.typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -88,6 +89,30 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       dev.log('--------------------------------');
     }
 
+    /// savedTravels 여행 정렬 변경 시작 종료 날짜와 오늘 날짜를 비교하여 오늘 날짜가 시작 종료 날짜 사이에 있으면 위로 오도록 정렬, 날짜가 지났으면 아래로 가도록 정렬
+    savedTravels.sort((a, b) {
+      final today = DateTime.now();
+      final aStart = a.startDate!;
+      final aEnd = a.endDate!;
+      final bStart = b.startDate!;
+      final bEnd = b.endDate!;
+
+      int getStatus(DateTime start, DateTime end) {
+        if (today.isBefore(start)) return 1; // 예정
+        if (today.isAfter(end)) return 2;    // 완료
+        return 0;                            // 진행 중
+      }
+
+      final aStatus = getStatus(aStart, aEnd);
+      final bStatus = getStatus(bStart, bEnd);
+
+      if (aStatus != bStatus) {
+        return aStatus.compareTo(bStatus);
+      }
+      // 같은 상태면 시작일이 빠른 순
+      return aStart.compareTo(bStart);
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -150,12 +175,10 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                           radius: 28,
                           textColor: $dinoToken.color.white,
                           backgroundColor: $dinoToken.color.primary,
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
-                              $dinoToken.color.brandBlingPlum700
-                                  .resolve(context),
-                              $dinoToken.color.brandBlingPurple700
-                                  .resolve(context),
+                              Color(0xFF5E9DEA),
+                              Color(0xFFF189E0),
                             ],
                           ),
                           onTap: () {
@@ -168,16 +191,32 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    itemCount: savedTravels.length,
-                    padding: const EdgeInsets.all(16),
-                    itemBuilder: (context, index) {
-                      final travel = savedTravels[index];
-                      return SavedTravelItem(
-                        travel: travel,
-                        formatDate: _formatDate,
-                      );
-                    },
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: DinoText.custom(
+                          fontSize: DinoTextSizeToken.text600,
+                          fontWeight: FontWeight.w700,
+                          color: $dinoToken.color.blingGray800,
+                          text: '즐거운 여행 되세요! 🥰',
+                        ),
+                      ),
+                      Expanded(
+                          child: ListView.builder(
+                        itemCount: savedTravels.length,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 16),
+                        itemBuilder: (context, index) {
+                          final travel = savedTravels[index];
+                          return SavedTravelItem(
+                            travel: travel,
+                            formatDate: _formatDate,
+                          );
+                        },
+                      ))
+                    ],
                   ),
           ),
           if (savedTravels.isNotEmpty) ...[
@@ -185,7 +224,8 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: DinoButton.custom(
-                  type: DinoButtonType.solid,
+                  type: DinoButtonType.outline,
+                  size: DinoButtonSize.full,
                   title: '여행 추가하기',
                   leading: Padding(
                     padding: const EdgeInsets.only(right: 5),
@@ -194,21 +234,20 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                       width: 20,
                       height: 20,
                       colorFilter: ColorFilter.mode(
-                        $dinoToken.color.white.resolve(context),
+                        $dinoToken.color.blingGray500.resolve(context),
                         BlendMode.srcIn,
                       ),
                     ),
                   ),
                   textSize: 16,
-                  radius: 28,
-                  textColor: $dinoToken.color.white,
-                  backgroundColor: $dinoToken.color.primary,
-                  gradient: LinearGradient(
-                    colors: [
-                      $dinoToken.color.brandBlingPlum700.resolve(context),
-                      $dinoToken.color.brandBlingPurple700.resolve(context),
-                    ],
-                  ),
+                  radius: 12,
+                  width: 1,
+                  fontWeight: FontWeight.w600,
+                  textColor: $dinoToken.color.blingGray800,
+                  backgroundColor: $dinoToken.color.white,
+                  pressedBorderColor: $dinoToken.color.blingGray200,
+                  disabledBorderColor: $dinoToken.color.blingGray200,
+                  borderColor: $dinoToken.color.blingGray200,
                   onTap: () {
                     ref.read(currentTravelIdProvider.notifier).state = '';
                     context.push(DateScreen.routePath);

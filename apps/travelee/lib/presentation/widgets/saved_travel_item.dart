@@ -1,13 +1,12 @@
+import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/foundations/theme.dart';
+import 'package:design_systems/dino/foundations/token.typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:design_systems/dino/components/text/text.dart';
-import 'package:design_systems/dino/components/text/text.variant.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/router.dart';
-import 'dart:math' as Math;
 
 class SavedTravelItem extends ConsumerWidget {
   final TravelModel travel;
@@ -21,141 +20,186 @@ class SavedTravelItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: $dinoToken.color.blingGray200.resolve(context),
-          ),
-          borderRadius: BorderRadius.circular(8),
+    // 오늘 날짜가 여행 시작일과 종료일에 포함되는지 확인
+    bool isTodayInRange = false;
+    try {
+      isTodayInRange = DateTime.now().isAfter(travel.startDate!) &&
+          DateTime.now().isBefore(travel.endDate!);
+    } catch (e) {
+      print('error: $e');
+    }
+    // 오늘 날짜가 여행 종료일이 지났는지 확인
+    bool isEnded = false;
+    try {
+      isEnded = DateTime.now().isAfter(travel.endDate!);
+    } catch (e) {
+      print('error: $e');
+    }
+
+    BoxDecoration decoration;
+
+    if (isTodayInRange) {
+      decoration = BoxDecoration(
+        color: $dinoToken.color.brandBlingPurple50.resolve(context),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF5E9DEA),
+            Color(0xFFF189E0),
+          ],
         ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              ref.read(currentTravelIdProvider.notifier).state = travel.id;
-              ref.read(routerProvider).push('/travel_detail/${travel.id}');
-            },
-            borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
+        borderRadius: BorderRadius.circular(20),
+      );
+    } else if (isEnded) {
+      decoration = BoxDecoration(
+        border:
+            Border.all(color: $dinoToken.color.blingGray200.resolve(context)),
+        color: $dinoToken.color.blingGray75.resolve(context),
+        borderRadius: BorderRadius.circular(20),
+      );
+    } else {
+      decoration = BoxDecoration(
+        border:
+            Border.all(color: $dinoToken.color.blingGray300.resolve(context)),
+        color: $dinoToken.color.white.resolve(context),
+        borderRadius: BorderRadius.circular(20),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        decoration: decoration,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: InkWell(
+          onTap: () {
+            ref.read(currentTravelIdProvider.notifier).state = travel.id;
+            ref.read(routerProvider).push('/travel_detail/${travel.id}');
+          },
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: $dinoToken.color.blingGray100.resolve(context),
+                    width: 0.5,
+                  ),
+                  color: $dinoToken.color.white.resolve(context),
+                ),
+                child: ClipOval(
+                  child: Text(
+                    travel.countryInfos.first.flagEmoji,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 18,
-                        color: $dinoToken.color.primary.resolve(context),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: B2bText(
-                          type: DinoTextType.bodyM,
-                          text: travel.destination.join(', '),
-                        ),
-                      ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('여행 삭제'),
-                              content: const Text(
-                                  '이 여행을 삭제하시겠습니까?\n삭제된 여행은 복구할 수 없습니다.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                  child: const Text('취소'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    ref
-                                        .read(travelsProvider.notifier)
-                                        .removeTravel(travel.id);
-                                    context.pop();
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                  ),
-                                  child: const Text('삭제'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: $dinoToken.color.blingGray400.resolve(context),
-                        ),
-                      ),
-                    ],
+                  DinoText.custom(
+                    text: travel.destination.join(', '),
+                    fontSize: DinoTextSizeToken.text300,
+                    fontWeight: FontWeight.w700,
+                    color: isTodayInRange
+                        ? $dinoToken.color.white
+                        : isEnded
+                            ? $dinoToken.color.blingGray400
+                            : $dinoToken.color.blingGray700,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 2),
                   Row(
                     children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                        color: $dinoToken.color.primary.resolve(context),
+                      DinoText.custom(
+                        text: isTodayInRange
+                            ? '여행중'
+                            : isEnded
+                                ? '여행완료'
+                                : '여행예정',
+                        fontSize: DinoTextSizeToken.text75,
+                        fontWeight: FontWeight.w500,
+                        color: isTodayInRange
+                            ? $dinoToken.color.white
+                            : isEnded
+                                ? $dinoToken.color.blingGray400
+                                : $dinoToken.color.brandBlingCyan600,
                       ),
-                      const SizedBox(width: 6),
-                      B2bText(
-                        type: DinoTextType.bodyS,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: DinoText.custom(
+                          text: '|',
+                          fontSize: DinoTextSizeToken.text75,
+                          fontWeight: FontWeight.w500,
+                          color: $dinoToken.color.blingGray200,
+                        ),
+                      ),
+                      DinoText.custom(
                         text:
                             '${formatDate(travel.startDate)} ~ ${formatDate(travel.endDate)}',
-                        color: $dinoToken.color.blingGray500.resolve(context),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 12,
-                        color: $dinoToken.color.blingGray400.resolve(context),
-                      ),
-                      const SizedBox(width: 6),
-                      B2bText(
-                        type: DinoTextType.detailS,
-                        text: '생성일: ${formatDate(travel.createdAt)}',
-                        color: $dinoToken.color.blingGray400.resolve(context),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 12,
-                        color: $dinoToken.color.blingGray400.resolve(context),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: B2bText(
-                          type: DinoTextType.detailS,
-                          text:
-                              'ID: ${travel.id.substring(0, Math.min(travel.id.length, 16))}...',
-                          color: $dinoToken.color.blingGray400.resolve(context),
-                        ),
+                        fontSize: DinoTextSizeToken.text75,
+                        fontWeight: FontWeight.w500,
+                        color: isTodayInRange
+                            ? $dinoToken.color.white
+                            : isEnded
+                                ? $dinoToken.color.blingGray400
+                                : $dinoToken.color.blingGray700,
                       ),
                     ],
                   ),
                 ],
               ),
-            ),
+              const Spacer(),
+              SvgPicture.asset(
+                'assets/icons/ar_right.svg',
+                colorFilter: ColorFilter.mode(
+                  isTodayInRange
+                      ? $dinoToken.color.white.resolve(context)
+                      : $dinoToken.color.blingGray400.resolve(context),
+                  BlendMode.srcIn,
+                ),
+              ),
+              // IconButton(
+              //   padding: EdgeInsets.zero,
+              //   constraints: const BoxConstraints(),
+              //   onPressed: () {
+              //     showDialog(
+              //       context: context,
+              //       builder: (context) => AlertDialog(
+              //         title: const Text('여행 삭제'),
+              //         content:
+              //             const Text('이 여행을 삭제하시겠습니까?\n삭제된 여행은 복구할 수 없습니다.'),
+              //         actions: [
+              //           TextButton(
+              //             onPressed: () {},
+              //             child: const Text('취소'),
+              //           ),
+              //           TextButton(
+              //             onPressed: () {
+              //               ref
+              //                   .read(travelsProvider.notifier)
+              //                   .removeTravel(travel.id);
+              //             },
+              //             style: TextButton.styleFrom(
+              //               foregroundColor: Colors.red,
+              //             ),
+              //             child: const Text('삭제'),
+              //           ),
+              //         ],
+              //       ),
+              //     );
+              //   },
+              //   icon: Icon(
+              //     Icons.delete_outline,
+              //     size: 18,
+              //     color: $dinoToken.color.blingGray400.resolve(context),
+              //   ),
+              // ),
+            ],
           ),
         ),
       ),
     );
   }
-} 
+}
