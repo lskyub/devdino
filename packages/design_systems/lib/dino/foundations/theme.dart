@@ -15,6 +15,7 @@ class DesignToken {
   final DinoRadiusToken radius = const DinoRadiusToken();
   final DinoStrokeToken stroke = const DinoStrokeToken();
   final DinoTypographyToken typography = const DinoTypographyToken();
+  final DinoTextSizeToken textSize = const DinoTextSizeToken();
 }
 
 final dinoTheme = MixThemeData(

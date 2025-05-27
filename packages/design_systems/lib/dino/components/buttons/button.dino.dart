@@ -124,6 +124,7 @@ class DinoButton extends StatelessWidget {
     ColorToken? pressedBackgroundColor,
     LinearGradient? gradient,
     VoidCallback? onTap,
+    double? width,
     DinoButtonState state = DinoButtonState.base,
   }) {
     return DinoButton(
@@ -134,6 +135,7 @@ class DinoButton extends StatelessWidget {
       size: size ?? DinoButtonSize.wrap,
       radius: radius,
       fontWeight: fontWeight,
+      width: width,
       leading: leading,
       trailing: trailing,
       horizontalPadding: horizontalPadding,

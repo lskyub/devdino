@@ -41,6 +41,11 @@ class DinoButtonStyle {
         ..shapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
+            side: BorderSide(
+              color: ColorRef(borderColor ?? $dinoToken.color.transparent),
+              width: width ?? 0,
+              strokeAlign: BorderSide.strokeAlignOutside,
+            ),
           ),
           gradient: gradient,
         ),
