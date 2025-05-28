@@ -109,7 +109,12 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       final bStatus = getTravelStatus(b);
       final cmp = statusOrder(aStatus).compareTo(statusOrder(bStatus));
       if (cmp != 0) return cmp;
-      // 같은 상태면 시작일 최신순
+      // 같은 상태 내 정렬
+      if (aStatus == '여행 예정' && bStatus == '여행 예정') {
+        // 가까운 시작일이 위로
+        return a.startDate!.compareTo(b.startDate!);
+      }
+      // 그 외(여행중/완료)는 최신순
       return b.startDate!.compareTo(a.startDate!);
     });
 
@@ -153,7 +158,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
             onPressed: () {
               // 업로드 기능
             },
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.upload),
           ),
         ],
         backgroundColor: Colors.white,
