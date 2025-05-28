@@ -507,9 +507,26 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
   /// 업데이트 일정 함수
   void _settingTravel() {
-    ref.read(routerProvider).push(
-          DateScreen.routePath,
-        );
+    TravelDialogManager.showSettingTravelDialog(context, ref).then((index) {
+      if (index == 0) {
+        dev.log('여행 일정 편집');
+        ref.read(routerProvider).push(
+              DateScreen.routePath,
+            );
+      } else if (index == 1) {
+        dev.log('여행 일정 공유');
+      } else if (index == 2) {
+        dev.log('여행 삭제');
+        final travel = ref.watch(travel_providers.currentTravelProvider);
+        if (travel != null) {
+          if (!mounted) return;
+          ref
+              .read(travel_providers.travelsProvider.notifier)
+              .removeTravel(travel.id);
+          Navigator.of(context).pop();
+        }
+      }
+    });
   }
 
   void _refreshAllData() async {

@@ -37,11 +37,6 @@ class _DateScreenState extends ConsumerState<DateScreen> {
   DateTime? _tempStartDate;
   DateTime? _tempEndDate;
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return '-';
-    return '${date.year.toString().substring(2)}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
-  }
-
   @override
   Widget build(BuildContext context) {
     // 여행 정보 확인
