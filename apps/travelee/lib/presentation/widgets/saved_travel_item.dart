@@ -23,15 +23,20 @@ class SavedTravelItem extends ConsumerWidget {
     // 오늘 날짜가 여행 시작일과 종료일에 포함되는지 확인
     bool isTodayInRange = false;
     try {
-      isTodayInRange = DateTime.now().isAfter(travel.startDate!) &&
-          DateTime.now().isBefore(travel.endDate!);
+      DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
+      DateTime start = DateTime(travel.startDate!.year, travel.startDate!.month, travel.startDate!.day);
+      DateTime end = DateTime(travel.endDate!.year, travel.endDate!.month, travel.endDate!.day);
+      isTodayInRange = !today.isBefore(start) && !today.isAfter(end);
     } catch (e) {
       print('error: $e');
     }
     // 오늘 날짜가 여행 종료일이 지났는지 확인
     bool isEnded = false;
     try {
-      isEnded = DateTime.now().isAfter(travel.endDate!);
+      final now = DateTime.now();
+      final end = travel.endDate!;
+      isEnded = now.isAfter(end) && !now.isAtSameMomentAs(end);
     } catch (e) {
       print('error: $e');
     }

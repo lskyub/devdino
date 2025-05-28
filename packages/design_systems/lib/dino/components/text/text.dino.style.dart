@@ -14,6 +14,7 @@ class DinoTextStyle {
         $text.style.fontSize(fontSize ?? 16),
         $text.style.fontWeight(fontWeight ?? FontWeight.w400),
         $text.style.fontFamily('Pretendard'),
+        $text.overflow.ellipsis(),
         DinoTextAlign.left(
           $text.textAlign.left(),
         ),

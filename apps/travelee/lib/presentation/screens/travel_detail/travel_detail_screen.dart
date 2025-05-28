@@ -1,3 +1,4 @@
+import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,7 @@ import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/data/services/database_helper.dart';
 import 'package:travelee/presentation/modal/country_select_modal.dart';
 import 'package:travelee/presentation/screens/travel_detail/schedule_input_screen.dart';
+import 'package:travelee/presentation/widgets/country_and_date_row.dart';
 import 'package:travelee/providers/travel_state_provider.dart'
     as travel_providers;
 import 'package:travelee/core/utils/result_types.dart';
@@ -118,55 +120,30 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 3),
+            child: SizedBox(
+              height: 48,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start, // 위쪽 정렬
                 children: [
                   GestureDetector(
                     onTap: () => _handleBackNavigation(context),
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16, right: 24, top: 12),
+                      padding: const EdgeInsets.only(left: 16, right: 16),
                       child: SvgPicture.asset(
                         'assets/icons/home.svg',
                       ),
                     ),
                   ),
-                  Stack(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            travelInfo.countryInfos.first.flagEmoji,
-                            style: const TextStyle(fontSize: 24),
-                          ),
-                          const SizedBox(width: 8),
-                          DinoText.custom(
-                            fontSize: 17,
-                            text: travelInfo.destination.join(', '),
-                            color: $dinoToken.color.blingGray900,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
-                      ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: DinoText.custom(
-                          fontSize: 11.24,
-                          text:
-                              '여행기간: ${TravelDateFormatter.formatDate(travelInfo.startDate)} ~ ${TravelDateFormatter.formatDate(travelInfo.endDate)}',
-                          color: $dinoToken.color.blingGray400,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  DinoText.custom(
+                    fontSize: 17,
+                    text: '여행 일정',
+                    color: $dinoToken.color.blingGray900,
+                    fontWeight: FontWeight.w500,
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: _updateSchedule,
+                    onTap: _settingTravel,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 16, top: 6),
+                      padding: const EdgeInsets.only(right: 16),
                       child: SvgPicture.asset(
                         'assets/icons/setting.svg',
                       ),
@@ -179,45 +156,22 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         ),
         body: Column(
           children: [
-            // Row(
-            //   children: [
-            //     SizedBox(
-            //       width: 70,
-            //       child: Align(
-            //         alignment: Alignment.center,
-            //         child: B2bText(
-            //           text: 'DATE',
-            //           type: DinoTextType.bodyS,
-            //           color: $dinoToken.color.black.resolve(context),
-            //         ),
-            //       ),
-            //     ),
-            //     B2bText(
-            //       text: 'EVENTS',
-            //       type: DinoTextType.bodyS,
-            //       color: $dinoToken.color.black.resolve(context),
-            //     ),
-            //     const Spacer(),
-            //     IconButton(
-            //       icon: isEdit
-            //           ? Icon(
-            //               Icons.visibility,
-            //               color: $dinoToken.color.blingGray600.resolve(context),
-            //             )
-            //           : Icon(
-            //               Icons.edit,
-            //               color: $dinoToken.color.blingGray600.resolve(context),
-            //             ),
-            //       onPressed: () {
-            //         setState(() {
-            //           isEdit = !isEdit;
-            //         });
-            //       },
-            //     ),
-            //   ],
-            // ),
             Divider(
               color: $dinoToken.color.blingGray75.resolve(context),
+              height: 1,
+            ),
+            Container(
+              height: 34,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              color: $dinoToken.color.blingGray50.resolve(context),
+              child: CountryAndDateRow(
+                countryInfos: travelInfo.countryInfos,
+                dateText: TravelDateFormatter.formatDateRange(
+                  travelInfo.startDate!,
+                  travelInfo.endDate!,
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -552,7 +506,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
   }
 
   /// 업데이트 일정 함수
-  void _updateSchedule() {
+  void _settingTravel() {
     ref.read(routerProvider).push(
           DateScreen.routePath,
         );

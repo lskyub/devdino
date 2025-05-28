@@ -56,13 +56,6 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     }
   }
 
-  Future<void> signOut() async {
-    await Supabase.instance.client.auth.signOut();
-    await GoogleSignIn().signOut();
-    if (!mounted) return;
-    context.go(FirstScreen.routePath); // 또는 원하는 라우트로 이동
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

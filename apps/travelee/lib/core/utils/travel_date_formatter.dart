@@ -10,8 +10,23 @@ class TravelDateFormatter {
   static String formatDate(DateTime? date) {
     if (date == null) return '-';
     String formattedDate =
-        '${date.year.toString().substring(2, 4)}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+        '${date.year.toString().substring(2, 4)}.${date.month.toString()}.${date.day.toString()}';
     return formattedDate;
+  }
+
+  static String formatDateWithoutYear(DateTime? date) {
+    if (date == null) return '-';
+    String formattedDate =
+        '${date.month.toString()}.${date.day.toString()}';
+    return formattedDate;
+  }
+
+  static String formatDateRange(DateTime start, DateTime end) {
+    // 시작연도와 종료 연도가 같을 경우 종료 연도에는 연도를 표시하지 않음
+    if (start.year == end.year) {
+      return '${formatDate(start)} - ${formatDateWithoutYear(end)}';
+    }
+    return '${formatDate(start)} - ${formatDate(end)}';
   }
 
   /// 시작일부터 종료일까지의 연속된 날짜 목록 생성

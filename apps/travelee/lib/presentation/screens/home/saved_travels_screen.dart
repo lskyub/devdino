@@ -72,6 +72,20 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     context.go(FirstScreen.routePath); // 또는 원하는 라우트로 이동
   }
 
+  String getTravelStatus(travel) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final start = DateTime(travel.startDate!.year, travel.startDate!.month, travel.startDate!.day);
+    final end = DateTime(travel.endDate!.year, travel.endDate!.month, travel.endDate!.day);
+    if (!today.isBefore(start) && !today.isAfter(end)) {
+      return '여행 중';
+    } else if (today.isBefore(start)) {
+      return '여행 예정';
+    } else {
+      return '여행 완료';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // 저장된 여행 불러오기
@@ -83,6 +97,21 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
 
     // 생성일 기준으로 최신순 정렬
     savedTravels.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    // 여행 상태 기준 정렬: 여행 중 > 여행 예정 > 여행 완료
+    int statusOrder(String status) {
+      if (status == '여행 중') return 0;
+      if (status == '여행 예정') return 1;
+      return 2; // 여행 완료
+    }
+    savedTravels.sort((a, b) {
+      final aStatus = getTravelStatus(a);
+      final bStatus = getTravelStatus(b);
+      final cmp = statusOrder(aStatus).compareTo(statusOrder(bStatus));
+      if (cmp != 0) return cmp;
+      // 같은 상태면 시작일 최신순
+      return b.startDate!.compareTo(a.startDate!);
+    });
 
     // 저장된 여행 목록 로깅 (상세 정보 포함)
     dev.log(
@@ -98,22 +127,6 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       }
       dev.log('--------------------------------');
     }
-
-    // savedTravels 여행 정렬 변경 시작 종료 날짜와 오늘 날짜를 비교하여 오늘 날짜가 시작 종료 날짜 사이에 있으면 위로 오도록 정렬, 날짜가 지났으면 아래로 가도록 정렬
-    savedTravels.sort((a, b) {
-      final today = DateTime.now();
-      final aStartDate = a.startDate!;
-      final aEndDate = a.endDate!;
-      final bStartDate = b.startDate!;
-      final bEndDate = b.endDate!;
-
-      if (today.isAfter(aStartDate) && today.isBefore(aEndDate)) {
-        return -1;
-      } else if (today.isAfter(bStartDate) && today.isBefore(bEndDate)) {
-        return 1;
-      }
-      return 0;
-    });
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -133,6 +146,12 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
             onPressed: () {
               // 로그인 정보 삭제 후 로그인 화면으로 이동
               signOut();
+            },
+            icon: const Icon(Icons.search),
+          ),
+          IconButton(
+            onPressed: () {
+              // 업로드 기능
             },
             icon: const Icon(Icons.search),
           ),
