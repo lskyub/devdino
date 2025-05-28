@@ -25,6 +25,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:travelee/router.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
+import 'package:travelee/data/services/pdf_export_service.dart';
+import 'package:travelee/data/models/db/travel_db_model.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -507,31 +509,57 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
   /// 업데이트 일정 함수
   void _settingTravel() {
-    TravelDialogManager.showSettingTravelDialog(context, ref).then((index) {
-      if (index == 0) {
-        dev.log('여행 일정 편집');
-        ref.read(routerProvider).push(
-              DateScreen.routePath,
+    TravelDialogManager.showSettingTravelDialog(context, ref).then(
+      (index) async {
+        if (index == 0) {
+          dev.log('여행 일정 편집');
+          ref.read(routerProvider).push(
+                DateScreen.routePath,
+              );
+        } else if (index == 1) {
+          dev.log('여행 일정 공유');
+          final travelInfo = ref.watch(travel_providers.currentTravelProvider);
+          if (travelInfo == null) return;
+
+          try {
+            final travelDbModel = TravelDBModel.fromTravelModel(travelInfo);
+            final schedules = travelDbModel.schedules;
+            var pdfFile = await PdfExportService.exportTravelDetailToPdf(
+              travel: travelDbModel,
+              schedules: schedules,
             );
-      } else if (index == 1) {
-        dev.log('여행 일정 공유');
-      } else if (index == 2) {
-        dev.log('여행 삭제');
-        final travel = ref.watch(travel_providers.currentTravelProvider);
-        if (travel != null) {
-          if (!mounted) return;
-          ref
-              .read(travel_providers.travelsProvider.notifier)
-              .removeTravel(travel.id);
-          Navigator.of(context).pop();
+            await PdfExportService.sharePdf(pdfFile);
+
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('PDF로 내보내기 완료')),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('PDF 내보내기 실패: $e')),
+              );
+            }
+          }
+        } else if (index == 2) {
+          dev.log('여행 삭제');
+          final travel = ref.watch(travel_providers.currentTravelProvider);
+          if (travel != null) {
+            if (!mounted) return;
+            ref
+                .read(travel_providers.travelsProvider.notifier)
+                .removeTravel(travel.id);
+            Navigator.of(context).pop();
+          }
         }
-      }
-    });
+      },
+    );
   }
 
-  void _refreshAllData() async {
-    await TravelDialogManager.showEditTravelDialog(context, ref);
-  }
+  // void _refreshAllData() async {
+  //   await TravelDialogManager.showEditTravelDialog(context, ref);
+  // }
 
   String _formatDateKey(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

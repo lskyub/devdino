@@ -61,6 +61,10 @@ dependencies:
   # firebase_auth: ^4.17.4
   # firebase_core: ^2.25.4
 
+  pdf: ^3.10.7
+  path_provider: ^2.1.2
+  share_plus: ^7.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -78,7 +82,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - .env # 환경 변수
-
+    - assets/fonts/NotoSansKR-Regular.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
