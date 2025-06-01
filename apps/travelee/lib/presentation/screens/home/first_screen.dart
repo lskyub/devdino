@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/dino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
   static const routeName = 'inital';
@@ -43,6 +48,55 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
       accessToken: googleAuth.accessToken,
     );
     return response.user != null;
+  }
+
+  // 애플 로그인
+  Future<bool> signInWithApple() async {
+    final credential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    ).then((AuthorizationCredentialAppleID user) {
+      print(user);
+    }).catchError((error, stackTrace) {
+      print(error);
+      print(stackTrace);
+    });
+    // webAuthenticationOptions: WebAuthenticationOptions(
+    //   // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
+    //   clientId: 'de.lunaone.flutter.signinwithappleexample.service',
+    //   redirectUri:
+    //       // For web your redirect URI needs to be the host of the "current page",
+    //       // while for Android you will be using the API server that redirects back into your app via a deep link
+    //       // NOTE(tp): For package local development use (as described in `Development.md`)
+    //       // Uri.parse('https://siwa-flutter-plugin.dev/')
+    //       kIsWeb
+    //           ? Uri.parse('https://${Uri.base.host}/')
+    //           : Uri.parse(
+    //               'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+    //             ),
+    // ),
+
+//     talker.debug('''
+// [로그인#애플] 로그인 결과
+// 메일: ${credential.email}
+// 이름: ${credential.familyName} ${credential.givenName}
+// ''');
+
+    final userNickname =
+        '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim();
+    String nickname = userNickname;
+
+    // return (
+    //   token: credential.authorizationCode,
+    //   user: SocialUser(
+    //     platform: 'apple',
+    //     email: credential.email ?? '',
+    //     nickname: nickname,
+    //   ),
+    // );
+    return true;
   }
 
   @override
@@ -110,23 +164,60 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: DinoButton.custom(
-                  type: DinoButtonType.solid,
-                  size: DinoButtonSize.full,
-                  title: 'Google로 계속하기',
-                  radius: 12,
-                  backgroundColor: $dinoToken.color.brandBlingPurple600,
-                  onTap: () async {
-                    final success = await signInWithGoogle();
-                    if (!mounted) return;
-                    if (success) {
-                      context.go(SavedTravelsScreen.routePath);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('구글 로그인에 실패했습니다.')),
-                      );
-                    }
-                  },
+                child: Column(
+                  spacing: 12,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (Platform.isIOS)
+                      DinoButton.custom(
+                        type: DinoButtonType.solid,
+                        size: DinoButtonSize.full,
+                        leading: SvgPicture.asset(
+                          'assets/icons/apple.svg',
+                        ),
+                        title: 'Apple로 계속하기',
+                        radius: 12,
+                        backgroundColor: $dinoToken.color.black,
+                        onTap: () async {
+                          final success = await signInWithApple();
+                          if (!mounted) return;
+                          if (success) {
+                            if (context.mounted) {
+                              context.go(SavedTravelsScreen.routePath);
+                            }
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('애플 로그인에 실패했습니다.')),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    DinoButton.custom(
+                      type: DinoButtonType.solid,
+                      size: DinoButtonSize.full,
+                      title: 'Google로 계속하기',
+                      radius: 12,
+                      backgroundColor: $dinoToken.color.brandBlingPurple600,
+                      onTap: () async {
+                        final success = await signInWithGoogle();
+                        if (!mounted) return;
+                        if (success) {
+                          if (context.mounted) {
+                            context.go(SavedTravelsScreen.routePath);
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('구글 로그인에 실패했습니다.')),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),

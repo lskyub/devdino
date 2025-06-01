@@ -136,14 +136,12 @@ class $TAssetsIcons {
         'assets/icons/toast_check.svg',
       );
 
-
   /// The `assets/icons/toast_close.svg`.
   SvgAsset get toastClose => const SvgAsset(
         'design_systems',
         'toast_close',
         'assets/icons/toast_close.svg',
       );
-
 
   /// The contents of this directory.
   Map<String, Asset> get contents => const {
@@ -191,6 +189,11 @@ class $TAssetsIcons {
           'design_systems',
           'refresh',
           'assets/icons/refresh.svg',
+        ),
+        'apple': const SvgAsset(
+          'design_systems',
+          'apple',
+          'assets/icons/apple.svg',
         ),
       };
 }

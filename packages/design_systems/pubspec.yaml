@@ -26,6 +26,7 @@ dev_dependencies:
 flutter:
   assets:
     # icons
+    - assets/icons/apple.svg
     - assets/icons/arrow_down.svg
     - assets/icons/arrow_up.svg
     - assets/icons/checkbox_on.svg
