@@ -11,11 +11,11 @@ flutter_native_splash:
   # splash screen to a png image.  This is useful for gradients. The image will be stretch to the
   # size of the app. Only one parameter can be used, color and background_image cannot both be set.
   color: "#000000"
-  image: assets/images/splash_logo.png
-  branding: assets/images/splash_logo.png
+  image: assets/images/logotype_travelee.png
+  branding: assets/images/logotype_travelee.png
   color_dark: "#000000"
-  image_dark: assets/images/splash_logo.png
-  branding_dark: assets/images/splash_logo.png
+  image_dark: assets/images/logotype_travelee.png
+  branding_dark: assets/images/logotype_travelee.png
 
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
   # the leading # character.
@@ -54,7 +54,7 @@ flutter_native_splash:
     # 640 pixels in diameter.
     # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
     # 768 pixels in diameter.
-    image: assets/images/splash_logo.png
+    image: assets/images/logotype_travelee.png
 
     # Splash screen background color.
     color: "#000000"
@@ -68,7 +68,7 @@ flutter_native_splash:
     # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
     # apply when the device is in dark mode. If they are not specified, the app will use the
     # parameters from above.
-    image_dark: assets/images/splash_logo.png
+    image_dark: assets/images/logotype_travelee.png
     #color_dark: "#042a49"
     icon_background_color_dark: "#000000"
 

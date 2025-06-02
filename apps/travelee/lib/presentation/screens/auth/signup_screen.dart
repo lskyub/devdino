@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:utils/utils.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   static const routeName = 'signup';
@@ -101,7 +102,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   const SizedBox(height: 24),
                   B2bText(
                     type: DinoTextType.headingXL,
-                    text: '회원가입',
+                    text: AppLocalizations.of(context)!.signUp,
                     color: $dinoToken.color.white.resolve(context),
                   ),
                   const SizedBox(height: 40),
@@ -111,7 +112,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       color: $dinoToken.color.white.resolve(context),
                     ),
                     decoration: InputDecoration(
-                      hintText: '이메일',
+                      hintText: AppLocalizations.of(context)!.email,
                       hintStyle: TextStyle(
                         color: $dinoToken.color.white
                             .resolve(context)
@@ -144,7 +145,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       color: $dinoToken.color.white.resolve(context),
                     ),
                     decoration: InputDecoration(
-                      hintText: '비밀번호 (6자리 이상)',
+                      hintText: AppLocalizations.of(context)!.password,
                       hintStyle: TextStyle(
                         color: $dinoToken.color.white
                             .resolve(context)
@@ -190,7 +191,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       width: double.infinity,
                       child: B2bButton.medium(
                         type: B2bButtonType.primary,
-                        title: '인증번호 전송',
+                        title: AppLocalizations.of(context)!.sendVerificationCode,
                         onTap: _sendVerificationCode,
                       ),
                     )

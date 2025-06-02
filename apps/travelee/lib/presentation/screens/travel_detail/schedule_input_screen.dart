@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
@@ -11,6 +13,7 @@ import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/modal/time_picker_modal.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/gen/app_localizations.dart';
 
 class ScheduleInputScreen extends ConsumerStatefulWidget {
   static const routeName = 'scheduleInput';
@@ -214,7 +217,7 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
               padding: const EdgeInsets.only(left: 4),
               child: DinoText.custom(
                 fontSize: 14.22,
-                text: '장소',
+                text: AppLocalizations.of(context)!.schedulePlace,
                 color: $dinoToken.color.blingGray600,
                 fontWeight: FontWeight.w500,
               ),
@@ -223,14 +226,14 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
             DinoTextField(
               controller: _locationController,
               borderColor: _locationBorderColor,
-              hint: '장소를 입력해 주세요.',
+              hint: AppLocalizations.of(context)!.enterPlace,
             ),
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.only(left: 4),
               child: DinoText.custom(
                 fontSize: 14.22,
-                text: '시간',
+                text: AppLocalizations.of(context)!.scheduleTime,
                 color: $dinoToken.color.blingGray600,
                 fontWeight: FontWeight.w500,
               ),
@@ -312,7 +315,7 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
               padding: const EdgeInsets.only(left: 4),
               child: DinoText.custom(
                 fontSize: 14.22,
-                text: '메모',
+                text: AppLocalizations.of(context)!.scheduleMemo,
                 color: $dinoToken.color.blingGray600,
                 fontWeight: FontWeight.w500,
               ),
@@ -324,7 +327,7 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
               minLines: 4,
               maxLength: 300,
               borderColor: _memoBorderColor,
-              hint: '메모를 입력해 주세요.',
+              hint: AppLocalizations.of(context)!.enterMemo,
             ),
             const Spacer(),
             SafeArea(
@@ -341,7 +344,9 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
                 disabledTextColor: $dinoToken.color.white,
                 disabledBackgroundColor: $dinoToken.color.blingGray300,
                 backgroundColor: $dinoToken.color.brandBlingPurple600,
-                title: isEditMode ? '일정 수정하기' : '일정 추가하기',
+                title: isEditMode 
+                    ? AppLocalizations.of(context)!.editScheduleButton 
+                    : AppLocalizations.of(context)!.addScheduleButton,
                 onTap: _saveSchedule,
               ),
             ),

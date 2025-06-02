@@ -19,6 +19,7 @@ import 'package:travelee/data/models/location/country_info.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 import 'dart:developer' as dev;
 import 'dart:math';
+import 'package:travelee/gen/app_localizations.dart';
 
 final searchTextProvider = StateProvider<String>((ref) => '');
 
@@ -52,7 +53,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
         // 빈 여행 객체 생성
         final newTravel = TravelModel(
           id: tempId,
-          title: '새 여행',
+          title: AppLocalizations.of(context)!.newTravel,
           destination: [],
           startDate: null,
           endDate: null,
@@ -92,9 +93,9 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 color: $dinoToken.color.primary.resolve(context),
               ),
               const SizedBox(height: 16),
-              const B2bText(
+              B2bText(
                 type: DinoTextType.bodyM,
-                text: '새 여행 생성 중...',
+                text: AppLocalizations.of(context)!.creatingNewTravel,
               ),
             ],
           ),
@@ -121,7 +122,9 @@ class _DateScreenState extends ConsumerState<DateScreen> {
           alignment: Alignment.centerLeft,
           child: DinoText.custom(
             fontSize: 17,
-            text: travelInfo.id.startsWith('temp_') ? '여행 정보 등록' : '여행 정보 수정',
+            text: travelInfo.id.startsWith('temp_')
+                ? AppLocalizations.of(context)!.registerTravelInfo
+                : AppLocalizations.of(context)!.editTravelInfo,
             color: $dinoToken.color.blingGray900,
             fontWeight: FontWeight.w500,
           ),
@@ -181,7 +184,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 const SizedBox(width: 8),
                 DinoText.custom(
                   fontSize: 22.78,
-                  text: '여행 국가',
+                  text: AppLocalizations.of(context)!.travelCountry,
                   color: $dinoToken.color.blingGray600,
                   fontWeight: FontWeight.w700,
                 ),
@@ -204,7 +207,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       ),
                     ),
                   ),
-                  title: '추가하기',
+                  title: AppLocalizations.of(context)!.addCountry,
                   onTap: () {
                     showCountryPicker(
                       context: context,
@@ -222,7 +225,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                           topRight: Radius.circular(24.0),
                         ),
                         inputDecoration: InputDecoration(
-                            hintText: '국가 이름을 검색해주세요',
+                            hintText:
+                                AppLocalizations.of(context)!.searchCountryHint,
                             hintStyle: TextStyle(
                               fontSize: 16,
                               color: $dinoToken.color.blingGray400
@@ -258,9 +262,10 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                         if (travelInfo.destination.contains(countryName)) {
                           // 이미 선택된 국가는 추가하지 않고 메시지 표시
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('이미 선택된 국가입니다'),
-                              duration: Duration(seconds: 2),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .countryAlreadySelected),
+                              duration: const Duration(seconds: 2),
                             ),
                           );
                           return;
@@ -397,14 +402,14 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 const SizedBox(width: 8),
                 DinoText.custom(
                   fontSize: 22.78,
-                  text: '여행 기간',
+                  text: AppLocalizations.of(context)!.travelPeriod,
                   color: $dinoToken.color.blingGray600,
                   fontWeight: FontWeight.w700,
                 ),
                 const Spacer(),
                 DinoText.custom(
                   fontSize: 12.64,
-                  text: '여행 기간을 선택해 주세요.',
+                  text: AppLocalizations.of(context)!.selectTravelPeriod,
                   color: $dinoToken.color.blingGray400,
                   fontWeight: FontWeight.w500,
                 ),
@@ -615,11 +620,11 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                   type: DinoButtonType.solid,
                   size: DinoButtonSize.full,
                   title: travelInfo.id.startsWith('temp_')
-                      ? '여행 정보 등록하기'
-                      : '여행 정보 수정하기',
+                      ? AppLocalizations.of(context)!.registerTravelInfoButton
+                      : AppLocalizations.of(context)!.editTravelInfoButton,
                   state: _tempStartDate == null ||
                           _tempEndDate == null ||
-                          travelInfo.destination.isEmpty
+                          travelInfo.countryInfos.isEmpty
                       ? DinoButtonState.disabled
                       : DinoButtonState.base,
                   backgroundColor: $dinoToken.color.brandBlingPurple600,
@@ -638,7 +643,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                     } else {
                       if (_tempStartDate == null ||
                           _tempEndDate == null ||
-                          travelInfo.destination.isEmpty) {
+                          travelInfo.countryInfos.isEmpty) {
                         return;
                       }
 
@@ -727,7 +732,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 const AdBannerWidget(),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

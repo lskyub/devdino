@@ -18,6 +18,7 @@ import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/gen/app_localizations.dart';
 
 import 'package:travelee/core/utils/travel_dialog_manager.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
@@ -27,6 +28,7 @@ import 'package:travelee/router.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/data/services/pdf_export_service.dart';
 import 'package:travelee/data/models/db/travel_db_model.dart';
+import 'package:travelee/providers/ad_provider.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -131,13 +133,13 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16, right: 16),
                       child: SvgPicture.asset(
-                        'assets/icons/home.svg',
+                        'assets/icons/bottomnav_home_sel.svg',
                       ),
                     ),
                   ),
                   DinoText.custom(
                     fontSize: 17,
-                    text: '여행 일정',
+                    text: AppLocalizations.of(context)!.travelScheduleTitle,
                     color: $dinoToken.color.blingGray900,
                     fontWeight: FontWeight.w500,
                   ),
@@ -147,7 +149,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: SvgPicture.asset(
-                        'assets/icons/setting.svg',
+                        'assets/icons/bottomnav_setting_sel.svg',
                       ),
                     ),
                   ),
@@ -202,14 +204,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                 ],
               ),
             ),
-            const SafeArea(
-              child: Column(
-                children: [
-                  AdBannerWidget(),
-                  SizedBox(height: 16),
-                ],
-              ),
-            ),
+            const SafeArea(child: AdBannerWidget()),
           ],
         ),
       ),

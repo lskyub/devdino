@@ -14,7 +14,11 @@ import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
+import 'package:travelee/presentation/screens/settings/settings_screen.dart';
+import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
+import 'package:travelee/gen/app_localizations.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/providers/ad_provider.dart';
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
   static const routeName = 'saved_travels';
@@ -35,11 +39,17 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cleanupTempTravels();
     });
+
+    // 광고 표시 상태를 true로 설정
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(adProvider.notifier).setBannerAdVisibility(true);
+    });
   }
 
   /// 임시 여행 데이터 정리 (temp_로 시작하는 ID를 가진 여행 삭제)
   void _cleanupTempTravels() {
     final allTravels = ref.read(travelsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     // 임시 여행 필터링
     final tempTravels =
@@ -47,16 +57,16 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
 
     // 임시 여행 있으면 로그 출력
     if (tempTravels.isNotEmpty) {
-      dev.log('SavedTravelsScreen - 임시 여행 데이터 삭제: ${tempTravels.length}개');
+      dev.log(l10n.tempTravelDeleted(tempTravels.length));
 
       // 임시 여행 삭제
       for (final travel in tempTravels) {
-        dev.log(
-            'SavedTravelsScreen - 임시 여행 삭제: ID=${travel.id}, 목적지=${travel.destination.join(", ")}');
+        dev.log(l10n.tempTravelDeleteDetail(
+            travel.id, travel.destination.join(", ")));
         ref.read(travelsProvider.notifier).removeTravel(travel.id);
       }
     } else {
-      dev.log('SavedTravelsScreen - 임시 여행 데이터 없음');
+      dev.log(l10n.noTempTravel);
     }
   }
 
@@ -73,21 +83,25 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
   }
 
   String getTravelStatus(travel) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final start = DateTime(travel.startDate!.year, travel.startDate!.month, travel.startDate!.day);
-    final end = DateTime(travel.endDate!.year, travel.endDate!.month, travel.endDate!.day);
+    final start = DateTime(
+        travel.startDate!.year, travel.startDate!.month, travel.startDate!.day);
+    final end = DateTime(
+        travel.endDate!.year, travel.endDate!.month, travel.endDate!.day);
     if (!today.isBefore(start) && !today.isAfter(end)) {
-      return '여행 중';
+      return l10n.travelStatusOngoing;
     } else if (today.isBefore(start)) {
-      return '여행 예정';
+      return l10n.travelStatusUpcoming;
     } else {
-      return '여행 완료';
+      return l10n.travelStatusCompleted;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     // 저장된 여행 불러오기
     final allTravels = ref.watch(travelsProvider);
 
@@ -104,6 +118,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       if (status == '여행 예정') return 1;
       return 2; // 여행 완료
     }
+
     savedTravels.sort((a, b) {
       final aStatus = getTravelStatus(a);
       final bStatus = getTravelStatus(b);
@@ -119,10 +134,10 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     });
 
     // 저장된 여행 목록 로깅 (상세 정보 포함)
-    dev.log(
-        'SavedTravelsScreen - 저장된 여행 목록: ${savedTravels.length}개 (전체: ${allTravels.length}개)');
+    final l10n = AppLocalizations.of(context)!;
+    dev.log(l10n.savedTravelList(savedTravels.length, allTravels.length));
     if (savedTravels.isNotEmpty) {
-      dev.log('------- 여행 목록 상세 정보 -------');
+      dev.log('------- ${l10n.travelListDetail} -------');
       for (int i = 0; i < savedTravels.length; i++) {
         final travel = savedTravels[i];
         dev.log(' • 여행[$i]:');
@@ -140,26 +155,36 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
         leading: null,
         title: Align(
           alignment: Alignment.centerLeft,
-          child: DinoText.custom(
-            fontSize: 25.63,
-            text: '트래블리 로고',
-            fontWeight: FontWeight.w700,
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                local.localeName == 'ko'
+                    ? 'assets/icons/logotype_travelee.svg'
+                    : 'assets/icons/logotype_travelee_e.svg',
+                width: 72,
+                height: 18,
+                colorFilter: ColorFilter.mode(
+                  $dinoToken.color.blingGray800.resolve(context),
+                  BlendMode.srcIn,
+                ),
+              ),
+              Image.asset(
+                'assets/images/travelee_airplain.png',
+                width: 32,
+                height: 32,
+              ),
+            ],
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // 로그인 정보 삭제 후 로그인 화면으로 이동
-              signOut();
-            },
-            icon: const Icon(Icons.search),
-          ),
-          IconButton(
-            onPressed: () {
-              // 업로드 기능
-            },
-            icon: const Icon(Icons.upload),
-          ),
+        actions: const [
+          // GestureDetector(
+          //   onTap: () {
+          //     context.push(SettingsScreen.routePath);
+          //   },
+          //   child: SvgPicture.asset(
+          //     'assets/icons/bottomnav_setting_sel.svg',
+          //   ),
+          // ),
         ],
         backgroundColor: Colors.white,
         elevation: 0,
@@ -172,20 +197,23 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(
-                          'assets/icons/airplane.svg',
+                        Image.asset(
+                          'assets/images/travel_carrier.png',
+                          width: 100,
+                          height: 100,
                         ),
                         const SizedBox(height: 24),
                         DinoText.custom(
                           fontSize: 25.63,
-                          text: '어디로 떠나시나요?',
+                          text: AppLocalizations.of(context)!.whereToGo,
                           color: $dinoToken.color.blingGray800,
                           fontWeight: FontWeight.w700,
                           textAlign: DinoTextAlign.center,
                         ),
                         DinoText.custom(
                           fontSize: 16,
-                          text: '여행지를 추가하고 일정을 정리하여\n완벽한 휴가를 즐겨보세요. ',
+                          text: AppLocalizations.of(context)!
+                              .organizeTravelMessage,
                           color: $dinoToken.color.blingGray500,
                           textAlign: DinoTextAlign.center,
                           fontWeight: FontWeight.w500,
@@ -193,21 +221,23 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                         const SizedBox(height: 24),
                         DinoButton.custom(
                           type: DinoButtonType.solid,
-                          title: '여행 추가하기',
+                          title: AppLocalizations.of(context)!.addTravelButton,
                           leading: Padding(
                             padding: const EdgeInsets.only(right: 5),
                             child: SvgPicture.asset(
                               'assets/icons/add_schedule.svg',
-                              width: 20,
-                              height: 20,
+                              width: 24,
+                              height: 24,
                               colorFilter: ColorFilter.mode(
                                 $dinoToken.color.white.resolve(context),
                                 BlendMode.srcIn,
                               ),
                             ),
                           ),
+                          verticalPadding: 20,
+                          horizontalPadding: 32,
                           textSize: 16,
-                          radius: 28,
+                          radius: 40,
                           textColor: $dinoToken.color.white,
                           backgroundColor: $dinoToken.color.primary,
                           gradient: const LinearGradient(
@@ -235,7 +265,8 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                           fontSize: DinoTextSizeToken.text600,
                           fontWeight: FontWeight.w700,
                           color: $dinoToken.color.blingGray800,
-                          text: '즐거운 여행 되세요! 🥰',
+                          text: AppLocalizations.of(context)!
+                              .enjoyYourTripMessage,
                         ),
                       ),
                       Expanded(
@@ -254,40 +285,46 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                     ],
                   ),
           ),
+          if (savedTravels.isEmpty) const SafeArea(child: AdBannerWidget()),
           if (savedTravels.isNotEmpty) ...[
             SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: DinoButton.custom(
-                  type: DinoButtonType.outline,
-                  size: DinoButtonSize.full,
-                  title: '여행 추가하기',
-                  leading: Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: SvgPicture.asset(
-                      'assets/icons/add_schedule.svg',
-                      width: 20,
-                      height: 20,
-                      colorFilter: ColorFilter.mode(
-                        $dinoToken.color.blingGray500.resolve(context),
-                        BlendMode.srcIn,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: DinoButton.custom(
+                      type: DinoButtonType.outline,
+                      size: DinoButtonSize.full,
+                      title: AppLocalizations.of(context)!.addTravelButton,
+                      leading: Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: SvgPicture.asset(
+                          'assets/icons/add_schedule.svg',
+                          width: 20,
+                          height: 20,
+                          colorFilter: ColorFilter.mode(
+                            $dinoToken.color.blingGray500.resolve(context),
+                            BlendMode.srcIn,
+                          ),
+                        ),
                       ),
+                      textSize: 16,
+                      radius: 12,
+                      width: 1,
+                      fontWeight: FontWeight.w600,
+                      textColor: $dinoToken.color.blingGray800,
+                      backgroundColor: $dinoToken.color.white,
+                      pressedBorderColor: $dinoToken.color.blingGray200,
+                      disabledBorderColor: $dinoToken.color.blingGray200,
+                      borderColor: $dinoToken.color.blingGray200,
+                      onTap: () {
+                        ref.read(currentTravelIdProvider.notifier).state = '';
+                        context.push(DateScreen.routePath);
+                      },
                     ),
                   ),
-                  textSize: 16,
-                  radius: 12,
-                  width: 1,
-                  fontWeight: FontWeight.w600,
-                  textColor: $dinoToken.color.blingGray800,
-                  backgroundColor: $dinoToken.color.white,
-                  pressedBorderColor: $dinoToken.color.blingGray200,
-                  disabledBorderColor: $dinoToken.color.blingGray200,
-                  borderColor: $dinoToken.color.blingGray200,
-                  onTap: () {
-                    ref.read(currentTravelIdProvider.notifier).state = '';
-                    context.push(DateScreen.routePath);
-                  },
-                ),
+                  const AdBannerWidget(),
+                ],
               ),
             ),
           ],

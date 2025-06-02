@@ -14,6 +14,7 @@ import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
   static const routeName = 'inital';
@@ -52,51 +53,32 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
 
   // 애플 로그인
   Future<bool> signInWithApple() async {
-    final credential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-    ).then((AuthorizationCredentialAppleID user) {
-      print(user);
-    }).catchError((error, stackTrace) {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      print(credential); // 실제 credential 값 확인
+
+      if (credential.identityToken == null) {
+        print('identityToken is null');
+        return false;
+      }
+
+      final response = await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: credential.identityToken!,
+        // accessToken, authorizationCode 등 필요시 추가
+      );
+      print(response);
+      return response.user != null;
+    } catch (error, stackTrace) {
       print(error);
       print(stackTrace);
-    });
-    // webAuthenticationOptions: WebAuthenticationOptions(
-    //   // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
-    //   clientId: 'de.lunaone.flutter.signinwithappleexample.service',
-    //   redirectUri:
-    //       // For web your redirect URI needs to be the host of the "current page",
-    //       // while for Android you will be using the API server that redirects back into your app via a deep link
-    //       // NOTE(tp): For package local development use (as described in `Development.md`)
-    //       // Uri.parse('https://siwa-flutter-plugin.dev/')
-    //       kIsWeb
-    //           ? Uri.parse('https://${Uri.base.host}/')
-    //           : Uri.parse(
-    //               'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
-    //             ),
-    // ),
-
-//     talker.debug('''
-// [로그인#애플] 로그인 결과
-// 메일: ${credential.email}
-// 이름: ${credential.familyName} ${credential.givenName}
-// ''');
-
-    final userNickname =
-        '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim();
-    String nickname = userNickname;
-
-    // return (
-    //   token: credential.authorizationCode,
-    //   user: SocialUser(
-    //     platform: 'apple',
-    //     email: credential.email ?? '',
-    //     nickname: nickname,
-    //   ),
-    // );
-    return true;
+      return false;
+    }
   }
 
   @override
@@ -112,6 +94,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -136,20 +119,15 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Opacity(
-                    opacity: 0.5,
-                    child: SvgPicture.asset(
-                      'assets/icons/icon.svg',
-                      width: 44,
-                    ),
-                  ),
                   SvgPicture.asset(
-                    'assets/icons/logo.svg',
-                    width: 281,
+                    local.localeName == 'ko'
+                        ? 'assets/icons/logotype_travelee.svg'
+                        : 'assets/icons/logotype_travelee_e.svg',
+                    width: MediaQuery.of(context).size.width * 0.5,
                   ),
                   const SizedBox(height: 25),
                   DinoText.custom(
-                    text: '여행의 꿈에 뛰어들어\n오늘부터 계획을 세우세요!',
+                    text: local.firstScreenTitle,
                     textAlign: DinoTextAlign.center,
                     color: $dinoToken.color.white,
                   ),
@@ -172,10 +150,13 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                       DinoButton.custom(
                         type: DinoButtonType.solid,
                         size: DinoButtonSize.full,
-                        leading: SvgPicture.asset(
-                          'assets/icons/apple.svg',
+                        leading: Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: SvgPicture.asset(
+                            'assets/icons/apple.svg',
+                          ),
                         ),
-                        title: 'Apple로 계속하기',
+                        title: local.continueWithApple,
                         radius: 12,
                         backgroundColor: $dinoToken.color.black,
                         onTap: () async {
@@ -188,8 +169,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                           } else {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('애플 로그인에 실패했습니다.')),
+                                SnackBar(content: Text(local.appleLoginFailed)),
                               );
                             }
                           }
@@ -198,7 +178,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                     DinoButton.custom(
                       type: DinoButtonType.solid,
                       size: DinoButtonSize.full,
-                      title: 'Google로 계속하기',
+                      title: local.continueWithGoogle,
                       radius: 12,
                       backgroundColor: $dinoToken.color.brandBlingPurple600,
                       onTap: () async {
@@ -211,7 +191,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                         } else {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('구글 로그인에 실패했습니다.')),
+                              SnackBar(content: Text(local.googleLoginFailed)),
                             );
                           }
                         }

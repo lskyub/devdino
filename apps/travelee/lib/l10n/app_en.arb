@@ -1,0 +1,103 @@
+{
+  "appTitle": "Travelee",
+  "firstScreenTitle": "Dive into your travel dreams\nStart planning today!",
+  "continueWithApple": "Continue with Apple",
+  "continueWithGoogle": "Continue with Google",
+  "appleLoginFailed": "Apple login failed.",
+  "googleLoginFailed": "Google login failed.",
+  
+  "@saved_travels": {},
+  "tempTravelDeleted": "Temporary travel data deleted: {count}",
+  "@tempTravelDeleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tempTravelDeleteDetail": "Deleted temporary travel: ID={id}, Destination={destination}",
+  "@tempTravelDeleteDetail": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "destination": {
+        "type": "String"
+      }
+    }
+  },
+  "noTempTravel": "No temporary travel data",
+  "savedTravelList": "Saved travels: {count} (Total: {total})",
+  "@savedTravelList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "travelListDetail": "Travel List Details",
+  "travelStatusOngoing": "Ongoing",
+  "travelStatusUpcoming": "Upcoming",
+  "travelStatusCompleted": "Completed",
+  "whereToGo": "Where would you like to go?",
+  "addTravelButton": "Add Travel",
+  "enjoyYourTripMessage": "Enjoy your trip! 🥰",
+  "organizeTravelMessage": "Add destinations and organize your schedule\nfor a perfect vacation.",
+
+  "@travel_detail": {},
+  "travelScheduleTitle": "Travel Schedule",
+  "addSchedule": "Add Schedule",
+  "enjoyYourTrip": "Enjoy your trip! 🥰",
+  "addTravel": "Add Travel",
+
+  "@date_screen": {},
+  "creatingNewTravel": "Creating new travel...",
+  "registerTravelInfo": "Register Travel Info",
+  "editTravelInfo": "Edit Travel Info",
+  "newTravel": "New Travel",
+  "travelCountry": "Travel Country",
+  "travelPeriod": "Travel Period",
+  "selectTravelPeriod": "Please select your travel period.",
+  "registerTravelInfoButton": "Register Travel Info",
+  "editTravelInfoButton": "Edit Travel Info",
+  "addCountry": "Add Country",
+  "searchCountryHint": "Search for a country",
+  "countryAlreadySelected": "Country already selected",
+
+  "@schedule_input": {},
+  "scheduleEditTitle": "Edit Schedule",
+  "scheduleAddTitle": "Add Schedule",
+  "scheduleSaveFailed": "Failed to save schedule: No current travel info",
+  "travelInfoNotFound": "Travel information not found. Please try again.",
+  "timeFormatAM": "AM",
+  "timeFormatPM": "PM",
+  "schedulePlace": "Place",
+  "scheduleTime": "Time",
+  "scheduleMemo": "Memo",
+  "enterPlace": "Enter place",
+  "enterMemo": "Enter memo",
+  "editScheduleButton": "Edit Schedule",
+  "addScheduleButton": "Add Schedule",
+
+  "@location_search": {},
+  "locationSelectionComplete": "Location Selection Complete",
+  "searchCityHint": "Enter city name",
+
+  "@auth": {},
+  "signUp": "Sign Up",
+  "email": "Email",
+  "password": "Password (6+ characters)",
+  "sendVerificationCode": "Send Verification Code",
+  "enterVerificationCode": "Enter verification code",
+  "signUpButton": "Sign Up",
+
+  "@settings": {
+    "description": "Settings related strings"
+  },
+  "settings": "Settings",
+  "removeAds": "Remove Ads",
+  "version": "Version"
+} 

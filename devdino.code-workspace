@@ -9,20 +9,26 @@
       "path": "apps/travelee"
     },
     {
-      "name": "external_web_call",
-      "path": "apps/external_web_call"
-    },
-    {
       "name": "design_systems",
       "path": "packages/design_systems"
     },
     {
+      "name": "external_web_call",
+      "path": "apps/external_web_call"
+    },
+    {
       "name": "utils",
       "path": "packages/utils"
+    },
+    {
+      "name": "apple_jwt_generator",
+      "path": "apps/apple_jwt_generator"
     }
   ],
   "settings": {
-    "githubPullRequests.ignoredPullRequestBranches": ["main"],
+    "githubPullRequests.ignoredPullRequestBranches": [
+      "main"
+    ],
     "todo-tree.tree.scanMode": "workspace only",
     "workbench.tree.expandMode": "singleClick",
     "workbench.tree.indent": 16,

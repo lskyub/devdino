@@ -8,6 +8,7 @@ import 'package:travelee/presentation/screens/travel_detail/schedule_input_scree
 import 'package:travelee/presentation/screens/travel_detail/location_search_screen.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:travelee/presentation/screens/auth/signup_screen.dart';
+import 'package:travelee/presentation/screens/settings/settings_screen.dart';
 import 'dart:developer' as dev;
 
 GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();
@@ -102,6 +103,11 @@ final routerProvider = Provider<GoRouter>(
               scheduleId: scheduleId,
             );
           },
+        ),
+        GoRoute(
+          name: SettingsScreen.routeName,
+          path: SettingsScreen.routePath,
+          builder: (context, state) => const SettingsScreen(),
         ),
       ],
     );

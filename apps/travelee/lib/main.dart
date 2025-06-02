@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:travelee/core/config/supabase_config.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,10 @@ void main() async {
   );
   // 광고 초기화
   await MobileAds.instance.initialize();
+  MobileAds.instance.updateRequestConfiguration(
+    // RequestConfiguration(testDeviceIds: ['96ac300aeddf882d90dbdb86a2d2035d']),
+    RequestConfiguration(),
+  );
 
   // 수파베이스 초기화
   await SupabaseConfig.initialize();
@@ -42,7 +47,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       FlutterNativeSplash.remove();
     });
     return MixTheme(
@@ -57,6 +62,7 @@ class MyApp extends ConsumerWidget {
           Locale('en', 'US'),
         ],
         localizationsDelegates: const [
+          AppLocalizations.delegate,
           CountryLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

@@ -1,0 +1,103 @@
+{
+  "appTitle": "트래블리",
+  "firstScreenTitle": "여행의 꿈에 뛰어들어\n오늘부터 계획을 세우세요!",
+  "continueWithApple": "Apple로 계속하기",
+  "continueWithGoogle": "Google로 계속하기",
+  "appleLoginFailed": "애플 로그인에 실패했습니다.",
+  "googleLoginFailed": "구글 로그인에 실패했습니다.",
+  
+  "@saved_travels": {},
+  "tempTravelDeleted": "임시 여행 데이터 삭제: {count}개",
+  "@tempTravelDeleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tempTravelDeleteDetail": "임시 여행 삭제: ID={id}, 목적지={destination}",
+  "@tempTravelDeleteDetail": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "destination": {
+        "type": "String"
+      }
+    }
+  },
+  "noTempTravel": "임시 여행 데이터 없음",
+  "savedTravelList": "저장된 여행 목록: {count}개 (전체: {total}개)",
+  "@savedTravelList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "travelListDetail": "여행 목록 상세 정보",
+  "travelStatusOngoing": "여행 중",
+  "travelStatusUpcoming": "여행 예정",
+  "travelStatusCompleted": "여행 완료",
+  "whereToGo": "어디로 떠나시나요?",
+  "addTravelButton": "여행 추가하기",
+  "enjoyYourTripMessage": "즐거운 여행 되세요! 🥰",
+  "organizeTravelMessage": "여행지를 추가하고 일정을 정리하여\n완벽한 휴가를 즐겨보세요.",
+
+  "@travel_detail": {},
+  "travelScheduleTitle": "여행 일정",
+  "addSchedule": "일정 추가하기",
+  "enjoyYourTrip": "즐거운 여행 되세요! 🥰",
+  "addTravel": "여행 추가하기",
+
+  "@date_screen": {},
+  "creatingNewTravel": "새 여행 생성 중...",
+  "registerTravelInfo": "여행 정보 등록",
+  "editTravelInfo": "여행 정보 수정",
+  "newTravel": "새 여행",
+  "travelCountry": "여행 국가",
+  "travelPeriod": "여행 기간",
+  "selectTravelPeriod": "여행 기간을 선택해 주세요.",
+  "registerTravelInfoButton": "여행 정보 등록하기",
+  "editTravelInfoButton": "여행 정보 수정하기",
+  "addCountry": "추가하기",
+  "searchCountryHint": "국가 이름을 검색해주세요",
+  "countryAlreadySelected": "이미 선택된 국가입니다",
+
+  "@schedule_input": {},
+  "scheduleEditTitle": "일정 수정",
+  "scheduleAddTitle": "일정 추가",
+  "scheduleSaveFailed": "일정 저장 실패: 현재 여행 정보 없음",
+  "travelInfoNotFound": "여행 정보를 찾을 수 없습니다. 다시 시도해주세요.",
+  "timeFormatAM": "오전",
+  "timeFormatPM": "오후",
+  "schedulePlace": "장소",
+  "scheduleTime": "시간",
+  "scheduleMemo": "메모",
+  "enterPlace": "장소를 입력해 주세요.",
+  "enterMemo": "메모를 입력해 주세요.",
+  "editScheduleButton": "일정 수정하기",
+  "addScheduleButton": "일정 추가하기",
+
+  "@location_search": {},
+  "locationSelectionComplete": "위치 선택 완료",
+  "searchCityHint": "도시 이름을 입력하세요",
+
+  "@auth": {},
+  "signUp": "회원가입",
+  "email": "이메일",
+  "password": "비밀번호 (6자리 이상)",
+  "sendVerificationCode": "인증번호 전송",
+  "enterVerificationCode": "인증번호 입력",
+  "signUpButton": "가입하기",
+
+  "@settings": {
+    "description": "Settings related strings"
+  },
+  "settings": "설정",
+  "removeAds": "광고 제거",
+  "version": "버전 정보"
+} 

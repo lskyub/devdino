@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -22,7 +24,8 @@ class _AdBannerWidgetState extends ConsumerState<AdBannerWidget> {
 
   void _loadAd() {
     _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111', // 테스트 광고 ID
+      //'ca-app-pub-3940256099942544/6300978111', // 테스트 광고 ID
+      adUnitId: Platform.isAndroid ? 'ca-app-pub-3566318613494066/9172777817' : 'ca-app-pub-3566318613494066/9882406017', 
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
