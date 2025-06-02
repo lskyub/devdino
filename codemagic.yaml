@@ -22,9 +22,8 @@ workflows:
 
       - name: Flutter build iOS
         script: |
-          flutter build ios --release \
-            --build-number=$BUILD_NUMBER \
-            --no-codesign
+          flutter build ios --profile \
+            --build-number=$BUILD_NUMBER
 
       - name: Flutter build Android
         script: |
