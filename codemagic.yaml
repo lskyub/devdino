@@ -1,33 +1,53 @@
 workflows:
-  flutter-app:
-    name: Flutter App
+  ios-android-release:
+    name: iOS & Android Release
+    instance_type: mac_mini_m1
+    max_build_duration: 120
     environment:
-      flutter: 3.29.1
-      xcode: latest
-      cocoapods: default
-    cache:
-      cache_paths:
-        - ~/.pub-cache
-        - ~/.gradle
-        - ~/.cocoapods
-        - pubspec.lock
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.devdino.travelee
+      flutter: stable
     triggering:
       events:
-        - push
-      branch_patterns:
-        - pattern: "main"
+        - tag
+      tag_patterns:
+        - pattern: "v*.*.*"
           include: true
     scripts:
-      - name: Flutter analyze
-        script: flutter analyze
-      - name: Flutter test
-        script: flutter test
-      - name: Build iOS
+      - name: Set build number
         script: |
-          flutter build ios --release --no-codesign
-      - name: Build Android
+          BUILD_NUMBER=$(($(date +%s) / 60))
+          echo "Build number: $BUILD_NUMBER"
+
+      - name: Flutter build iOS
         script: |
-          flutter build appbundle --release
+          flutter build ios --release \
+            --build-number=$BUILD_NUMBER \
+            --no-codesign
+
+      - name: Flutter build Android
+        script: |
+          flutter build appbundle --release \
+            --build-number=$BUILD_NUMBER
+
+      - name: iOS code signing and packaging
+        script: |
+          cd ios
+          xcode-project use-profiles
+          xcode-project build-ipa \
+            --workspace Runner.xcworkspace \
+            --scheme Runner
+
     artifacts:
       - build/ios/ipa/*.ipa
       - build/app/outputs/bundle/release/app-release.aab
+      - flutter_drive.log
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_KEY
+        submit_to_testflight: true
+      google_play:
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT
+        track: internal
