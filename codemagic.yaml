@@ -22,7 +22,7 @@ workflows:
 
       - name: Flutter build iOS
         script: |
-          flutter build ios --profile \
+          flutter build ios --release \
             --build-number=$BUILD_NUMBER
 
       - name: Flutter build Android
@@ -30,13 +30,13 @@ workflows:
           flutter build appbundle --release \
             --build-number=$BUILD_NUMBER
 
-      - name: iOS code signing and packaging
-        script: |
-          cd ios
-          xcode-project use-profiles
-          xcode-project build-ipa \
-            --workspace Runner.xcworkspace \
-            --scheme Runner
+      # - name: iOS code signing and packaging
+      #   script: |
+      #     cd ios
+      #     xcode-project use-profiles
+      #     xcode-project build-ipa \
+      #       --workspace Runner.xcworkspace \
+      #       --scheme Runner
 
     artifacts:
       - build/ios/ipa/*.ipa
