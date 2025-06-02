@@ -22,7 +22,7 @@ workflows:
 
       - name: Flutter build iOS
         script: |
-          flutter build ios --release \
+          flutter build ipa --release \
             --build-number=$BUILD_NUMBER
 
       - name: Flutter build Android
