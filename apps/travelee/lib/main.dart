@@ -29,8 +29,12 @@ void main() async {
   // 광고 초기화
   await MobileAds.instance.initialize();
   MobileAds.instance.updateRequestConfiguration(
-    // RequestConfiguration(testDeviceIds: ['96ac300aeddf882d90dbdb86a2d2035d']),
-    RequestConfiguration(),
+    RequestConfiguration(
+      testDeviceIds: ['96ac300aeddf882d90dbdb86a2d2035d'],
+      maxAdContentRating: MaxAdContentRating.pg,
+      tagForChildDirectedTreatment: TagForChildDirectedTreatment.unspecified,
+      tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.unspecified,
+    ),
   );
 
   // 수파베이스 초기화
