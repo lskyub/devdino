@@ -10,11 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:go_router/go_router.dart';
+import 'package:travelee/core/config/supabase_config.dart';
+import 'package:travelee/data/services/travel_sync_service.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:travelee/gen/app_localizations.dart';
+import 'package:travelee/providers/travel_state_provider.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
   static const routeName = 'inital';
@@ -79,6 +82,14 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
       print(stackTrace);
       return false;
     }
+  }
+
+  /// 사용자 여행 데이터 불러오기
+  Future<void> _loadTravels() async {
+    final travelSyncService = TravelSyncService(SupabaseConfig.client);
+    final travels = await travelSyncService.loadAllTravels();
+    print(travels);
+    ref.read(travelsProvider.notifier).setTravels(travels);
   }
 
   @override
@@ -164,7 +175,10 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                           if (!mounted) return;
                           if (success) {
                             if (context.mounted) {
-                              context.go(SavedTravelsScreen.routePath);
+                              /// 사용자 여행 데이터 불러오기 이후 여행 목록 화면으로 이동
+                              _loadTravels().then((_) {
+                                context.go(SavedTravelsScreen.routePath);
+                              });
                             }
                           } else {
                             if (context.mounted) {
@@ -186,7 +200,10 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                         if (!mounted) return;
                         if (success) {
                           if (context.mounted) {
-                            context.go(SavedTravelsScreen.routePath);
+                            /// 사용자 여행 데이터 불러오기 이후 여행 목록 화면으로 이동
+                            _loadTravels().then((_) {
+                              context.go(SavedTravelsScreen.routePath);
+                            });
                           }
                         } else {
                           if (context.mounted) {

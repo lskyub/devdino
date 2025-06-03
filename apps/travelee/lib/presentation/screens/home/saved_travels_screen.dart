@@ -10,6 +10,8 @@ import 'package:design_systems/dino/components/buttons/button.dino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:travelee/core/config/supabase_config.dart';
+import 'package:travelee/data/services/travel_sync_service.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
@@ -34,7 +36,6 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
   @override
   void initState() {
     super.initState();
-
     // 화면이 로드된 후 임시 여행 데이터 정리
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cleanupTempTravels();
@@ -73,13 +74,6 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
   String _formatDate(DateTime? date) {
     if (date == null) return '-';
     return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> signOut() async {
-    await Supabase.instance.client.auth.signOut();
-    await GoogleSignIn().signOut();
-    if (!mounted) return;
-    context.go(FirstScreen.routePath); // 또는 원하는 라우트로 이동
   }
 
   String getTravelStatus(travel) {
@@ -176,15 +170,15 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
             ],
           ),
         ),
-        actions: const [
-          // GestureDetector(
-          //   onTap: () {
-          //     context.push(SettingsScreen.routePath);
-          //   },
-          //   child: SvgPicture.asset(
-          //     'assets/icons/bottomnav_setting_sel.svg',
-          //   ),
-          // ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              context.push(SettingsScreen.routePath);
+            },
+            child: SvgPicture.asset(
+              'assets/icons/bottomnav_setting_sel.svg',
+            ),
+          ),
         ],
         backgroundColor: Colors.white,
         elevation: 0,

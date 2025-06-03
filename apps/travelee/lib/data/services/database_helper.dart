@@ -306,4 +306,11 @@ class DatabaseHelper {
       };
     }
   }
+
+  // 모든 여행 삭제
+  Future<void> deleteAllTravels() async {
+    final db = await database;
+    await db.delete('travels');
+    await db.delete('schedules');
+  }
 } 

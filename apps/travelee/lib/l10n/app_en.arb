@@ -99,5 +99,10 @@
   },
   "settings": "Settings",
   "removeAds": "Remove Ads",
-  "version": "Version"
+  "logout": "Logout",
+  "withdraw": "Delete Account",
+  "syncData": "Sync Data",
+  "version": "Version Info",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service"
 } 

@@ -99,5 +99,10 @@
   },
   "settings": "설정",
   "removeAds": "광고 제거",
-  "version": "버전 정보"
+  "logout": "로그아웃",
+  "withdraw": "회원탈퇴",
+  "syncData": "데이터 백업",
+  "version": "버전 정보",
+  "privacyPolicy": "개인정보 처리방침",
+  "termsOfService": "서비스 이용약관"
 } 

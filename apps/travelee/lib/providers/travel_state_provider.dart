@@ -366,6 +366,13 @@ class TravelNotifier extends StateNotifier<List<TravelModel>> {
 
     dev.log('특정 날짜의 일정 삭제 완료: $removedCount개 일정 삭제됨');
   }
+
+  void clear() {
+    state = [];
+    _originalState = [];
+    _isEditing = false;
+    ref.read(databaseHelperProvider).deleteAllTravels();
+  }
 }
 
 // 여행 목록 Provider
