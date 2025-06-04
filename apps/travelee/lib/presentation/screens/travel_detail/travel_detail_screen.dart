@@ -1,4 +1,3 @@
-import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,13 +6,11 @@ import 'package:travelee/data/controllers/travel_controller.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/data/services/database_helper.dart';
 import 'package:travelee/presentation/modal/country_select_modal.dart';
 import 'package:travelee/presentation/screens/travel_detail/schedule_input_screen.dart';
 import 'package:travelee/presentation/widgets/country_and_date_row.dart';
 import 'package:travelee/providers/travel_state_provider.dart'
     as travel_providers;
-import 'package:travelee/core/utils/result_types.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
@@ -28,7 +25,6 @@ import 'package:travelee/router.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/data/services/pdf_export_service.dart';
 import 'package:travelee/data/models/db/travel_db_model.dart';
-import 'package:travelee/providers/ad_provider.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -266,240 +262,20 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     );
   }
 
-  Future<void> _handleBackNavigation(BuildContext context) async {
-    final controller = ref.read(unifiedControllerProvider);
-    final travelInfo = controller.currentTravel;
-
-    if (travelInfo == null) {
-      Navigator.of(context).pop();
-      return;
-    }
-
-    // 변경 관리자를 통해 변경사항 감지
-    final isControllerHasChanges = controller.hasChanges;
-    final isChangeManagerHasChanges = controller.detectChanges();
-    final hasChanges = isControllerHasChanges || isChangeManagerHasChanges;
-
-    dev.log(
-        'TravelDetailScreen - 뒤로가기 감지: controller.hasChanges=$isControllerHasChanges, changeManager.hasChanges=$isChangeManagerHasChanges');
+  Future<bool> _handleBackNavigation(BuildContext context) async {
+    final travelNotifier = ref.read(travel_providers.travelsProvider.notifier);
+    final hasChanges = ref.read(travel_providers.travelChangesProvider);
 
     if (hasChanges) {
-      // 실제 변경사항 있는지 마지막 확인
-      final backupTravel = ref.read(travel_providers.travelBackupProvider);
-
-      // 백업이 없으면 변경사항 있는 것으로 간주
-      if (backupTravel == null) {
-        dev.log('TravelDetailScreen - 백업이 없어 변경사항 있는 것으로 간주');
-        // 변경 사항이 있으면 확인 다이얼로그 표시
-        final saveResult = await _showExitConfirmDialog(context);
-        await _handleSaveResult(saveResult);
-        return;
-      }
-
-      // 실제 변경 여부 확인 (백업과 현재 데이터 비교)
-      final hasActualChanges =
-          _hasActualTravelChanges(backupTravel, travelInfo);
-      dev.log('TravelDetailScreen - 실제 변경사항 확인: $hasActualChanges');
-
-      if (!hasActualChanges) {
-        dev.log('TravelDetailScreen - 실제 변경사항 없음: 확인 다이얼로그 없이 나가기');
-        if (!mounted) return;
-        Navigator.of(context).pop();
-        return;
-      }
-
-      // 변경 사항이 있으면 확인 다이얼로그 표시
-      final saveResult = await _showExitConfirmDialog(context);
-      await _handleSaveResult(saveResult);
-    } else {
-      // 변경 사항이 없으면 바로 이전 화면으로 이동
-      dev.log('TravelDetailScreen - 변경사항 없음, 바로 나가기');
-      if (!mounted) return;
-      Navigator.of(context).pop();
-    }
-  }
-
-  // 저장 결과 처리 helper 메서드
-  Future<void> _handleSaveResult(SaveResult? saveResult) async {
-    final controller = ref.read(unifiedControllerProvider);
-
-    if (saveResult == SaveResult.save) {
-      // 변경 사항 저장
-      ref.read(travel_providers.travelsProvider.notifier).commitChanges();
-
-      // 날짜 범위 밖의 일정 삭제 로직 추가
-      final updatedTravel = ref.read(travel_providers.currentTravelProvider);
-      if (updatedTravel != null) {
-        final start = updatedTravel.startDate;
-        final end = updatedTravel.endDate;
-        if (start != null && end != null) {
-          final validDates = <String>{};
-          DateTime cursor = start;
-          while (!cursor.isAfter(end)) {
-            validDates.add(_formatDateKey(cursor));
-            cursor = cursor.add(const Duration(days: 1));
-          }
-
-          // 날짜 범위 밖의 일정 찾기
-          final schedulesToRemove = updatedTravel.schedules.where((schedule) {
-            final key = _formatDateKey(schedule.date);
-            return !validDates.contains(key);
-          }).toList();
-
-          if (schedulesToRemove.isNotEmpty) {
-            for (final schedule in schedulesToRemove) {
-              ref
-                  .read(travel_providers.travelsProvider.notifier)
-                  .removeSchedule(updatedTravel.id, schedule.id);
-            }
-            // 변경사항 저장
-            ref.read(travel_providers.travelsProvider.notifier).commitChanges();
-          }
-        }
-      }
-
-      // 저장 후 변경사항 플래그 초기화
-      controller.hasChanges = false;
+      // 변경사항이 있으면 자동으로 저장
+      travelNotifier.commitChanges();
       ref.read(travel_providers.travelChangesProvider.notifier).state = false;
-
-      final currentTravel = ref.read(travel_providers.currentTravelProvider);
-      if (currentTravel != null) {
-        ref.read(databaseHelperProvider).saveTravel(currentTravel);
-      }
-
-      if (!mounted) return;
-      Navigator.of(context).pop(); // 화면 나가기
-    } else if (saveResult == SaveResult.discard) {
-      // 변경 사항 취소 - 백업 데이터로 복원
-      dev.log('TravelDetailScreen - 변경사항 취소 후 나가기');
-
-      // 백업 복원
-      await controller.restoreFromBackup();
-
-      if (!mounted) return;
-      Navigator.of(context).pop(); // 화면 나가기
-    }
-    // SaveResult.cancel이면 (다이얼로그에서 취소 선택) 아무것도 하지 않음
-  }
-
-  /// 나가기 전 변경 사항 저장 여부 확인 다이얼로그
-  Future<SaveResult> _showExitConfirmDialog(BuildContext context) async {
-    dev.log('TravelDetailScreen - 변경 사항 저장 다이얼로그 표시');
-    final result = await showDialog<SaveResult>(
-      context: context,
-      barrierDismissible: false, // 바깥 영역 터치로 닫기 방지
-      builder: (context) => AlertDialog(
-        title: const Text('변경 사항 저장'),
-        content: const Text('변경된 내용이 있습니다.\n저장하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              dev.log('다이얼로그 - [저장 안 함] 선택');
-              Navigator.pop(context, SaveResult.discard);
-            },
-            child: const Text('저장 안 함', style: TextStyle(color: Colors.red)),
-          ),
-          TextButton(
-            onPressed: () {
-              dev.log('다이얼로그 - [취소] 선택');
-              Navigator.pop(context, SaveResult.cancel);
-            },
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () {
-              dev.log('다이얼로그 - [저장] 선택');
-              Navigator.pop(context, SaveResult.save);
-            },
-            child: const Text('저장'),
-          ),
-        ],
-      ),
-    );
-    // 결과가 null인 경우 기본값으로 취소 반환
-    return result ?? SaveResult.cancel;
-  }
-
-  // 실제 여행 데이터 변경 확인 메서드
-  bool _hasActualTravelChanges(TravelModel backup, TravelModel current) {
-    // 기본 정보 변경 확인
-    if (backup.title != current.title ||
-        !_areDatesEqual(backup.startDate, current.startDate) ||
-        !_areDatesEqual(backup.endDate, current.endDate)) {
-      return true;
+      ref.read(travel_providers.changeManagerProvider).clearChanges();
     }
 
-    // 목적지 변경 확인
-    if (backup.destination.length != current.destination.length) {
-      return true;
-    }
-
-    for (int i = 0; i < backup.destination.length; i++) {
-      if (i >= current.destination.length ||
-          backup.destination[i] != current.destination[i]) {
-        return true;
-      }
-    }
-
-    // 일정 수 변경 확인
-    if (backup.schedules.length != current.schedules.length) {
-      return true;
-    }
-
-    // 일정 내용 비교
-    for (int i = 0; i < backup.schedules.length; i++) {
-      final backupSchedule = backup.schedules[i];
-      final currentSchedule = current.schedules[i];
-
-      if (backupSchedule.id != currentSchedule.id ||
-          backupSchedule.dayNumber != currentSchedule.dayNumber ||
-          backupSchedule.date != currentSchedule.date ||
-          backupSchedule.time != currentSchedule.time ||
-          backupSchedule.location != currentSchedule.location ||
-          backupSchedule.memo != currentSchedule.memo ||
-          backupSchedule.latitude != currentSchedule.latitude ||
-          backupSchedule.longitude != currentSchedule.longitude) {
-        return true;
-      }
-    }
-
-    // dayDataMap 비교 (국가 정보만)
-    if (backup.dayDataMap.length != current.dayDataMap.length) {
-      return true;
-    }
-
-    for (final entry in backup.dayDataMap.entries) {
-      final dateKey = entry.key;
-      final backupDayData = entry.value;
-
-      if (!current.dayDataMap.containsKey(dateKey)) {
-        return true;
-      }
-
-      final currentDayData = current.dayDataMap[dateKey];
-      if (currentDayData == null) {
-        return true;
-      }
-
-      // 국가 정보만 비교
-      if (backupDayData.countryName != currentDayData.countryName ||
-          backupDayData.flagEmoji != currentDayData.flagEmoji ||
-          backupDayData.countryCode != currentDayData.countryCode) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // 날짜 동등 비교 헬퍼
-  bool _areDatesEqual(DateTime? date1, DateTime? date2) {
-    if (date1 == null && date2 == null) return true;
-    if (date1 == null || date2 == null) return false;
-
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+    Navigator.pop(context);
+    // 화면 종료
+    return true;
   }
 
   /// 업데이트 일정 함수
@@ -551,10 +327,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       },
     );
   }
-
-  // void _refreshAllData() async {
-  //   await TravelDialogManager.showEditTravelDialog(context, ref);
-  // }
 
   String _formatDateKey(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

@@ -208,129 +208,138 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: DinoText.custom(
-                fontSize: 14.22,
-                text: AppLocalizations.of(context)!.schedulePlace,
-                color: $dinoToken.color.blingGray600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            DinoTextField(
-              controller: _locationController,
-              borderColor: _locationBorderColor,
-              hint: AppLocalizations.of(context)!.enterPlace,
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: DinoText.custom(
-                fontSize: 14.22,
-                text: AppLocalizations.of(context)!.scheduleTime,
-                color: $dinoToken.color.blingGray600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => _selectTime(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 20,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: $dinoToken.color.blingGray400.resolve(context),
-                    width: 0.7,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/clock_medium.svg',
-                    ),
-                    const SizedBox(width: 6),
-                    DinoText.custom(
-                      fontSize: 16,
-                      text: getTimeFormat(_selectedTime),
-                      color: $dinoToken.color.blingGray900,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: DinoText.custom(
+                      fontSize: 14.22,
+                      text: AppLocalizations.of(context)!.schedulePlace,
+                      color: $dinoToken.color.blingGray600,
                       fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                  DinoTextField(
+                    controller: _locationController,
+                    borderColor: _locationBorderColor,
+                    hint: AppLocalizations.of(context)!.enterPlace,
+                  ),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: DinoText.custom(
+                      fontSize: 14.22,
+                      text: AppLocalizations.of(context)!.scheduleTime,
+                      color: $dinoToken.color.blingGray600,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () => _selectTime(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: $dinoToken.color.blingGray400.resolve(context),
+                          width: 0.7,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/clock_medium.svg',
+                          ),
+                          const SizedBox(width: 6),
+                          DinoText.custom(
+                            fontSize: 16,
+                            text: getTimeFormat(_selectedTime),
+                            color: $dinoToken.color.blingGray900,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // TODO 위치 추가 기능 이후 작업 필요
+                  // Padding(
+                  //   padding: const EdgeInsets.only(left: 4),
+                  //   child: DinoText.custom(
+                  //     fontSize: 14.22,
+                  //     text: '위치',
+                  //     color: $dinoToken.color.blingGray600,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
+                  // GestureDetector(
+                  //   onTap: () => _selectLocation(context),
+                  //   child: Container(
+                  //     padding: const EdgeInsets.symmetric(
+                  //       horizontal: 16,
+                  //       vertical: 12,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       border: Border.all(
+                  //         color: $dinoToken.color.blingGray300.resolve(context),
+                  //         width: 0.7,
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     child: Row(
+                  //       children: [
+                  //         SvgPicture.asset(
+                  //           'assets/icons/pin_small.svg',
+                  //         ),
+                  //         const SizedBox(width: 6),
+                  //         DinoText.custom(
+                  //           fontSize: 16,
+                  //           text: _locationController.text,
+                  //           color: $dinoToken.color.blingGray900,
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: DinoText.custom(
+                      fontSize: 14.22,
+                      text: AppLocalizations.of(context)!.scheduleMemo,
+                      color: $dinoToken.color.blingGray600,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  DinoTextField(
+                    controller: _memoController,
+                    maxLines: 4,
+                    minLines: 4,
+                    maxLength: 300,
+                    borderColor: _memoBorderColor,
+                    hint: AppLocalizations.of(context)!.enterMemo,
+                  ),
+                  const SizedBox(height: 40),
+                ],
               ),
             ),
-            const SizedBox(height: 24),
-            // TODO 위치 추가 기능 이후 작업 필요
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 4),
-            //   child: DinoText.custom(
-            //     fontSize: 14.22,
-            //     text: '위치',
-            //     color: $dinoToken.color.blingGray600,
-            //     fontWeight: FontWeight.w500,
-            //   ),
-            // ),
-            // GestureDetector(
-            //   onTap: () => _selectLocation(context),
-            //   child: Container(
-            //     padding: const EdgeInsets.symmetric(
-            //       horizontal: 16,
-            //       vertical: 12,
-            //     ),
-            //     decoration: BoxDecoration(
-            //       border: Border.all(
-            //         color: $dinoToken.color.blingGray300.resolve(context),
-            //         width: 0.7,
-            //       ),
-            //       borderRadius: BorderRadius.circular(8),
-            //     ),
-            //     child: Row(
-            //       children: [
-            //         SvgPicture.asset(
-            //           'assets/icons/pin_small.svg',
-            //         ),
-            //         const SizedBox(width: 6),
-            //         DinoText.custom(
-            //           fontSize: 16,
-            //           text: _locationController.text,
-            //           color: $dinoToken.color.blingGray900,
-            //           fontWeight: FontWeight.w500,
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: DinoText.custom(
-                fontSize: 14.22,
-                text: AppLocalizations.of(context)!.scheduleMemo,
-                color: $dinoToken.color.blingGray600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            DinoTextField(
-              controller: _memoController,
-              maxLines: 4,
-              minLines: 4,
-              maxLength: 300,
-              borderColor: _memoBorderColor,
-              hint: AppLocalizations.of(context)!.enterMemo,
-            ),
-            const Spacer(),
-            SafeArea(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SafeArea(
               child: DinoButton.custom(
                 type: DinoButtonType.solid,
                 size: DinoButtonSize.full,
@@ -344,14 +353,14 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
                 disabledTextColor: $dinoToken.color.white,
                 disabledBackgroundColor: $dinoToken.color.blingGray300,
                 backgroundColor: $dinoToken.color.brandBlingPurple600,
-                title: isEditMode 
-                    ? AppLocalizations.of(context)!.editScheduleButton 
+                title: isEditMode
+                    ? AppLocalizations.of(context)!.editScheduleButton
                     : AppLocalizations.of(context)!.addScheduleButton,
                 onTap: _saveSchedule,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

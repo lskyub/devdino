@@ -25,6 +25,15 @@ class ChangeManager {
     dev.log('ChangeManager: 변경 사항 기록됨');
   }
   
+  /// 변경사항 초기화
+  void clearChanges() {
+    _hasChanges = false;
+  }
+  
+  bool detectChanges() {
+    return _hasChanges;
+  }
+  
   /// 여행 데이터에 변경 사항이 있는지 확인합니다.
   bool hasChanges(TravelModel currentTravel) {
     // 백업이 없으면 변경 사항 없음

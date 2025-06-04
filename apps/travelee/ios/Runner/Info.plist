@@ -28,6 +28,7 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+					<string>com.googleusercontent.apps.780787532259-u3h5k309oi3e6a6id45bj54tbuodsrhl</string>
 				</array>
 			</dict>
 		</array>

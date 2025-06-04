@@ -25,8 +25,10 @@ class SavedTravelItem extends ConsumerWidget {
     try {
       DateTime now = DateTime.now();
       DateTime today = DateTime(now.year, now.month, now.day);
-      DateTime start = DateTime(travel.startDate!.year, travel.startDate!.month, travel.startDate!.day);
-      DateTime end = DateTime(travel.endDate!.year, travel.endDate!.month, travel.endDate!.day);
+      DateTime start = DateTime(travel.startDate!.year, travel.startDate!.month,
+          travel.startDate!.day);
+      DateTime end = DateTime(
+          travel.endDate!.year, travel.endDate!.month, travel.endDate!.day);
       isTodayInRange = !today.isBefore(start) && !today.isAfter(end);
     } catch (e) {
       print('error: $e');
@@ -94,7 +96,9 @@ class SavedTravelItem extends ConsumerWidget {
                 ),
                 child: ClipOval(
                   child: Text(
-                    travel.countryInfos.first.flagEmoji,
+                    travel.countryInfos.isEmpty
+                        ? ''
+                        : travel.countryInfos.first.flagEmoji,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 20),
                   ),

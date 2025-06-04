@@ -42,16 +42,23 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
 
   // 구글 로그인
   Future<bool> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return false;
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final response = await Supabase.instance.client.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: googleAuth.idToken!,
-      accessToken: googleAuth.accessToken,
-    );
-    return response.user != null;
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return false;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final response = await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: googleAuth.idToken!,
+        accessToken: googleAuth.accessToken,
+      );
+      print(response);
+      return response.user != null;
+    } catch (error, stackTrace) {
+      print(error);
+      print(stackTrace);
+      return false;
+    }
   }
 
   // 애플 로그인
