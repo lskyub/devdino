@@ -17,6 +17,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:travelee/gen/app_localizations.dart';
+import 'package:travelee/providers/loading_state_provider.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
@@ -42,6 +43,9 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
 
   // 구글 로그인
   Future<bool> signInWithGoogle() async {
+    ref.read(loadingStateProvider.notifier).startLoading(
+          message: '구글 로그인 중...',
+        );
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return false;
@@ -57,12 +61,16 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     } catch (error, stackTrace) {
       print(error);
       print(stackTrace);
+      ref.read(loadingStateProvider.notifier).stopLoading();
       return false;
     }
   }
 
   // 애플 로그인
   Future<bool> signInWithApple() async {
+    ref.read(loadingStateProvider.notifier).startLoading(
+          message: '애플 로그인 중...',
+        );
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -87,6 +95,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
     } catch (error, stackTrace) {
       print(error);
       print(stackTrace);
+      ref.read(loadingStateProvider.notifier).stopLoading();
       return false;
     }
   }

@@ -12,6 +12,8 @@ import 'package:travelee/core/config/supabase_config.dart';
 import 'package:travelee/data/services/travel_sync_service.dart';
 import 'package:travelee/gen/app_localizations.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
+import 'package:travelee/presentation/screens/settings/legal_document_screen.dart';
+import 'package:travelee/providers/loading_state_provider.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -54,13 +56,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           TextButton(
             onPressed: () async {
+              ref.read(loadingStateProvider.notifier).startLoading(
+                    message: '로그아웃 중...',
+                  );
               await Supabase.instance.client.auth.signOut();
               await GoogleSignIn().signOut();
 
               /// 로컬 데이터 삭제
               ref.read(travelsProvider.notifier).clear();
+              Navigator.pop(context);
               if (!mounted) return;
               context.go(FirstScreen.routePath);
+              ref.read(loadingStateProvider.notifier).stopLoading();
             },
             child: const Text('로그아웃'),
           ),
@@ -83,6 +90,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           TextButton(
             onPressed: () async {
+              ref.read(loadingStateProvider.notifier).startLoading(
+                    message: '회원탈퇴 중...',
+                  );
               final travelSyncService =
                   TravelSyncService(SupabaseConfig.client);
               await travelSyncService.deleteUser();
@@ -90,6 +100,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ref.read(travelsProvider.notifier).clear();
               if (!mounted) return;
               context.go(FirstScreen.routePath);
+              ref.read(loadingStateProvider.notifier).stopLoading();
             },
             child: const Text('탈퇴'),
           ),
@@ -132,19 +143,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildSettingItem(
             title: AppLocalizations.of(context)!.syncData,
             onTap: () {
+              ref.read(loadingStateProvider.notifier).startLoading(
+                    message: '데이터 백업 중...',
+                  );
               /// 데이터 백업
               final travelSyncService =
                   TravelSyncService(SupabaseConfig.client);
               travelSyncService.saveTravels(ref.read(travelsProvider));
+              ref.read(loadingStateProvider.notifier).stopLoading();
             },
           ),
           _buildSettingItem(
             title: AppLocalizations.of(context)!.privacyPolicy,
-            onTap: () {},
+            onTap: () {
+              context.push(
+                LegalDocumentScreen.routePath,
+                extra: {
+                  'title': AppLocalizations.of(context)!.privacyPolicy,
+                  'type': 'privacy',
+                },
+              );
+            },
           ),
           _buildSettingItem(
             title: AppLocalizations.of(context)!.termsOfService,
-            onTap: () {},
+            onTap: () {
+              context.push(
+                LegalDocumentScreen.routePath,
+                extra: {
+                  'title': AppLocalizations.of(context)!.termsOfService,
+                  'type': 'terms',
+                },
+              );
+            },
           ),
           _buildSettingItem(
             title: AppLocalizations.of(context)!.version,

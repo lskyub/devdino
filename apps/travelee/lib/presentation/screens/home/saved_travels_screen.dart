@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelee/core/config/supabase_config.dart';
 import 'package:travelee/data/services/travel_sync_service.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
+import 'package:travelee/providers/loading_state_provider.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
@@ -39,6 +40,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
     // 화면이 로드된 후 임시 여행 데이터 정리
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cleanupTempTravels();
+      ref.read(loadingStateProvider.notifier).stopLoading();
     });
 
     // 광고 표시 상태를 true로 설정

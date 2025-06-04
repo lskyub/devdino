@@ -72,6 +72,8 @@ dependencies:
 
   package_info_plus: ^8.3.0
 
+  webview_flutter: ^4.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -97,6 +99,10 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/privacyPolicy_k.html
+    - assets/privacyPolicy_e.html
+    - assets/termsOfService_k.html
+    - assets/termsOfService_e.html
     - .env # 환경 변수
     - assets/fonts/NotoSansKR-Regular.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
