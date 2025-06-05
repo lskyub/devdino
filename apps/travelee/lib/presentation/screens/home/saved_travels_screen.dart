@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelee/core/config/supabase_config.dart';
 import 'package:travelee/data/services/travel_sync_service.dart';
+import 'package:travelee/data/services/ad_tracking_service.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/providers/loading_state_provider.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
@@ -43,8 +44,11 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       ref.read(loadingStateProvider.notifier).stopLoading();
     });
 
-    // 광고 표시 상태를 true로 설정
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // 광고 추적 권한 요청 및 광고 표시 상태 설정
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 광고 추적 권한 요청
+      await AdTrackingService.requestTrackingAuthorization();
+      // 광고 표시 상태를 true로 설정
       ref.read(adProvider.notifier).setBannerAdVisibility(true);
     });
   }

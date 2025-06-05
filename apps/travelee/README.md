@@ -61,3 +61,6 @@ lib/
 2. 상태 관리 개선 (Provider 패턴 최적화)
 3. 에러 처리 강화
 4. 단위 테스트 추가
+
+
+flutter build appbundle —flavor production —release -t ./lib/main.dart —build-number=2 —build-name=0.1.1 && flutter build ipa —flavor production —release -t ./lib/main.dart  —build-number=2 —build-name=0.1.1

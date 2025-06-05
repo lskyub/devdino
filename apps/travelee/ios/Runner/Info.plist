@@ -47,6 +47,8 @@
 		<true/>
 		<key>NSUserAuthenticationUsageDescription</key>
 		<string>Sign in with Apple is used for authentication.</string>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>이 앱은 귀하에게 맞춤형 광고를 제공하기 위해 광고 식별자를 사용합니다.</string>
 		<key>SKAdNetworkItems</key>
 		<array>
 			<dict>
