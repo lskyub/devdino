@@ -230,6 +230,16 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
                         }
                       },
                     ),
+                    // 디버깅 빌드 상태 여부
+                    if (!kReleaseMode)
+                      DinoButton.custom(
+                        type: DinoButtonType.solid,
+                        size: DinoButtonSize.full,
+                        title: '임시 로그인',
+                        onTap: () {
+                          context.go(SavedTravelsScreen.routePath);
+                        },
+                      ),
                   ],
                 ),
               ),
