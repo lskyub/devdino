@@ -17,6 +17,7 @@ class SettingItem extends ConsumerWidget {
       onTap: onTap,
       child: Container(
         height: 56,
+        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [

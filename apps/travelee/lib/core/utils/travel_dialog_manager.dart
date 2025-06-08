@@ -11,6 +11,7 @@ import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/modal/edit_travel_dialog.dart';
 import 'package:travelee/gen/app_localizations.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+
 /// TravelDialogManager
 ///
 /// 여행 관련 다이얼로그를 관리하는 유틸리티 클래스
@@ -29,7 +30,7 @@ class TravelDialogManager {
         name: 'show_delete_date_dialog',
         parameters: {'screen': 'travel_detail'},
       );
-      
+
       final result = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -149,7 +150,7 @@ class TravelDialogManager {
           endDate: result['endDate'] as DateTime,
         );
         ref.read(travelsProvider.notifier).updateTravel(updatedTravel);
-        
+
         await _analytics.logEvent(
           name: 'edit_travel_success',
           parameters: {
@@ -221,8 +222,7 @@ class TravelDialogManager {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 24, top: 24, right: 16, bottom: 24),
+                  padding: const EdgeInsets.only(left: 16, top: 28, bottom: 6, right: 16),
                   child: Row(
                     children: [
                       DinoText.custom(
@@ -234,10 +234,16 @@ class TravelDialogManager {
                       const Spacer(),
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: SvgPicture.asset(
-                          'assets/icons/popup_cancle.svg',
-                          width: 32,
-                          height: 32,
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          color: Colors.white,
+                          child: SvgPicture.asset(
+                            'assets/icons/popup_cancle.svg',
+                            fit: BoxFit.none,
+                            width: 32,
+                            height: 32,
+                          ),
                         ),
                       ),
                     ],

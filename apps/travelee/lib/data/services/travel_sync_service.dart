@@ -74,6 +74,30 @@ class TravelSyncService {
       if (user == null) {
         throw Exception('User not found');
       }
+
+      // 1. 현재 서버의 모든 여행 데이터 ID 목록 가져오기
+      final response = await _supabase
+          .from(_tableName)
+          .select('id')
+          .eq('user_id', user.id);
+      
+      final serverTravelIds = (response as List)
+          .map((data) => data['id'] as String)
+          .toSet();
+
+      // 2. 로컬 여행 데이터 ID 목록
+      final localTravelIds = travels.map((t) => t.id).toSet();
+
+      // 3. 서버에만 있는 데이터 삭제
+      final idsToDelete = serverTravelIds.difference(localTravelIds);
+      if (idsToDelete.isNotEmpty) {
+        await _supabase
+            .from(_tableName)
+            .delete()
+            .inFilter('id', idsToDelete.toList());
+      }
+
+      // 4. 로컬 데이터 저장/업데이트
       final compressedData = travels
           .map((travel) => {
                 'id': travel.id,
@@ -83,9 +107,10 @@ class TravelSyncService {
               })
           .toList();
 
-      await _supabase.from(_tableName).upsert(compressedData);
+      if (compressedData.isNotEmpty) {
+        await _supabase.from(_tableName).upsert(compressedData);
+      }
     } catch (e) {
-      print('Error saving travels: $e');
       rethrow;
     }
   }
