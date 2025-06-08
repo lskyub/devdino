@@ -104,5 +104,88 @@
   "syncData": "데이터 백업",
   "version": "버전 정보",
   "privacyPolicy": "개인정보 처리방침",
-  "termsOfService": "서비스 이용약관"
+  "termsOfService": "서비스 이용약관",
+  "pdfExportSuccess": "PDF로 내보내기 완료",
+  "pdfExportFailed": "PDF 내보내기 실패: {error}",
+  "@pdfExportFailed": {"placeholders": {"error": {"type": "String"}}},
+  "countryInfoUpdating": "국가 정보 업데이트 중...",
+  "countryInfoUpdated": "{countryName} 국가로 설정되었습니다",
+  "@countryInfoUpdated": {"placeholders": {"countryName": {"type": "String"}}},
+  "countryInfoUpdateFailed": "국가 정보 변경 실패: {error}",
+  "@countryInfoUpdateFailed": {"placeholders": {"error": {"type": "String"}}},
+  "deleteScheduleTitle": "일정 삭제",
+  "deleteScheduleConfirmation": "이 일정을 삭제하시겠습니까?",
+  "cancel": "취소",
+  "delete": "삭제",
+  "scheduleMoved": "일정이 {month}월 {day}일로 이동되었습니다",
+  "@scheduleMoved": {"placeholders": {"month": {"type": "int"}, "day": {"type": "int"}}},
+  "logoutConfirm": "로그아웃 하시겠습니까?",
+  "withdrawConfirm": "회원탈퇴 하시겠습니까?",
+  "travelIdRequired": "여행 ID가 필요합니다",
+  "noSchedules": "표시할 일정이 없습니다.",
+  "locationSelectDone": "위치 선택 완료",
+  
+  "@notifications": {},
+  "scheduleMoved": "일정이 {month}월 {day}일로 이동되었습니다",
+  "@scheduleMoved": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "countryInfoUpdating": "국가 정보 업데이트 중...",
+  "countryInfoUpdated": "{countryName} 국가로 설정되었습니다",
+  "@countryInfoUpdated": {
+    "placeholders": {
+      "countryName": {
+        "type": "String"
+      }
+    }
+  },
+  "countryInfoUpdateFailed": "국가 정보 변경 실패: {error}",
+  "@countryInfoUpdateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "@dialogs": {},
+  "deleteScheduleTitle": "일정 삭제",
+  "deleteScheduleConfirmation": "이 일정을 삭제하시겠습니까?",
+  "cancel": "취소",
+  "delete": "삭제",
+
+  "@schedule": {},
+  "noSchedules": "표시할 일정이 없습니다.",
+  "scheduleManagement": "일정 관리",
+
+  "@country": {},
+  "countryAlreadySelected": "이미 선택된 국가입니다",
+  
+  "@travel": {},
+  "travelDestination": "여행 목적지",
+  "travelInfoModify": "여행 정보 수정",
+  "date": "날짜",
+  "confirm": "확인",
+  "searchCountry": "국가 검색",
+  "enterCountryName": "국가 이름을 입력하세요",
+  "pleaseAddTravelDestination": "여행 목적지를 추가해주세요",
+  "travelStatusOngoing": "여행중",
+  "travelStatusUpcoming": "여행예정",
+  "travelStatusCompleted": "여행완료",
+  
+  "@dialog": {},
+  "deleteDateTitle": "날짜 삭제 확인",
+  "deleteDateMessage": "해당 날짜의 모든 일정이 삭제됩니다.\n계속하시겠습니까?",
+  "editTravel": "여행 편집",
+  "editTravelSchedule": "여행 일정 편집",
+  "shareTravelSchedule": "여행 일정 공유",
+  "deleteTravel": "여행 삭제",
+  "deleteTravelConfirm": "이 여행을 삭제하시겠습니까?\n삭제된 여행은 복구할 수 없습니다."
 } 

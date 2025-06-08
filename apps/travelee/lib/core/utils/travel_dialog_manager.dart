@@ -10,6 +10,7 @@ import 'package:travelee/data/models/location/country_info.dart';
 import 'package:travelee/presentation/widgets/setting_item.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/modal/edit_travel_dialog.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 /// TravelDialogManager
 ///
@@ -25,28 +26,28 @@ class TravelDialogManager {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const B2bText(
+        title: B2bText(
           type: DinoTextType.bodyXL,
-          text: '날짜 삭제 확인',
+          text: AppLocalizations.of(context)!.deleteDateTitle,
         ),
-        content: const B2bText(
+        content: B2bText(
           type: DinoTextType.bodyL,
-          text: '해당 날짜의 모든 일정이 삭제됩니다.\n계속하시겠습니까?',
+          text: AppLocalizations.of(context)!.deleteDateMessage,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: B2bText(
               type: DinoTextType.bodyL,
-              text: '취소',
+              text: AppLocalizations.of(context)!.cancel,
               color: $dinoToken.color.blingGray400.resolve(context),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const B2bText(
+            child: B2bText(
               type: DinoTextType.bodyXL,
-              text: '삭제',
+              text: AppLocalizations.of(context)!.delete,
               color: Colors.red,
             ),
           ),
@@ -142,7 +143,7 @@ class TravelDialogManager {
                 child: Row(
                   children: [
                     DinoText.custom(
-                      text: '여행 편집',
+                      text: AppLocalizations.of(context)!.editTravel,
                       fontSize: DinoTextSizeToken.text500,
                       fontWeight: FontWeight.w600,
                       color: $dinoToken.color.blingGray900,
@@ -161,19 +162,19 @@ class TravelDialogManager {
               ),
               SettingItem(
                   path: 'assets/icons/main_payment_24.svg',
-                  title: '여행 일정 편집',
+                  title: AppLocalizations.of(context)!.editTravelSchedule,
                   onTap: () {
                     Navigator.pop(context, 0);
                   }),
               SettingItem(
                   path: 'assets/icons/main_payment_24.svg',
-                  title: '여행 일정 공유',
+                  title: AppLocalizations.of(context)!.shareTravelSchedule,
                   onTap: () {
                     Navigator.pop(context, 1);
                   }),
               SettingItem(
                   path: 'assets/icons/trash.svg',
-                  title: '여행 삭제',
+                  title: AppLocalizations.of(context)!.deleteTravel,
                   onTap: () {
                     Navigator.pop(context, 2);
                   }),

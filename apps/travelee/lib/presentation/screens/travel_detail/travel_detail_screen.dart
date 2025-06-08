@@ -25,6 +25,7 @@ import 'package:travelee/router.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/data/services/pdf_export_service.dart';
 import 'package:travelee/data/models/db/travel_db_model.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -295,11 +296,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
           try {
             final travelDbModel = TravelDBModel.fromTravelModel(travelInfo);
             final schedules = travelDbModel.schedules;
-            var pdfFile = await PdfExportService.exportTravelDetailToPdf(
-              travel: travelDbModel,
-              schedules: schedules,
-            );
-            await PdfExportService.sharePdf(pdfFile);
+            await _exportPdf();
 
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -543,5 +540,99 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         duration: const Duration(seconds: 2),
       ),
     );
+  }
+
+  void _exportToPdf() async {
+    try {
+      await _exportPdf();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.pdfExportSuccess)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.pdfExportFailed(e.toString()))),
+        );
+      }
+    }
+  }
+
+  void _updateCountryInfo(String countryCode) async {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.countryInfoUpdating)),
+      );
+    }
+
+    try {
+      final countryName = await _updateCountry(countryCode);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.countryInfoUpdated(countryName))),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.countryInfoUpdateFailed(e.toString()))),
+        );
+      }
+    }
+  }
+
+  void _showDeleteScheduleDialog(Schedule schedule) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.deleteScheduleTitle),
+        content: Text(AppLocalizations.of(context)!.deleteScheduleConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              _deleteSchedule(schedule);
+              Navigator.pop(context);
+            },
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onScheduleMoved(DateTime newDate) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.scheduleMoved(newDate.month, newDate.day))),
+    );
+  }
+
+  Future<void> _exportPdf() async {
+    final travelInfo = ref.watch(travel_providers.currentTravelProvider);
+    if (travelInfo == null) return;
+
+    final travelDbModel = TravelDBModel.fromTravelModel(travelInfo);
+    final schedules = travelDbModel.schedules;
+    final pdfFile = await PdfExportService.exportTravelDetailToPdf(
+      travel: travelDbModel,
+      schedules: schedules,
+    );
+    await PdfExportService.sharePdf(pdfFile);
+  }
+
+  Future<String> _updateCountry(String countryCode) async {
+    final travel = ref.watch(travel_providers.currentTravelProvider);
+    if (travel == null) throw Exception('Travel not found');
+
+    final countryInfo = travel.countryInfos.firstWhere(
+      (info) => info.countryCode == countryCode,
+      orElse: () => throw Exception('Country not found'),
+    );
+
+    return countryInfo.name;
   }
 }

@@ -5,6 +5,7 @@ import 'package:travelee/data/models/schedule/day_schedule_data.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/gen/app_localizations.dart';
 
 // 일정 탭 콜백 정의
 typedef ScheduleTapCallback = void Function(DateTime date, int dayNumber);
@@ -239,7 +240,7 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
           ),
           const SizedBox(height: 12),
           Text(
-            '등록된 일정이 없습니다',
+            AppLocalizations.of(context)!.noSchedules,
             style: TextStyle(
               color: $dinoToken.color.blingGray400.resolve(context),
               fontSize: 16,

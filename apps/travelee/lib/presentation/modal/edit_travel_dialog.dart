@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:travelee/data/models/location/country_info.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 class EditTravelDialog extends StatefulWidget {
   final List<String> initialDestination;
@@ -79,7 +80,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
           children: [
             B2bText(
               type: DinoTextType.bodyM,
-              text: '여행 목적지',
+              text: AppLocalizations.of(context)!.travelDestination,
               color: $dinoToken.color.black.resolve(context),
             ),
             IconButton(
@@ -124,8 +125,8 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                       topRight: Radius.circular(16.0),
                     ),
                     inputDecoration: InputDecoration(
-                      labelText: '국가 검색',
-                      hintText: '국가 이름을 입력하세요',
+                      labelText: AppLocalizations.of(context)!.searchCountry,
+                      hintText: AppLocalizations.of(context)!.enterCountryName,
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -161,7 +162,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
             child: Center(
               child: B2bText(
                 type: DinoTextType.bodyM,
-                text: '여행 목적지를 추가해주세요',
+                text: AppLocalizations.of(context)!.pleaseAddTravelDestination,
                 color: $dinoToken.color.blingGray400.resolve(context),
               ),
             ),
@@ -232,7 +233,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
       children: [
         B2bText(
           type: DinoTextType.bodyM,
-          text: '여행 기간',
+          text: AppLocalizations.of(context)!.travelPeriod,
           color: $dinoToken.color.black.resolve(context),
         ),
         const SizedBox(height: 16),
@@ -352,15 +353,17 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                   children: [
                     B2bText(
                       type: DinoTextType.bodyM,
-                      text: '여행 정보 수정',
+                      text: AppLocalizations.of(context)!.travelInfoModify,
                       color: $dinoToken.color.black.resolve(context),
                     ),
                     const SizedBox(height: 24),
                     TabBar(
                       controller: _tabController,
-                      tabs: const [
-                        Tab(text: '여행지'),
-                        Tab(text: '날짜'),
+                      tabs: [
+                        Tab(
+                            text: AppLocalizations.of(context)!
+                                .travelDestination),
+                        Tab(text: AppLocalizations.of(context)!.date),
                       ],
                       labelColor: $dinoToken.color.primary.resolve(context),
                       unselectedLabelColor:
@@ -382,7 +385,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                       children: [
                         Expanded(
                           child: B2bButton.medium(
-                            title: '취소',
+                            title: AppLocalizations.of(context)!.cancel,
                             type: B2bButtonType.secondary,
                             onTap: () {
                               Navigator.pop(context);
@@ -392,7 +395,7 @@ class _EditTravelDialogState extends State<EditTravelDialog>
                         const SizedBox(width: 8),
                         Expanded(
                           child: B2bButton.medium(
-                            title: '확인',
+                            title: AppLocalizations.of(context)!.confirm,
                             type: B2bButtonType.primary,
                             onTap: () {
                               Navigator.pop(context, {

@@ -62,7 +62,7 @@ class MyApp extends ConsumerWidget {
           fontFamily: 'Pretendard',
         ),
         supportedLocales: const [
-          Locale('ko', 'KR'),
+          // Locale('ko', 'KR'),
           Locale('en', 'US'),
         ],
         localizationsDelegates: const [

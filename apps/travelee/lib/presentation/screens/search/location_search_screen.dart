@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:travelee/data/models/location/location_data.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 class LocationSearchScreen extends ConsumerStatefulWidget {
   static const routeName = 'location_search';
@@ -160,7 +161,7 @@ class _LocationSearchScreenState extends ConsumerState<LocationSearchScreen> {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        child: const Text('위치 선택 완료'),
+        child: Text(AppLocalizations.of(context)!.locationSelectDone),
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/providers/travel_state_provider.dart';
 import 'package:travelee/router.dart';
+import 'package:travelee/gen/app_localizations.dart';
 
 class SavedTravelItem extends ConsumerWidget {
   final TravelModel travel;
@@ -71,16 +72,16 @@ class SavedTravelItem extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
       );
     }
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Container(
-        decoration: decoration,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: InkWell(
-          onTap: () {
-            ref.read(currentTravelIdProvider.notifier).state = travel.id;
-            ref.read(routerProvider).push('/travel_detail/${travel.id}');
-          },
+    return GestureDetector(
+      onTap: () {
+        ref.read(currentTravelIdProvider.notifier).state = travel.id;
+        ref.read(routerProvider).push('/travel_detail/${travel.id}');
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Container(
+          decoration: decoration,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Row(
             children: [
               Container(
@@ -123,10 +124,12 @@ class SavedTravelItem extends ConsumerWidget {
                     children: [
                       DinoText.custom(
                         text: isTodayInRange
-                            ? '여행중'
+                            ? AppLocalizations.of(context)!.travelStatusOngoing
                             : isEnded
-                                ? '여행완료'
-                                : '여행예정',
+                                ? AppLocalizations.of(context)!
+                                    .travelStatusCompleted
+                                : AppLocalizations.of(context)!
+                                    .travelStatusUpcoming,
                         fontSize: DinoTextSizeToken.text75,
                         fontWeight: FontWeight.w500,
                         color: isTodayInRange

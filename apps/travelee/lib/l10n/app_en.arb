@@ -60,7 +60,7 @@
   "newTravel": "New Travel",
   "travelCountry": "Travel Country",
   "travelPeriod": "Travel Period",
-  "selectTravelPeriod": "Please select your travel period.",
+  "selectTravelPeriod": "Select your travel dates.",
   "registerTravelInfoButton": "Register Travel Info",
   "editTravelInfoButton": "Edit Travel Info",
   "addCountry": "Add Country",
@@ -104,5 +104,106 @@
   "syncData": "Sync Data",
   "version": "Version Info",
   "privacyPolicy": "Privacy Policy",
-  "termsOfService": "Terms of Service"
+  "termsOfService": "Terms of Service",
+  "pdfExportSuccess": "PDF export completed",
+  "pdfExportFailed": "PDF export failed: {error}",
+  "@pdfExportFailed": {"placeholders": {"error": {"type": "String"}}},
+  "countryInfoUpdating": "Updating country information...",
+  "countryInfoUpdated": "Country set to {countryName}",
+  "@countryInfoUpdated": {
+    "placeholders": {
+      "countryName": {
+        "type": "String"
+      }
+    }
+  },
+  "countryInfoUpdateFailed": "Failed to update country information: {error}",
+  "@countryInfoUpdateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteScheduleTitle": "Delete Schedule",
+  "deleteScheduleConfirmation": "Are you sure you want to delete this schedule?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "scheduleMoved": "Schedule moved to {month}/{day}",
+  "@scheduleMoved": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "logoutConfirm": "Do you want to logout?",
+  "withdrawConfirm": "Do you want to delete your account?",
+  "travelIdRequired": "Travel ID is required",
+  "noSchedules": "No schedules to display.",
+  "locationSelectDone": "Location selection complete",
+  
+  "@notifications": {},
+  "scheduleMoved": "Schedule moved to {month}/{day}",
+  "@scheduleMoved": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "countryInfoUpdating": "Updating country information...",
+  "countryInfoUpdated": "Country set to {countryName}",
+  "@countryInfoUpdated": {
+    "placeholders": {
+      "countryName": {
+        "type": "String"
+      }
+    }
+  },
+  "countryInfoUpdateFailed": "Failed to update country information: {error}",
+  "@countryInfoUpdateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "@dialogs": {},
+  "deleteScheduleTitle": "Delete Schedule",
+  "deleteScheduleConfirmation": "Are you sure you want to delete this schedule?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+
+  "@schedule": {},
+  "noSchedules": "No schedules to display.",
+  "scheduleManagement": "Schedule Management",
+
+  "@country": {},
+  "countryAlreadySelected": "This country is already selected",
+  
+  "@travel": {},
+  "travelDestination": "Travel Destination",
+  "travelInfoModify": "Modify Travel Info",
+  "date": "Date",
+  "confirm": "Confirm",
+  "searchCountry": "Search Country",
+  "enterCountryName": "Enter country name",
+  "pleaseAddTravelDestination": "Please add travel destination",
+  
+  "@dialog": {},
+  "deleteDateTitle": "Delete Date Confirmation",
+  "deleteDateMessage": "All schedules for this date will be deleted.\nDo you want to continue?",
+  "editTravel": "Edit Travel",
+  "editTravelSchedule": "Edit Travel Schedule",
+  "shareTravelSchedule": "Share Travel Schedule",
+  "deleteTravel": "Delete Travel",
+  "deleteTravelConfirm": "Do you want to delete this travel?\nDeleted travel cannot be recovered."
 } 

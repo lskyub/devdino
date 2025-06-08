@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
 import 'package:travelee/data/models/schedule/schedule.dart';
+import 'package:travelee/gen/app_localizations.dart';
 import 'package:travelee/presentation/widgets/travel_detail/schedule_item.dart';
 
 class DayItem extends ConsumerStatefulWidget {
@@ -193,7 +194,8 @@ class _DayItemState extends ConsumerState<DayItem> {
                                     ),
                                     const SizedBox(width: 4),
                                     DinoText.custom(
-                                      text: '일정 추가 하기',
+                                      text: AppLocalizations.of(context)!
+                                          .addSchedule,
                                       color: $dinoToken.color.blingGray400,
                                       fontSize: 14.22,
                                       fontWeight: FontWeight.w600,

@@ -13,6 +13,7 @@ import 'package:travelee/presentation/screens/settings/legal_document_screen.dar
 import 'package:travelee/providers/loading_state_provider.dart';
 import 'package:travelee/presentation/widgets/loading_overlay.dart';
 import 'dart:developer' as dev;
+import 'package:travelee/gen/app_localizations.dart';
 
 GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -69,7 +70,7 @@ final routerProvider = Provider<GoRouter>(
 
                 if (travelId.isEmpty) {
                   dev.log('Router - 오류: 여행 ID가 비어 있음');
-                  return const Center(child: Text('여행 ID가 필요합니다'));
+                  return Center(child: Text(AppLocalizations.of(context)!.travelIdRequired));
                 }
 
                 return const TravelDetailScreen();

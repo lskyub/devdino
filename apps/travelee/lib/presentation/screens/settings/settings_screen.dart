@@ -47,12 +47,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('로그아웃 하시겠습니까?'),
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(AppLocalizations.of(context)!.logoutConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -69,7 +69,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               context.go(FirstScreen.routePath);
               ref.read(loadingStateProvider.notifier).stopLoading();
             },
-            child: const Text('로그아웃'),
+            child: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),
@@ -81,12 +81,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('회원탈퇴'),
-        content: const Text('회원탈퇴 하시겠습니까?'),
+        title: Text(AppLocalizations.of(context)!.withdraw),
+        content: Text(AppLocalizations.of(context)!.withdrawConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -102,7 +102,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               context.go(FirstScreen.routePath);
               ref.read(loadingStateProvider.notifier).stopLoading();
             },
-            child: const Text('탈퇴'),
+            child: Text(AppLocalizations.of(context)!.withdraw),
           ),
         ],
       ),
