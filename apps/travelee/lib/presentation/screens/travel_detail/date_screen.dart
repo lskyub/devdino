@@ -179,139 +179,137 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                         top: 16,
                         bottom: 8,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/nation.svg',
-                          ),
-                          const SizedBox(width: 8),
-                          DinoText.custom(
-                            fontSize: 22.78,
-                            text: AppLocalizations.of(context)!.travelCountry,
-                            color: $dinoToken.color.blingGray600,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          const Spacer(),
-                          DinoButton.custom(
-                            type: DinoButtonType.empty,
-                            horizontalPadding: 0,
-                            textColor: $dinoToken.color.brandBlingBlue700,
-                            backgroundColor: $dinoToken.color.transparent,
-                            pressedTextColor:
-                                $dinoToken.color.brandBlingBlue700,
-                            radius: 28,
-                            textSize: 12.64,
-                            trailing: Padding(
-                              padding: const EdgeInsets.only(left: 3),
-                              child: SvgPicture.asset(
-                                'assets/icons/ar_right.svg',
-                                colorFilter: ColorFilter.mode(
-                                  $dinoToken.color.brandBlingBlue700
-                                      .resolve(context),
-                                  BlendMode.srcIn,
-                                ),
+                      child: GestureDetector(
+                        onTap: () {
+                          showCountryPicker(
+                            context: context,
+                            showPhoneCode: false,
+                            countryListTheme: CountryListThemeData(
+                              backgroundColor: Colors.white,
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                color: $dinoToken.color.black.resolve(context),
                               ),
-                            ),
-                            title: AppLocalizations.of(context)!.addCountry,
-                            onTap: () {
-                              showCountryPicker(
-                                context: context,
-                                showPhoneCode: false,
-                                countryListTheme: CountryListThemeData(
-                                  backgroundColor: Colors.white,
-                                  textStyle: TextStyle(
+                              bottomSheetHeight:
+                                  MediaQuery.of(context).size.height * 0.7,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(24.0),
+                                topRight: Radius.circular(24.0),
+                              ),
+                              inputDecoration: InputDecoration(
+                                  hintText: AppLocalizations.of(context)!
+                                      .searchCountryHint,
+                                  hintStyle: TextStyle(
                                     fontSize: 16,
-                                    color:
-                                        $dinoToken.color.black.resolve(context),
+                                    color: $dinoToken.color.blingGray400
+                                        .resolve(context),
+                                    fontWeight: FontWeight.w400,
                                   ),
-                                  bottomSheetHeight:
-                                      MediaQuery.of(context).size.height * 0.7,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(24.0),
-                                    topRight: Radius.circular(24.0),
+                                  prefixIcon: Padding(
+                                    padding: const EdgeInsets.only(left: 15),
+                                    child: SvgPicture.asset(
+                                      'assets/icons/search.svg',
+                                    ),
                                   ),
-                                  inputDecoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)!
-                                          .searchCountryHint,
-                                      hintStyle: TextStyle(
-                                        fontSize: 16,
-                                        color: $dinoToken.color.blingGray400
-                                            .resolve(context),
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      prefixIcon: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 15),
-                                        child: SvgPicture.asset(
-                                          'assets/icons/search.svg',
-                                        ),
-                                      ),
-                                      prefixIconConstraints:
-                                          const BoxConstraints(
-                                        maxHeight: 48,
-                                        maxWidth: 48,
-                                      ),
-                                      border: const OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(12.0),
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: $dinoToken.color.blingGray75
-                                          .resolve(context)),
-                                ),
-                                onSelect: (Country country) {
-                                  // Country 객체 정보와 함께 저장
-                                  final countryName =
-                                      country.nameLocalized ?? country.name;
+                                  prefixIconConstraints: const BoxConstraints(
+                                    maxHeight: 48,
+                                    maxWidth: 48,
+                                  ),
+                                  border: const OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(12.0),
+                                    ),
+                                  ),
+                                  filled: true,
+                                  fillColor: $dinoToken.color.blingGray75
+                                      .resolve(context)),
+                            ),
+                            onSelect: (Country country) {
+                              // Country 객체 정보와 함께 저장
+                              final countryName =
+                                  country.nameLocalized ?? country.name;
 
-                                  // 이미 선택된 국가인지 확인
-                                  if (travelInfo.destination
-                                      .contains(countryName)) {
-                                    // 이미 선택된 국가는 추가하지 않고 메시지 표시
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                            AppLocalizations.of(context)!
-                                                .countryAlreadySelected),
-                                        duration: const Duration(seconds: 2),
-                                      ),
-                                    );
-                                    return;
-                                  }
+                              // 이미 선택된 국가인지 확인
+                              if (travelInfo.destination
+                                  .contains(countryName)) {
+                                // 이미 선택된 국가는 추가하지 않고 메시지 표시
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(AppLocalizations.of(context)!
+                                        .countryAlreadySelected),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-                                  final countryInfo = CountryInfo(
-                                    name: countryName,
-                                    countryCode: country.countryCode,
-                                    flagEmoji: country.flagEmoji,
-                                  );
-
-                                  // 목적지와 국가 정보 추가
-                                  final destinations =
-                                      List<String>.from(travelInfo.destination);
-                                  final countryInfos = List<CountryInfo>.from(
-                                      travelInfo.countryInfos);
-
-                                  destinations.add(countryInfo.name);
-                                  countryInfos.add(countryInfo);
-
-                                  final updatedTravel = travelInfo.copyWith(
-                                    destination: destinations,
-                                    countryInfos: countryInfos,
-                                  );
-
-                                  ref
-                                      .read(travel_providers
-                                          .travelsProvider.notifier)
-                                      .updateTravel(updatedTravel);
-                                },
+                              final countryInfo = CountryInfo(
+                                name: countryName,
+                                countryCode: country.countryCode,
+                                flagEmoji: country.flagEmoji,
                               );
+
+                              // 목적지와 국가 정보 추가
+                              final destinations =
+                                  List<String>.from(travelInfo.destination);
+                              final countryInfos = List<CountryInfo>.from(
+                                  travelInfo.countryInfos);
+
+                              destinations.add(countryInfo.name);
+                              countryInfos.add(countryInfo);
+
+                              final updatedTravel = travelInfo.copyWith(
+                                destination: destinations,
+                                countryInfos: countryInfos,
+                              );
+
+                              ref
+                                  .read(
+                                      travel_providers.travelsProvider.notifier)
+                                  .updateTravel(updatedTravel);
                             },
-                          ),
-                        ],
+                          );
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/nation.svg',
+                              ),
+                              const SizedBox(width: 8),
+                              DinoText.custom(
+                                fontSize: 22.78,
+                                text:
+                                    AppLocalizations.of(context)!.travelCountry,
+                                color: $dinoToken.color.blingGray600,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              const Spacer(),
+                              DinoButton.custom(
+                                type: DinoButtonType.empty,
+                                horizontalPadding: 0,
+                                textColor: $dinoToken.color.brandBlingBlue700,
+                                backgroundColor: $dinoToken.color.transparent,
+                                pressedTextColor:
+                                    $dinoToken.color.brandBlingBlue700,
+                                radius: 28,
+                                textSize: 12.64,
+                                trailing: Padding(
+                                  padding: const EdgeInsets.only(left: 3),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/ar_right.svg',
+                                    colorFilter: ColorFilter.mode(
+                                      $dinoToken.color.brandBlingBlue700
+                                          .resolve(context),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                ),
+                                title: AppLocalizations.of(context)!.addCountry,
+                              ),
+                            ]),
                       ),
                     ),
                     if (travelInfo.destination.isNotEmpty) ...[
@@ -343,6 +341,16 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                         .resolve(context),
                                     width: 1,
                                   ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: $dinoToken.color.black
+                                          .resolve(context)
+                                          .withAlpha((255 * 0.04).toInt()),
+                                      blurRadius: 10,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -352,9 +360,11 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                       style: const TextStyle(fontSize: 20),
                                     ),
                                     const SizedBox(width: 8),
-                                    B2bText(
-                                      type: DinoTextType.detailL,
+                                    DinoText.custom(
+                                      fontSize: 14.22,
                                       text: data,
+                                      color: $dinoToken.color.blingGray900,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                     const SizedBox(width: 8),
                                     GestureDetector(
@@ -659,6 +669,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                 backgroundColor: $dinoToken.color.brandBlingPurple600,
                 disabledBackgroundColor: $dinoToken.color.blingGray300,
                 textColor: $dinoToken.color.white,
+                disabledTextColor: $dinoToken.color.white,
                 onTap: () {
                   if (!travelInfo.id.startsWith('temp_')) {
                     final updatedTravel = travelInfo.copyWith(

@@ -337,6 +337,10 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
               ),
             ),
           ),
+          Divider(
+            color: $dinoToken.color.blingGray75.resolve(context),
+            height: 1,
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: SafeArea(
@@ -346,7 +350,7 @@ class _ScheduleInputScreenState extends ConsumerState<ScheduleInputScreen> {
                 state: _locationController.text.isEmpty
                     ? DinoButtonState.disabled
                     : DinoButtonState.base,
-                verticalPadding: 20,
+                verticalPadding: 18,
                 textSize: 16,
                 fontWeight: FontWeight.w700,
                 textColor: $dinoToken.color.white,

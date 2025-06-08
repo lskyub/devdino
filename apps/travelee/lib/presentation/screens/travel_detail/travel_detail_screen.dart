@@ -127,11 +127,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                 children: [
                   GestureDetector(
                     onTap: () => _handleBackNavigation(context),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 16),
-                      child: SvgPicture.asset(
-                        'assets/icons/bottomnav_home_sel.svg',
-                      ),
+                    child: SvgPicture.asset(
+                      'assets/icons/bottomnav_home_sel.svg',
                     ),
                   ),
                   DinoText.custom(
@@ -143,11 +140,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
                   const Spacer(),
                   GestureDetector(
                     onTap: _settingTravel,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: SvgPicture.asset(
-                        'assets/icons/bottomnav_setting_sel.svg',
-                      ),
+                    child: SvgPicture.asset(
+                      'assets/icons/bottomnav_setting_sel.svg',
                     ),
                   ),
                 ],
@@ -547,13 +541,16 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       await _exportPdf();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.pdfExportSuccess)),
+          SnackBar(
+              content: Text(AppLocalizations.of(context)!.pdfExportSuccess)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.pdfExportFailed(e.toString()))),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context)!.pdfExportFailed(e.toString()))),
         );
       }
     }
@@ -562,7 +559,8 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
   void _updateCountryInfo(String countryCode) async {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.countryInfoUpdating)),
+        SnackBar(
+            content: Text(AppLocalizations.of(context)!.countryInfoUpdating)),
       );
     }
 
@@ -570,13 +568,17 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
       final countryName = await _updateCountry(countryCode);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.countryInfoUpdated(countryName))),
+          SnackBar(
+              content: Text(AppLocalizations.of(context)!
+                  .countryInfoUpdated(countryName))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.countryInfoUpdateFailed(e.toString()))),
+          SnackBar(
+              content: Text(AppLocalizations.of(context)!
+                  .countryInfoUpdateFailed(e.toString()))),
         );
       }
     }
@@ -607,7 +609,9 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
   void _onScheduleMoved(DateTime newDate) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.scheduleMoved(newDate.month, newDate.day))),
+      SnackBar(
+          content: Text(AppLocalizations.of(context)!
+              .scheduleMoved(newDate.month, newDate.day))),
     );
   }
 

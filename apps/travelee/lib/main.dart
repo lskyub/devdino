@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -10,7 +11,8 @@ import 'package:country_picker/country_picker.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:travelee/core/config/supabase_config.dart';
 import 'package:travelee/gen/app_localizations.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:travelee/firebase_options.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -40,8 +42,14 @@ void main() async {
   // 수파베이스 초기화
   await SupabaseConfig.initialize();
 
-  // // Firebase 초기화
-  // await FirebaseConfig.initialize();
+  // Firebase 초기화
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+  // Firebase Analytics 설정
+  final analytics = FirebaseAnalytics.instance;
+  await analytics.setAnalyticsCollectionEnabled(true);
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -62,7 +70,7 @@ class MyApp extends ConsumerWidget {
           fontFamily: 'Pretendard',
         ),
         supportedLocales: const [
-          // Locale('ko', 'KR'),
+          Locale('ko', 'KR'),
           Locale('en', 'US'),
         ],
         localizationsDelegates: const [

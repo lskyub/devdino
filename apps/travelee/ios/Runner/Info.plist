@@ -263,5 +263,11 @@
 		</array>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>FirebaseAppDelegateProxyEnabled</key>
+		<false/>
+		<key>FirebaseAutomaticScreenReportingEnabled</key>
+		<true/>
+		<key>FirebaseScreenReportingEnabled</key>
+		<true/>
 	</dict>
 </plist>

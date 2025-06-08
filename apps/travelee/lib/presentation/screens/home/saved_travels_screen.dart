@@ -182,7 +182,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
               context.push(SettingsScreen.routePath);
             },
             child: SvgPicture.asset(
-              'assets/icons/bottomnav_setting_sel.svg',
+              'assets/icons/home_mysetting.svg',
             ),
           ),
         ],
@@ -239,6 +239,7 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                           textSize: 16,
                           radius: 40,
                           textColor: $dinoToken.color.white,
+                          fontWeight: FontWeight.w700,
                           backgroundColor: $dinoToken.color.primary,
                           gradient: const LinearGradient(
                             colors: [

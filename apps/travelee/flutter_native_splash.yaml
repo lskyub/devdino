@@ -12,10 +12,10 @@ flutter_native_splash:
   # size of the app. Only one parameter can be used, color and background_image cannot both be set.
   color: "#000000"
   image: assets/images/logotype_travelee.png
-  branding: assets/images/logotype_travelee.png
+  # branding: assets/images/logotype_travelee.png
   color_dark: "#000000"
   image_dark: assets/images/logotype_travelee.png
-  branding_dark: assets/images/logotype_travelee.png
+  # branding_dark: assets/images/logotype_travelee.png
 
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
   # the leading # character.
