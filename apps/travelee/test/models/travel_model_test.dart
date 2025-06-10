@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travelee/domain/entities/travel_model.dart';
-import 'schedule.dart';
-import 'country_info.dart';
+import 'package:travelee/domain/entities/country_info.dart';
+import 'package:travelee/domain/entities/schedule.dart';
 
 void main() {
   group('TravelModel Tests', () {
