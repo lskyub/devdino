@@ -1,10 +1,13 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
 import 'package:travelee/data/models/db/travel_db_model.dart';
 import 'package:travelee/data/models/db/schedule_db_model.dart';
 import 'dart:developer' as dev;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:travelee/domain/entities/schedule.dart';
+import 'package:travelee/domain/entities/country_info.dart';
 
 // DatabaseHelper Provider
 final databaseHelperProvider = Provider<DatabaseHelper>((ref) {

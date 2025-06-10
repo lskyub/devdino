@@ -1,5 +1,14 @@
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/models/location/country_info.dart';
+// Flutter/Dart imports
+import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+// External package imports
+import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
+
+// Local imports
+import 'package:travelee/domain/entities/schedule.dart';
+import 'country_info.dart';
 
 // 하루 데이터 모델
 class DayData {

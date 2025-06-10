@@ -1,16 +1,19 @@
-import 'package:design_systems/dino/dino.dart';
-import 'package:design_systems/dino/components/textfield/textfield.variant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mix/mix.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:travelee/domain/entities/schedule.dart';
+import 'package:travelee/domain/entities/location_data.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:travelee/gen/app_localizations.dart';
+import 'package:design_systems/dino/components/textfield/textfield.variant.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/models/location/location_data.dart';
-import 'package:travelee/providers/travel_state_provider.dart';
-import 'package:travelee/router.dart';
+import 'package:travelee/presentation/router/router.dart';
 import 'package:travelee/presentation/modal/time_picker_modal.dart';
 import 'package:travelee/presentation/screens/travel_detail/location_search_screen.dart';
-import 'package:uuid/uuid.dart';
 import 'dart:developer' as dev;
 
 class ScheduleInputModal extends ConsumerStatefulWidget {

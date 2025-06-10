@@ -1,4 +1,4 @@
-import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
 import 'dart:developer' as dev;
 
 /// 변경사항 관리 클래스

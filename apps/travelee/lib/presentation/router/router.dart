@@ -1,19 +1,22 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:travelee/presentation/screens/home/first_screen.dart';
-import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
-import 'package:travelee/presentation/screens/travel_detail/travel_detail_screen.dart';
-import 'package:travelee/presentation/screens/travel_detail/schedule_input_screen.dart';
-import 'package:travelee/presentation/screens/travel_detail/location_search_screen.dart';
-import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
-import 'package:travelee/presentation/screens/auth/signup_screen.dart';
-import 'package:travelee/presentation/screens/settings/settings_screen.dart';
-import 'package:travelee/presentation/screens/settings/legal_document_screen.dart';
-import 'package:travelee/providers/loading_state_provider.dart';
-import 'package:travelee/presentation/widgets/loading_overlay.dart';
-import 'dart:developer' as dev;
-import 'package:travelee/gen/app_localizations.dart';
+import '../../domain/entities/travel_model.dart';
+import '../../domain/entities/schedule.dart';
+import '../../domain/entities/location_data.dart';
+import '../screens/home/first_screen.dart';
+import '../screens/travel_detail/date_screen.dart';
+import '../screens/travel_detail/travel_detail_screen.dart';
+import '../screens/travel_detail/schedule_input_screen.dart';
+import '../screens/travel_detail/location_search_screen.dart';
+import '../screens/home/saved_travels_screen.dart';
+import '../screens/auth/signup_screen.dart';
+import '../screens/settings/settings_screen.dart';
+import '../screens/settings/legal_document_screen.dart';
+import '../providers/loading_state_provider.dart';
+import '../widgets/loading_overlay.dart';
+import '../../gen/app_localizations.dart';
 
 GlobalKey<NavigatorState> mainNavigatorKey = GlobalKey<NavigatorState>();
 

@@ -1,18 +1,26 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+// Flutter/Dart imports
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mix/mix.dart';
-import 'package:design_systems/dino/foundations/theme.dart';
-import 'package:travelee/router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:country_picker/country_picker.dart';
+
+// External package imports
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/gen/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:travelee/firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:mix/mix.dart';
+
+// Design system imports
+import 'package:design_systems/dino/foundations/theme.dart';
+
+// Local imports
+import 'presentation/router/router.dart';
+import 'core/config/supabase_config.dart';
+import 'gen/app_localizations.dart';
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -51,22 +59,30 @@ void main() async {
   final analytics = FirebaseAnalytics.instance;
   await analytics.setAnalyticsCollectionEnabled(true);
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    const ProviderScope(
+      child: TraveleeApp(),
+    ),
+  );
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+class TraveleeApp extends ConsumerWidget {
+  const TraveleeApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Future.delayed(const Duration(milliseconds: 500), () {
       FlutterNativeSplash.remove();
     });
+    final router = ref.watch(routerProvider);
+
     return MixTheme(
       data: dinoTheme,
       child: MaterialApp.router(
-        title: 'Flutter Demo',
+        title: 'Travelee',
         theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
           fontFamily: 'Pretendard',
         ),
         supportedLocales: const [
@@ -80,7 +96,7 @@ class MyApp extends ConsumerWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        routerConfig: ref.read(routerProvider),
+        routerConfig: router,
         builder: (context, child) => child!,
       ),
     );

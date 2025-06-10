@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/services/database_helper.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
+import 'package:travelee/domain/entities/schedule.dart';
+import 'package:travelee/data/datasources/local/database_helper.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'dart:developer' as dev;
 import 'package:travelee/data/managers/change_manager.dart';

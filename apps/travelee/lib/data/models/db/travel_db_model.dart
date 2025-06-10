@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/models/location/country_info.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:flutter/material.dart';
+import 'package:travelee/domain/entities/schedule.dart';
+import 'package:travelee/domain/entities/country_info.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
 import 'package:travelee/data/models/db/schedule_db_model.dart';
 
 class TravelDBModel {

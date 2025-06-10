@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/domain/entities/schedule.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
-import 'package:travelee/providers/travel_state_provider.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'dart:math' as Math;
 import 'dart:developer' as dev;

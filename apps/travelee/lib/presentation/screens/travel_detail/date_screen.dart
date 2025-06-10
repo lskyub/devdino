@@ -1,4 +1,3 @@
-import 'package:design_systems/dino/components/buttons/button.dino.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
@@ -9,13 +8,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:travelee/data/controllers/travel_detail_controller.dart';
-import 'package:travelee/providers/travel_state_provider.dart'
+import 'package:travelee/domain/entities/country_info.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
+import 'package:travelee/domain/usecases/travel_detail_controller.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart'
     as travel_providers;
-import 'package:travelee/data/models/travel/travel_model.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:travelee/data/models/location/country_info.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 import 'dart:developer' as dev;
 import 'dart:math';
@@ -37,6 +36,22 @@ class _DateScreenState extends ConsumerState<DateScreen> {
   final DateRangePickerController _controller = DateRangePickerController();
   DateTime? _tempStartDate;
   DateTime? _tempEndDate;
+  List<String>? _tempDestinations;
+  List<CountryInfo>? _tempCountryInfos;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final travelInfo = ref.read(travel_providers.currentTravelProvider);
+      if (travelInfo != null) {
+        setState(() {
+          _tempDestinations = List.from(travelInfo.destination);
+          _tempCountryInfos = List.from(travelInfo.countryInfos);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,17 +242,14 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                             ),
                             onSelect: (Country country) {
                               // Country 객체 정보와 함께 저장
-                              final countryName =
-                                  country.nameLocalized ?? country.name;
+                              final countryName = country.nameLocalized ?? country.name;
 
                               // 이미 선택된 국가인지 확인
-                              if (travelInfo.destination
-                                  .contains(countryName)) {
+                              if (_tempDestinations?.contains(countryName) ?? false) {
                                 // 이미 선택된 국가는 추가하지 않고 메시지 표시
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(AppLocalizations.of(context)!
-                                        .countryAlreadySelected),
+                                    content: Text(AppLocalizations.of(context)!.countryAlreadySelected),
                                     duration: const Duration(seconds: 2),
                                   ),
                                 );
@@ -250,24 +262,12 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                 flagEmoji: country.flagEmoji,
                               );
 
-                              // 목적지와 국가 정보 추가
-                              final destinations =
-                                  List<String>.from(travelInfo.destination);
-                              final countryInfos = List<CountryInfo>.from(
-                                  travelInfo.countryInfos);
-
-                              destinations.add(countryInfo.name);
-                              countryInfos.add(countryInfo);
-
-                              final updatedTravel = travelInfo.copyWith(
-                                destination: destinations,
-                                countryInfos: countryInfos,
-                              );
-
-                              ref
-                                  .read(
-                                      travel_providers.travelsProvider.notifier)
-                                  .updateTravel(updatedTravel);
+                              setState(() {
+                                _tempDestinations ??= [];
+                                _tempCountryInfos ??= [];
+                                _tempDestinations!.add(countryInfo.name);
+                                _tempCountryInfos!.add(countryInfo);
+                              });
                             },
                           );
                         },
@@ -312,16 +312,16 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                             ]),
                       ),
                     ),
-                    if (travelInfo.destination.isNotEmpty) ...[
+                    if (_tempDestinations?.isNotEmpty ?? false) ...[
                       Container(
                         padding: const EdgeInsets.only(left: 8),
                         height: 60,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: travelInfo.destination.length,
+                          itemCount: _tempDestinations!.length,
                           itemBuilder: (context, index) {
-                            final data = travelInfo.destination[index];
-                            final countryInfo = travelInfo.countryInfos[index];
+                            final data = _tempDestinations![index];
+                            final countryInfo = _tempCountryInfos![index];
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -369,32 +369,15 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                     const SizedBox(width: 8),
                                     GestureDetector(
                                       onTap: () {
-                                        // 목적지와 국가 정보 제거
-                                        final destinations = List<String>.from(
-                                            travelInfo.destination);
-                                        final countryInfos =
-                                            List<CountryInfo>.from(
-                                                travelInfo.countryInfos);
-
-                                        final index =
-                                            destinations.indexOf(data);
-                                        if (index != -1) {
-                                          destinations.removeAt(index);
-                                          if (index < countryInfos.length) {
-                                            countryInfos.removeAt(index);
+                                        setState(() {
+                                          final index = _tempDestinations!.indexOf(data);
+                                          if (index != -1) {
+                                            _tempDestinations!.removeAt(index);
+                                            if (index < _tempCountryInfos!.length) {
+                                              _tempCountryInfos!.removeAt(index);
+                                            }
                                           }
-                                        }
-
-                                        final updatedTravel =
-                                            travelInfo.copyWith(
-                                          destination: destinations,
-                                          countryInfos: countryInfos,
-                                        );
-
-                                        ref
-                                            .read(travel_providers
-                                                .travelsProvider.notifier)
-                                            .updateTravel(updatedTravel);
+                                        });
                                       },
                                       child: SvgPicture.asset(
                                         'assets/icons/chip_cancle.svg',
@@ -663,7 +646,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                     : AppLocalizations.of(context)!.editTravelInfoButton,
                 state: _tempStartDate == null ||
                         _tempEndDate == null ||
-                        travelInfo.countryInfos.isEmpty
+                        (_tempCountryInfos?.isEmpty ?? true)
                     ? DinoButtonState.disabled
                     : DinoButtonState.base,
                 backgroundColor: $dinoToken.color.brandBlingPurple600,
@@ -675,6 +658,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                     final updatedTravel = travelInfo.copyWith(
                       startDate: _tempStartDate,
                       endDate: _tempEndDate,
+                      destination: _tempDestinations ?? travelInfo.destination,
+                      countryInfos: _tempCountryInfos ?? travelInfo.countryInfos,
                     );
                     ref
                         .read(travel_providers.travelsProvider.notifier)
@@ -683,7 +668,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                   } else {
                     if (_tempStartDate == null ||
                         _tempEndDate == null ||
-                        travelInfo.countryInfos.isEmpty) {
+                        (_tempCountryInfos?.isEmpty ?? true)) {
                       return;
                     }
 
@@ -700,14 +685,12 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                     String defaultFlagEmoji = '🏳️';
                     String defaultCountryCode = '';
 
-                    if (travelInfo.countryInfos.isNotEmpty) {
-                      defaultCountryName = travelInfo.countryInfos.first.name;
-                      defaultFlagEmoji =
-                          travelInfo.countryInfos.first.flagEmoji;
-                      defaultCountryCode =
-                          travelInfo.countryInfos.first.countryCode;
-                    } else if (travelInfo.destination.isNotEmpty) {
-                      defaultCountryName = travelInfo.destination.first;
+                    if (_tempCountryInfos!.isNotEmpty) {
+                      defaultCountryName = _tempCountryInfos!.first.name;
+                      defaultFlagEmoji = _tempCountryInfos!.first.flagEmoji;
+                      defaultCountryCode = _tempCountryInfos!.first.countryCode;
+                    } else if (_tempDestinations!.isNotEmpty) {
+                      defaultCountryName = _tempDestinations!.first;
                     }
 
                     // 각 날짜에 대한 DayData 생성
@@ -732,6 +715,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       dayDataMap: initialDayDataMap,
                       startDate: _tempStartDate,
                       endDate: _tempEndDate,
+                      destination: _tempDestinations ?? travelInfo.destination,
+                      countryInfos: _tempCountryInfos ?? travelInfo.countryInfos,
                     );
 
                     // 여행 정보 업데이트

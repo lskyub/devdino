@@ -11,18 +11,21 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/data/services/travel_sync_service.dart';
+import 'package:travelee/data/datasources/remote/travel_sync_service.dart';
 import 'package:travelee/data/services/ad_tracking_service.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
-import 'package:travelee/providers/loading_state_provider.dart';
-import 'package:travelee/providers/travel_state_provider.dart';
+import 'package:travelee/presentation/providers/loading_state_provider.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
 import 'package:travelee/presentation/widgets/saved_travel_item.dart';
 import 'package:travelee/presentation/screens/settings/settings_screen.dart';
 import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
 import 'package:travelee/gen/app_localizations.dart';
 import 'dart:developer' as dev;
-import 'package:travelee/providers/ad_provider.dart';
+import 'package:travelee/presentation/providers/ad_provider.dart';
+import 'package:design_systems/dino/dino.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
+import 'package:travelee/presentation/router/router.dart';
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
   static const routeName = 'saved_travels';

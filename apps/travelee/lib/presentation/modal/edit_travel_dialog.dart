@@ -1,11 +1,11 @@
-import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
+import 'package:design_systems/dino/dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:travelee/data/models/location/country_info.dart';
+import 'package:travelee/domain/entities/country_info.dart';
 import 'package:travelee/gen/app_localizations.dart';
 
 class EditTravelDialog extends StatefulWidget {

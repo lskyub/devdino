@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/models/location/country_info.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
+import 'package:travelee/domain/entities/schedule.dart';
+import 'package:travelee/domain/entities/country_info.dart';
 
 /// 여행 데이터 동기화 서비스
 ///

@@ -9,12 +9,12 @@ import 'package:mix/mix.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/data/services/travel_sync_service.dart';
+import 'package:travelee/data/datasources/remote/travel_sync_service.dart';
 import 'package:travelee/gen/app_localizations.dart';
 import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/presentation/screens/settings/legal_document_screen.dart';
-import 'package:travelee/providers/loading_state_provider.dart';
-import 'package:travelee/providers/travel_state_provider.dart';
+import 'package:travelee/presentation/providers/loading_state_provider.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   static const routeName = 'settings';

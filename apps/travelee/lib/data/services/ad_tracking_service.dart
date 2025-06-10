@@ -1,7 +1,25 @@
 import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// 광고 추적 서비스
 class AdTrackingService {
+  /// 광고 추적 서비스 인스턴스
+  static final AdTrackingService instance = AdTrackingService._();
+
+  AdTrackingService._();
+
+  /// 광고 추적 초기화
+  Future<void> initialize() async {
+    // TODO: 광고 추적 초기화 구현
+  }
+
+  /// 광고 이벤트 추적
+  Future<void> trackAdEvent(String eventName, Map<String, dynamic> parameters) async {
+    // TODO: 광고 이벤트 추적 구현
+  }
+
   /// 광고 추적 권한 요청
   static Future<bool> requestTrackingAuthorization() async {
     if (!Platform.isIOS) return true;
@@ -32,4 +50,9 @@ class AdTrackingService {
       return false;
     }
   }
-} 
+}
+
+/// 광고 추적 서비스 프로바이더
+final adTrackingServiceProvider = Provider<AdTrackingService>((ref) {
+  return AdTrackingService.instance;
+}); 

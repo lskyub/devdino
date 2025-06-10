@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import 'package:travelee/data/models/location/location_data.dart';
+import 'package:travelee/domain/entities/location_data.dart';
 import 'package:travelee/gen/app_localizations.dart';
 
 class LocationSearchScreen extends ConsumerStatefulWidget {

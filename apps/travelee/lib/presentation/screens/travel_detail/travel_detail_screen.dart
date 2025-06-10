@@ -1,31 +1,43 @@
+// Design system imports
 import 'package:design_systems/dino/dino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:travelee/data/controllers/schedule_detail_controller.dart';
-import 'package:travelee/data/controllers/travel_controller.dart';
-import 'package:travelee/data/models/schedule/day_schedule_data.dart';
-import 'package:travelee/data/models/schedule/schedule.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/presentation/modal/country_select_modal.dart';
-import 'package:travelee/presentation/screens/travel_detail/schedule_input_screen.dart';
-import 'package:travelee/presentation/widgets/country_and_date_row.dart';
-import 'package:travelee/providers/travel_state_provider.dart'
-    as travel_providers;
-import 'package:travelee/core/utils/travel_date_formatter.dart';
-import 'package:go_router/go_router.dart';
-import 'package:travelee/presentation/widgets/travel_detail/day_item.dart';
-import 'dart:developer' as dev;
-import 'package:travelee/gen/app_localizations.dart';
-
-import 'package:travelee/core/utils/travel_dialog_manager.dart';
-import 'package:travelee/presentation/widgets/ad_banner_widget.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
-import 'package:travelee/router.dart';
-import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
-import 'package:travelee/data/services/pdf_export_service.dart';
-import 'package:travelee/data/models/db/travel_db_model.dart';
-import 'package:travelee/gen/app_localizations.dart';
+
+// Flutter/Dart imports
+import 'package:flutter/material.dart';
+import 'dart:developer' as dev;
+
+// External package imports
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+// Domain imports
+import '../../../domain/usecases/schedule_detail_controller.dart';
+import '../../../domain/usecases/travel_controller.dart';
+import '../../../domain/entities/travel_model.dart';
+import '../../../domain/entities/schedule.dart';
+import '../../../data/models/schedule/day_schedule_data.dart';
+
+// Data imports
+import '../../../data/models/db/travel_db_model.dart';
+import '../../../data/services/pdf_export_service.dart';
+
+// Core imports
+import '../../../core/utils/travel_date_formatter.dart';
+import '../../../core/utils/travel_dialog_manager.dart';
+
+// Presentation imports
+import '../../modal/country_select_modal.dart';
+import '../../providers/travel_state_provider.dart' as travel_providers;
+import '../../router/router.dart';
+import '../../widgets/country_and_date_row.dart';
+import '../../widgets/travel_detail/day_item.dart';
+import '../../widgets/ad_banner_widget.dart';
+import 'schedule_input_screen.dart';
+import 'date_screen.dart';
+
+// Generated imports
+import '../../../gen/app_localizations.dart';
 
 class TravelDetailScreen extends ConsumerStatefulWidget {
   static const routeName = 'travel_detail';
@@ -207,7 +219,7 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
     final daySchedules = <DayScheduleData>[];
 
     for (final date in dates) {
-      final dateKey = _formatDateKey(date);
+      final dateKey = TravelDateFormatter.formatDate(date);
       final schedulesForDay = travelInfo.schedules
           .where((s) =>
               s.date.year == date.year &&
@@ -237,10 +249,10 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
 
       daySchedules.add(DayScheduleData(
         date: date,
+        dayNumber: dayNumber,
         countryName: countryName,
         flagEmoji: flagEmoji,
         countryCode: countryCode,
-        dayNumber: dayNumber,
         schedules: schedulesForDay,
       ));
     }
@@ -317,10 +329,6 @@ class _TravelDetailScreenState extends ConsumerState<TravelDetailScreen>
         }
       },
     );
-  }
-
-  String _formatDateKey(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   @override

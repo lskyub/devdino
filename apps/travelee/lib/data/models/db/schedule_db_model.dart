@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travelee/data/models/schedule/schedule.dart';
+import 'package:travelee/domain/entities/schedule.dart';
 
 class ScheduleDBModel {
   final String id;

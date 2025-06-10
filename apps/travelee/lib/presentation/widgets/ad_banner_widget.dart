@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:travelee/providers/ad_provider.dart';
+import 'package:travelee/presentation/providers/ad_provider.dart';
 
 class AdBannerWidget extends ConsumerStatefulWidget {
   const AdBannerWidget({super.key});

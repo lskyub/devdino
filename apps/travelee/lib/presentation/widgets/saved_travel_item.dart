@@ -4,9 +4,9 @@ import 'package:design_systems/dino/foundations/token.typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
-import 'package:travelee/providers/travel_state_provider.dart';
-import 'package:travelee/router.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
+import 'package:travelee/presentation/router/router.dart';
 import 'package:travelee/gen/app_localizations.dart';
 
 class SavedTravelItem extends ConsumerWidget {

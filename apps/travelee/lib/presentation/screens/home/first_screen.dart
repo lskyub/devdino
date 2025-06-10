@@ -11,14 +11,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/data/services/travel_sync_service.dart';
+import 'package:travelee/data/datasources/remote/travel_sync_service.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:travelee/gen/app_localizations.dart';
-import 'package:travelee/providers/loading_state_provider.dart';
-import 'package:travelee/providers/travel_state_provider.dart';
+import 'package:travelee/presentation/providers/loading_state_provider.dart';
+import 'package:travelee/presentation/providers/travel_state_provider.dart';
 
 class FirstScreen extends ConsumerStatefulWidget {
   static const routeName = 'inital';

@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
-import 'package:travelee/data/models/travel/travel_model.dart';
+import 'package:travelee/domain/entities/travel_model.dart';
 import 'package:travelee/core/utils/travel_date_formatter.dart';
 import 'package:travelee/core/utils/travel_dialog_manager.dart';
-import 'package:travelee/data/controllers/travel_detail_controller.dart';
+import 'package:travelee/domain/usecases/travel_detail_controller.dart';
 
 /// 여행 상세 화면의 앱바 위젯
 class TravelDetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
