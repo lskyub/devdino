@@ -46,8 +46,6 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       // 광고 표시 상태를 true로 설정
       ref.read(adProvider.notifier).setBannerAdVisibility(true);
     });
-
-    TravelScheduleService.instance.fetchRecommendSchedule(4, '삿포로');
   }
 
   /// 임시 여행 데이터 정리 (temp_로 시작하는 ID를 가진 여행 삭제)
@@ -176,7 +174,36 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
         actions: [
           GestureDetector(
             onTap: () {
-              context.push(SettingsScreen.routePath);
+              // context.push(SettingsScreen.routePath);
+
+              TravelScheduleService.instance
+                  .fetchRecommendScheduleStream(4, '삿포로')
+                  .listen(
+                    (event) {
+                      try {
+                        if (event['type'] == 'progress') {
+                          ref.read(loadingStateProvider.notifier).startLoading(
+                                message: event['description'] ?? '',
+                              );
+                        } else if (event['type'] == 'complete') {
+                          // 완료 처리
+                          ref.read(loadingStateProvider.notifier).stopLoading();
+                          // 여기서 완료된 여행 계획 처리
+                          final travelPlan = event['data']?['travelPlan'];
+                          if (travelPlan != null) {
+                            // 여행 계획 처리 로직
+                          }
+                        }
+                      } catch (e) {
+                        ref.read(loadingStateProvider.notifier).stopLoading();
+                        // 에러 처리
+                      }
+                    },
+                    onError: (error) {
+                      ref.read(loadingStateProvider.notifier).stopLoading();
+                      // 에러 처리
+                    },
+                  );
             },
             child: SvgPicture.asset(
               'assets/icons/home_mysetting.svg',
