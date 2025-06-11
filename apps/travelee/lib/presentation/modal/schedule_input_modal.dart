@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mix/mix.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/domain/entities/schedule.dart';
 import 'package:travelee/domain/entities/location_data.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:travelee/gen/app_localizations.dart';
 import 'package:design_systems/dino/components/textfield/textfield.variant.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:design_systems/dino/components/buttons/button.variant.dart';

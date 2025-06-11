@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelee/domain/entities/travel_model.dart';
@@ -76,14 +75,11 @@ class TravelSyncService {
       }
 
       // 1. 현재 서버의 모든 여행 데이터 ID 목록 가져오기
-      final response = await _supabase
-          .from(_tableName)
-          .select('id')
-          .eq('user_id', user.id);
-      
-      final serverTravelIds = (response as List)
-          .map((data) => data['id'] as String)
-          .toSet();
+      final response =
+          await _supabase.from(_tableName).select('id').eq('user_id', user.id);
+
+      final serverTravelIds =
+          (response as List).map((data) => data['id'] as String).toSet();
 
       // 2. 로컬 여행 데이터 ID 목록
       final localTravelIds = travels.map((t) => t.id).toSet();

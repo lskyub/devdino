@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';

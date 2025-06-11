@@ -2,9 +2,6 @@ import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/entities/travel_model.dart';
-import '../../domain/entities/schedule.dart';
-import '../../domain/entities/location_data.dart';
 import '../screens/home/first_screen.dart';
 import '../screens/travel_detail/date_screen.dart';
 import '../screens/travel_detail/travel_detail_screen.dart';
@@ -73,7 +70,9 @@ final routerProvider = Provider<GoRouter>(
 
                 if (travelId.isEmpty) {
                   dev.log('Router - 오류: 여행 ID가 비어 있음');
-                  return Center(child: Text(AppLocalizations.of(context)!.travelIdRequired));
+                  return Center(
+                      child:
+                          Text(AppLocalizations.of(context)!.travelIdRequired));
                 }
 
                 return const TravelDetailScreen();
@@ -89,7 +88,7 @@ final routerProvider = Provider<GoRouter>(
                 final latitude = extraData['latitude'] as double;
                 final longitude = extraData['longitude'] as double;
                 final countryCode = extraData['countryCode'] as String;
-                
+
                 return LocationSearchScreen(
                   initialLocation: location,
                   initialLatitude: latitude,
@@ -120,7 +119,8 @@ final routerProvider = Provider<GoRouter>(
                 final date = extraData['date'] as DateTime;
                 final dayNumber = extraData['dayNumber'] as int;
                 final initialLatitude = extraData['initialLatitude'] as double;
-                final initialLongitude = extraData['initialLongitude'] as double;
+                final initialLongitude =
+                    extraData['initialLongitude'] as double;
                 final scheduleId = extraData['scheduleId'] as String?;
 
                 return ScheduleInputScreen(
@@ -144,7 +144,8 @@ final routerProvider = Provider<GoRouter>(
               path: LegalDocumentScreen.routePath,
               name: LegalDocumentScreen.routeName,
               builder: (context, state) {
-                final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+                final Map<String, dynamic> extra =
+                    state.extra as Map<String, dynamic>;
                 return LegalDocumentScreen(
                   title: extra['title'] as String,
                   type: extra['type'] as String,

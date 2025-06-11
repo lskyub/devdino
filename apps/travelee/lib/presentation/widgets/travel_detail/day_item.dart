@@ -5,11 +5,9 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:travelee/domain/entities/schedule.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
-import 'package:travelee/presentation/providers/travel_state_provider.dart';
-import 'package:travelee/presentation/router/router.dart';
 import 'package:travelee/presentation/widgets/travel_detail/schedule_item.dart';
 import 'package:travelee/gen/app_localizations.dart';
 

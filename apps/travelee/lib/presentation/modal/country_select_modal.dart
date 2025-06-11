@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:travelee/domain/entities/country_info.dart';
-import 'package:travelee/gen/app_localizations.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'dart:developer' as dev;
 

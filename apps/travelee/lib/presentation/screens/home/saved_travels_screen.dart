@@ -1,19 +1,12 @@
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
-import 'package:design_systems/dino/foundations/theme.dart';
-import 'package:design_systems/dino/foundations/token.typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
-import 'package:design_systems/dino/components/buttons/button.dino.dart';
+
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travelee/core/config/supabase_config.dart';
-import 'package:travelee/data/datasources/remote/travel_sync_service.dart';
 import 'package:travelee/data/services/ad_tracking_service.dart';
-import 'package:travelee/presentation/screens/home/first_screen.dart';
 import 'package:travelee/presentation/providers/loading_state_provider.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
@@ -24,8 +17,6 @@ import 'package:travelee/gen/app_localizations.dart';
 import 'dart:developer' as dev;
 import 'package:travelee/presentation/providers/ad_provider.dart';
 import 'package:design_systems/dino/dino.dart';
-import 'package:travelee/domain/entities/travel_model.dart';
-import 'package:travelee/presentation/router/router.dart';
 
 class SavedTravelsScreen extends ConsumerStatefulWidget {
   static const routeName = 'saved_travels';

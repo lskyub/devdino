@@ -1,11 +1,3 @@
-// Flutter/Dart imports
-import 'package:flutter/material.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-// External package imports
-import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
-
 // Local imports
 import 'package:travelee/domain/entities/schedule.dart';
 import 'country_info.dart';
@@ -142,7 +134,7 @@ class TravelModel {
   TravelModel addSchedule(Schedule schedule) {
     // 기존 일정 복사
     final newSchedules = List<Schedule>.from(schedules);
-    
+
     // 날짜를 시작일 기준으로 조정
     final adjustedDate = _calculateDateFromDayNumber(schedule.dayNumber);
     final adjustedSchedule = schedule.copyWith(date: adjustedDate);
@@ -172,9 +164,8 @@ class TravelModel {
     }
 
     // 해당 일차의 일정 목록 업데이트
-    final daySchedules = newSchedules
-        .where((s) => s.dayNumber == schedule.dayNumber)
-        .toList();
+    final daySchedules =
+        newSchedules.where((s) => s.dayNumber == schedule.dayNumber).toList();
 
     // 새 DayData 생성
     final newDayData = DayData(
@@ -203,7 +194,8 @@ class TravelModel {
     final newSchedules = schedules.map((schedule) {
       if (schedule.id == updatedSchedule.id) {
         // 날짜를 시작일 기준으로 조정
-        final adjustedDate = _calculateDateFromDayNumber(updatedSchedule.dayNumber);
+        final adjustedDate =
+            _calculateDateFromDayNumber(updatedSchedule.dayNumber);
         return updatedSchedule.copyWith(date: adjustedDate);
       }
       return schedule;
@@ -226,13 +218,12 @@ class TravelModel {
     final totalDays = endDate!.difference(startDate!).inDays + 1;
     final newSchedules = schedules.map((schedule) {
       // 일차가 총 일수를 초과하면 마지막 날로 이동
-      final adjustedDayNumber = schedule.dayNumber > totalDays 
-          ? totalDays 
-          : schedule.dayNumber;
-      
+      final adjustedDayNumber =
+          schedule.dayNumber > totalDays ? totalDays : schedule.dayNumber;
+
       // 날짜 재계산
       final adjustedDate = _calculateDateFromDayNumber(adjustedDayNumber);
-      
+
       return schedule.copyWith(
         dayNumber: adjustedDayNumber,
         date: adjustedDate,
@@ -267,7 +258,7 @@ class TravelModel {
 
       // 국가 정보 설정 (기존 정보 유지 또는 새로 설정)
       final existingDayData = dayDataMap[dayNumber.toString()];
-      String countryName = existingDayData?.countryName ?? 
+      String countryName = existingDayData?.countryName ??
           (destination.isNotEmpty ? destination.first : '');
       String flagEmoji = existingDayData?.flagEmoji ?? '🏳️';
       String countryCode = existingDayData?.countryCode ?? '';
