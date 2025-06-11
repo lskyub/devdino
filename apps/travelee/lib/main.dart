@@ -18,6 +18,7 @@ import 'package:design_systems/dino/foundations/theme.dart';
 // Local imports
 import 'presentation/router/router.dart';
 import 'core/config/supabase_config.dart';
+import 'core/api_client.dart';
 import 'gen/app_localizations.dart';
 import 'firebase_options.dart';
 
