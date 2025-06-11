@@ -11,6 +11,7 @@ import 'package:design_systems/dino/components/buttons/button.variant.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travelee/core/config/supabase_config.dart';
 import 'package:travelee/data/datasources/remote/travel_sync_service.dart';
+import 'package:travelee/data/services/travel_schedule_service.dart';
 import 'package:travelee/presentation/screens/home/saved_travels_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -103,7 +104,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
   Future<void> _loadTravels() async {
     final travelSyncService = TravelSyncService(SupabaseConfig.client);
     final travels = await travelSyncService.loadAllTravels();
-    print(travels);
+    debugPrint(travels.toString());
     ref.read(travelsProvider.notifier).setTravels(travels);
   }
 

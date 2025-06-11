@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/components/text/text.variant.dart';
 import 'package:flutter/material.dart';
@@ -222,7 +221,8 @@ class TravelDialogManager {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, top: 28, bottom: 6, right: 16),
+                  padding: const EdgeInsets.only(
+                      left: 16, top: 28, bottom: 6, right: 16),
                   child: Row(
                     children: [
                       DinoText.custom(

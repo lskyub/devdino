@@ -5,9 +5,6 @@ import 'package:travelee/data/models/db/travel_db_model.dart';
 import 'package:travelee/data/models/db/schedule_db_model.dart';
 import 'dart:developer' as dev;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart';
-import 'package:travelee/domain/entities/schedule.dart';
-import 'package:travelee/domain/entities/country_info.dart';
 
 // DatabaseHelper Provider
 final databaseHelperProvider = Provider<DatabaseHelper>((ref) {
@@ -44,7 +41,7 @@ class DatabaseHelper {
 
   Future<void> _createDatabase(Database db, int version) async {
     dev.log('데이터베이스 생성 시작');
-    
+
     await db.execute('''
       CREATE TABLE travels(
         id TEXT PRIMARY KEY,
@@ -81,19 +78,19 @@ class DatabaseHelper {
   // 데이터베이스 업그레이드 핸들러
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     dev.log('데이터베이스 업그레이드: $oldVersion -> $newVersion');
-    
+
     if (oldVersion < 2) {
       // schedules 테이블에 latitude와 longitude 컬럼 추가
       await db.execute('''
         ALTER TABLE schedules
         ADD COLUMN latitude REAL
       ''');
-      
+
       await db.execute('''
         ALTER TABLE schedules
         ADD COLUMN longitude REAL
       ''');
-      
+
       dev.log('schedules 테이블 업그레이드 완료');
     }
   }
@@ -102,16 +99,15 @@ class DatabaseHelper {
   Future<bool> saveTravel(TravelModel travel) async {
     try {
       final db = await database;
-      
+
       // UI 모델을 DB 모델로 변환
       final travelDBModel = TravelDBModel.fromTravelModel(travel);
       final travelData = travelDBModel.toMap();
-      
+
       // 스케줄 DB 모델 리스트
-      final scheduleDBModels = travel.schedules.map((s) => 
-        ScheduleDBModel.fromSchedule(s)
-      ).toList();
-      
+      final scheduleDBModels =
+          travel.schedules.map((s) => ScheduleDBModel.fromSchedule(s)).toList();
+
       // 트랜잭션 시작
       await db.transaction((txn) async {
         // 기존 여행 삭제 (일정도 CASCADE로 함께 삭제됨)
@@ -120,14 +116,14 @@ class DatabaseHelper {
           where: 'id = ?',
           whereArgs: [travel.id],
         );
-        
+
         // 여행 데이터 저장
         await txn.insert(
           'travels',
           travelData,
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-        
+
         // 일정 데이터 저장
         for (final scheduleDB in scheduleDBModels) {
           await txn.insert(
@@ -137,7 +133,7 @@ class DatabaseHelper {
           );
         }
       });
-      
+
       dev.log('여행 저장 성공: ${travel.id}, 일정 ${travel.schedules.length}개');
       return true;
     } catch (e) {
@@ -150,7 +146,7 @@ class DatabaseHelper {
   Future<bool> deleteTravel(String travelId) async {
     try {
       final db = await database;
-      
+
       // 트랜잭션 시작
       await db.transaction((txn) async {
         // 여행 삭제 (일정도 CASCADE로 함께 삭제됨)
@@ -160,7 +156,7 @@ class DatabaseHelper {
           whereArgs: [travelId],
         );
       });
-      
+
       dev.log('여행 삭제 성공: $travelId');
       return true;
     } catch (e) {
@@ -173,34 +169,33 @@ class DatabaseHelper {
   Future<List<TravelModel>> loadAllTravels() async {
     try {
       final db = await database;
-      
+
       // 여행 데이터 로드
       final travelMaps = await db.query('travels');
-      
+
       if (travelMaps.isEmpty) {
         dev.log('저장된 여행 없음');
         return [];
       }
-      
+
       final travels = <TravelModel>[];
-      
+
       // 각 여행 데이터에 대해 일정 로드하여 완전한 여행 모델 생성
       for (final travelMap in travelMaps) {
         final travelId = travelMap['id'] as String;
-        
+
         // 해당 여행의 일정 로드
         final scheduleMaps = await db.query(
           'schedules',
           where: 'travel_id = ?',
           whereArgs: [travelId],
         );
-        
+
         // DB 모델 생성
         final travelDBModel = TravelDBModel.fromMap(travelMap);
-        final scheduleDBModels = scheduleMaps.map((map) => 
-          ScheduleDBModel.fromMap(map)
-        ).toList();
-        
+        final scheduleDBModels =
+            scheduleMaps.map((map) => ScheduleDBModel.fromMap(map)).toList();
+
         // 최종 DB 모델 (스케줄 포함)
         final completeTravelDBModel = TravelDBModel(
           id: travelDBModel.id,
@@ -214,12 +209,12 @@ class DatabaseHelper {
           updatedAt: travelDBModel.updatedAt,
           schedules: scheduleDBModels,
         );
-        
+
         // UI 모델로 변환
         final travelUIModel = completeTravelDBModel.toTravelModel();
         travels.add(travelUIModel);
       }
-      
+
       dev.log('여행 로드 성공: ${travels.length}개');
       return travels;
     } catch (e) {
@@ -232,34 +227,33 @@ class DatabaseHelper {
   Future<TravelModel?> loadTravel(String travelId) async {
     try {
       final db = await database;
-      
+
       // 여행 데이터 로드
       final travelMaps = await db.query(
         'travels',
         where: 'id = ?',
         whereArgs: [travelId],
       );
-      
+
       if (travelMaps.isEmpty) {
         dev.log('여행을 찾을 수 없음: $travelId');
         return null;
       }
-      
+
       final travelMap = travelMaps.first;
-      
+
       // 해당 여행의 일정 로드
       final scheduleMaps = await db.query(
         'schedules',
         where: 'travel_id = ?',
         whereArgs: [travelId],
       );
-      
+
       // DB 모델 생성
       final travelDBModel = TravelDBModel.fromMap(travelMap);
-      final scheduleDBModels = scheduleMaps.map((map) => 
-        ScheduleDBModel.fromMap(map)
-      ).toList();
-      
+      final scheduleDBModels =
+          scheduleMaps.map((map) => ScheduleDBModel.fromMap(map)).toList();
+
       // 최종 DB 모델 (스케줄 포함)
       final completeTravelDBModel = TravelDBModel(
         id: travelDBModel.id,
@@ -273,10 +267,10 @@ class DatabaseHelper {
         updatedAt: travelDBModel.updatedAt,
         schedules: scheduleDBModels,
       );
-      
+
       // UI 모델로 변환
       final travelUIModel = completeTravelDBModel.toTravelModel();
-      
+
       dev.log('여행 로드 성공: $travelId, 일정 ${scheduleDBModels.length}개');
       return travelUIModel;
     } catch (e) {
@@ -289,13 +283,18 @@ class DatabaseHelper {
   Future<Map<String, dynamic>> testDatabaseStatus() async {
     try {
       final db = await database;
-      
-      final tableNames = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+
+      final tableNames = await db
+          .rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
       final tableList = tableNames.map((map) => map['name'] as String).toList();
-      
-      final travelCount = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM travels')) ?? 0;
-      final scheduleCount = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM schedules')) ?? 0;
-      
+
+      final travelCount = Sqflite.firstIntValue(
+              await db.rawQuery('SELECT COUNT(*) FROM travels')) ??
+          0;
+      final scheduleCount = Sqflite.firstIntValue(
+              await db.rawQuery('SELECT COUNT(*) FROM schedules')) ??
+          0;
+
       return {
         'status': 'success',
         'tables': tableList,
@@ -316,4 +315,4 @@ class DatabaseHelper {
     await db.delete('travels');
     await db.delete('schedules');
   }
-} 
+}

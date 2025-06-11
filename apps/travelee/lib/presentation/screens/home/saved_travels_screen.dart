@@ -7,6 +7,7 @@ import 'package:design_systems/dino/components/text/text.variant.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:travelee/data/services/ad_tracking_service.dart';
+import 'package:travelee/data/services/travel_schedule_service.dart';
 import 'package:travelee/presentation/providers/loading_state_provider.dart';
 import 'package:travelee/presentation/providers/travel_state_provider.dart';
 import 'package:travelee/presentation/screens/travel_detail/date_screen.dart';
@@ -45,6 +46,8 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
       // 광고 표시 상태를 true로 설정
       ref.read(adProvider.notifier).setBannerAdVisibility(true);
     });
+
+    TravelScheduleService.instance.fetchRecommendSchedule(4, '삿포로');
   }
 
   /// 임시 여행 데이터 정리 (temp_로 시작하는 ID를 가진 여행 삭제)

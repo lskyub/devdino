@@ -49,12 +49,14 @@ void main() async {
 
   // 수파베이스 초기화
   await SupabaseConfig.initialize();
+  // API 클라이언트 초기화
+  await ApiClient.instance.initialize();
 
   // Firebase 초기화
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+
   // Firebase Analytics 설정
   final analytics = FirebaseAnalytics.instance;
   await analytics.setAnalyticsCollectionEnabled(true);
