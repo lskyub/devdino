@@ -9,6 +9,10 @@
       "path": "apps/travelee"
     },
     {
+      "name": "hue_daily",
+      "path": "apps/hue_daily"
+    },
+    {
       "name": "design_systems",
       "path": "packages/design_systems"
     },
