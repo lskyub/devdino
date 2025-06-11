@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 광고 추적 서비스
@@ -16,7 +16,8 @@ class AdTrackingService {
   }
 
   /// 광고 이벤트 추적
-  Future<void> trackAdEvent(String eventName, Map<String, dynamic> parameters) async {
+  Future<void> trackAdEvent(
+      String eventName, Map<String, dynamic> parameters) async {
     // TODO: 광고 이벤트 추적 구현
   }
 
@@ -29,7 +30,8 @@ class AdTrackingService {
       if (status == TrackingStatus.notDetermined) {
         // 추적 권한 요청 전에 잠시 대기 (Apple 권장사항)
         await Future.delayed(const Duration(milliseconds: 200));
-        final result = await AppTrackingTransparency.requestTrackingAuthorization();
+        final result =
+            await AppTrackingTransparency.requestTrackingAuthorization();
         return result == TrackingStatus.authorized;
       }
       return status == TrackingStatus.authorized;
@@ -55,4 +57,4 @@ class AdTrackingService {
 /// 광고 추적 서비스 프로바이더
 final adTrackingServiceProvider = Provider<AdTrackingService>((ref) {
   return AdTrackingService.instance;
-}); 
+});

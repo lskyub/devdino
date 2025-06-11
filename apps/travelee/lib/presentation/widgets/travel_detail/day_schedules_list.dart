@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/data/models/schedule/day_schedule_data.dart';
 import 'package:travelee/domain/entities/travel_model.dart';
@@ -338,7 +337,8 @@ class _DaySchedulesListState extends ConsumerState<DaySchedulesList> {
                           Text(
                             schedule.memo,
                             style: TextStyle(
-                              color: $dinoToken.color.blingGray600.resolve(context),
+                              color: $dinoToken.color.blingGray600
+                                  .resolve(context),
                               fontSize: 14,
                             ),
                           ),

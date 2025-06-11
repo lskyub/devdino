@@ -2,7 +2,7 @@ import 'package:design_systems/dino/components/text/text.dino.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:design_systems/dino/components/text/text.variant.dart';
+
 import 'package:design_systems/dino/components/buttons/button.variant.dart';
 
 class TimePickerModal extends StatefulWidget {

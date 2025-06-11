@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:design_systems/dino/dino.dart';
 import 'package:travelee/domain/entities/country_info.dart';
-import 'package:travelee/gen/app_localizations.dart';
+
 import 'package:design_systems/dino/components/text/text.dino.dart';
 
 /// 나라정보와 날짜 정보를 한 줄에 노출하는 위젯

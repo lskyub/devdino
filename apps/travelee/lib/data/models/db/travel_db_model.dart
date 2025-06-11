@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
 import 'package:travelee/domain/entities/schedule.dart';
 import 'package:travelee/domain/entities/country_info.dart';
 import 'package:travelee/domain/entities/travel_model.dart';
@@ -33,18 +33,19 @@ class TravelDBModel {
   // UI 모델에서 DB 모델로 변환
   factory TravelDBModel.fromTravelModel(TravelModel model) {
     // 여행 목적지 리스트를 문자열로 변환
-    final destinationString = model.destination.isNotEmpty 
-        ? model.destination.join(',') 
-        : '';
-    
+    final destinationString =
+        model.destination.isNotEmpty ? model.destination.join(',') : '';
+
     // 국가 정보 리스트를 JSON 문자열로 변환
-    final countryInfosJson = model.countryInfos.map((info) => {
-      'name': info.name,
-      'country_code': info.countryCode,
-      'flag_emoji': info.flagEmoji,
-    }).toList();
+    final countryInfosJson = model.countryInfos
+        .map((info) => {
+              'name': info.name,
+              'country_code': info.countryCode,
+              'flag_emoji': info.flagEmoji,
+            })
+        .toList();
     final countryInfosString = jsonEncode(countryInfosJson);
-    
+
     // DayData 맵을 JSON 문자열로 변환
     final dayDataJson = <String, dynamic>{};
     model.dayDataMap.forEach((date, data) {
@@ -57,12 +58,12 @@ class TravelDBModel {
       };
     });
     final dayDataString = jsonEncode(dayDataJson);
-    
+
     // Schedule을 ScheduleDBModel로 변환
-    final scheduleDbModels = model.schedules.map((schedule) => 
-      ScheduleDBModel.fromSchedule(schedule)
-    ).toList();
-    
+    final scheduleDbModels = model.schedules
+        .map((schedule) => ScheduleDBModel.fromSchedule(schedule))
+        .toList();
+
     return TravelDBModel(
       id: model.id,
       title: model.title,
@@ -80,24 +81,23 @@ class TravelDBModel {
   // DB 모델에서 UI 모델로 변환 (schedules는 별도로 변환)
   TravelModel toTravelModel() {
     // 여행 목적지 문자열을 리스트로 변환
-    final destinationList = destination.isNotEmpty 
-        ? destination.split(',') 
-        : <String>[];
-    
+    final destinationList =
+        destination.isNotEmpty ? destination.split(',') : <String>[];
+
     // 국가 정보 JSON 문자열을 객체 리스트로 변환
     final countryInfosJson = jsonDecode(countryInfos) as List<dynamic>;
     final countryInfosList = countryInfosJson
         .map((infoJson) => CountryInfo(
-          name: infoJson['name'] as String,
-          countryCode: infoJson['country_code'] as String,
-          flagEmoji: infoJson['flag_emoji'] as String,
-        ))
+              name: infoJson['name'] as String,
+              countryCode: infoJson['country_code'] as String,
+              flagEmoji: infoJson['flag_emoji'] as String,
+            ))
         .toList();
-    
+
     // DayData 맵 JSON 문자열을 객체 맵으로 변환
     final dayDataJsonMap = jsonDecode(dayDataMap) as Map<String, dynamic>;
     final dayDataMapResult = <String, DayData>{};
-    
+
     dayDataJsonMap.forEach((date, dataJson) {
       final data = dataJson as Map<String, dynamic>;
       dayDataMapResult[date] = DayData(
@@ -109,27 +109,27 @@ class TravelDBModel {
         schedules: [], // schedules는 별도로 처리
       );
     });
-    
+
     // 날짜 처리
     DateTime? parsedStartDate;
     if (startDate.isNotEmpty) {
       parsedStartDate = DateTime.parse(startDate);
     }
-    
+
     DateTime? parsedEndDate;
     if (endDate.isNotEmpty) {
       parsedEndDate = DateTime.parse(endDate);
     }
-    
+
     // 생성일, 수정일 파싱
     final parsedCreatedAt = DateTime.parse(createdAt);
     final parsedUpdatedAt = DateTime.parse(updatedAt);
-    
+
     // Schedule DB 모델들을 일반 Schedule 객체로 변환
     final scheduleModels = schedules.isNotEmpty
         ? schedules.map((s) => s.toSchedule()).toList()
         : <Schedule>[];
-    
+
     return TravelModel(
       id: id,
       title: title,
@@ -176,18 +176,21 @@ class TravelDBModel {
   }
 
   // 새 여행 생성 (ID 필요)
-  factory TravelDBModel.create(String id, String title, List<String> destination, List<CountryInfo> countryInfos) {
+  factory TravelDBModel.create(String id, String title,
+      List<String> destination, List<CountryInfo> countryInfos) {
     final now = DateTime.now().toIso8601String();
-    
+
     return TravelDBModel(
       id: id,
       title: title,
       destination: destination.join(','),
-      countryInfos: jsonEncode(countryInfos.map((info) => {
-        'name': info.name,
-        'country_code': info.countryCode,
-        'flag_emoji': info.flagEmoji,
-      }).toList()),
+      countryInfos: jsonEncode(countryInfos
+          .map((info) => {
+                'name': info.name,
+                'country_code': info.countryCode,
+                'flag_emoji': info.flagEmoji,
+              })
+          .toList()),
       dayDataMap: '{}',
       createdAt: now,
       updatedAt: now,
@@ -199,4 +202,4 @@ class TravelDBModel {
   String toString() {
     return 'TravelDBModel{id: $id, title: $title, schedules: ${schedules.length} items}';
   }
-} 
+}
