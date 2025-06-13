@@ -46,20 +46,54 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
           message: '구글 로그인 중...',
         );
     try {
+      // // 구글 로그인 초기화
+      // final GoogleSignIn googleSignIn = GoogleSignIn(
+      //   // 웹 클라이언트 ID 설정 (필요한 경우)
+      //   scopes: [
+      //     'email',
+      //     'profile',
+      //   ],
+      // );
+
+      // print('기존 로그인 세션이 있다면 로그아웃');
+      // // 기존 로그인 세션이 있다면 로그아웃
+      // await googleSignIn.signOut();
+
+      print('구글 로그인 시도');
+      // 구글 로그인 시도
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return false;
+      if (googleUser == null) {
+        ref.read(loadingStateProvider.notifier).stopLoading();
+        return false;
+      }
+
+      print('인증 정보 가져오기');
+      // 인증 정보 가져오기
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+
+      print(' 토큰 확인');
+      // 토큰 확인
+      if (googleAuth.idToken == null) {
+        print('Google Auth Error: idToken is null');
+        print('accessToken: ${googleAuth.accessToken}');
+        ref.read(loadingStateProvider.notifier).stopLoading();
+        return false;
+      }
+      print('Supabase: start');
+
+      // Supabase 로그인
       final response = await Supabase.instance.client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: googleAuth.idToken!,
         accessToken: googleAuth.accessToken,
       );
-      print(response);
+
+      ref.read(loadingStateProvider.notifier).stopLoading();
       return response.user != null;
     } catch (error, stackTrace) {
-      print(error);
-      print(stackTrace);
+      print('Google Sign In Error: $error');
+      print('Stack Trace: $stackTrace');
       ref.read(loadingStateProvider.notifier).stopLoading();
       return false;
     }

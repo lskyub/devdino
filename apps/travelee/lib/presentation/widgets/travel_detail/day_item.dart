@@ -73,9 +73,10 @@ class _DayItemState extends ConsumerState<DayItem> {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (widget.isEdit) {
-                    widget.onSelectCountry(widget.dayData.date);
-                  }
+                  // TODO 임시제거 날짜별 국가 선택의 경우 화면 노출에 대한 위치와 시간별로 해야될것으로 보임
+                  // if (widget.isEdit) {
+                  //   widget.onSelectCountry(widget.dayData.date);
+                  // }
                 },
                 child: SizedBox(
                   width: 70,
@@ -106,13 +107,13 @@ class _DayItemState extends ConsumerState<DayItem> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      DinoText.custom(
-                        text: 'day ${widget.index + 1}',
-                        color: color,
-                        fontSize: 9.99,
-                        fontWeight: FontWeight.w700,
-                      )
+                      // const SizedBox(height: 4),
+                      // DinoText.custom(
+                      //   text: 'day ${widget.index + 1}',
+                      //   color: color,
+                      //   fontSize: 9.99,
+                      //   fontWeight: FontWeight.w700,
+                      // )
                     ],
                   ),
                 ),
@@ -195,8 +196,7 @@ class _DayItemState extends ConsumerState<DayItem> {
                                     ),
                                     const SizedBox(width: 4),
                                     DinoText.custom(
-                                      text: AppLocalizations.of(context)!
-                                          .addSchedule,
+                                      text: 'day ${widget.index + 1} ${AppLocalizations.of(context)!.addSchedule}',
                                       color: $dinoToken.color.blingGray400,
                                       fontSize: 14.22,
                                       fontWeight: FontWeight.w600,

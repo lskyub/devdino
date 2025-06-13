@@ -242,14 +242,17 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                             ),
                             onSelect: (Country country) {
                               // Country 객체 정보와 함께 저장
-                              final countryName = country.nameLocalized ?? country.name;
+                              final countryName =
+                                  country.nameLocalized ?? country.name;
 
                               // 이미 선택된 국가인지 확인
-                              if (_tempDestinations?.contains(countryName) ?? false) {
+                              if (_tempDestinations?.contains(countryName) ??
+                                  false) {
                                 // 이미 선택된 국가는 추가하지 않고 메시지 표시
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(AppLocalizations.of(context)!.countryAlreadySelected),
+                                    content: Text(AppLocalizations.of(context)!
+                                        .countryAlreadySelected),
                                     duration: const Duration(seconds: 2),
                                   ),
                                 );
@@ -370,11 +373,14 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          final index = _tempDestinations!.indexOf(data);
+                                          final index =
+                                              _tempDestinations!.indexOf(data);
                                           if (index != -1) {
                                             _tempDestinations!.removeAt(index);
-                                            if (index < _tempCountryInfos!.length) {
-                                              _tempCountryInfos!.removeAt(index);
+                                            if (index <
+                                                _tempCountryInfos!.length) {
+                                              _tempCountryInfos!
+                                                  .removeAt(index);
                                             }
                                           }
                                         });
@@ -502,6 +508,7 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       child: AspectRatio(
                         aspectRatio: 1,
                         child: SfDateRangePicker(
+                          navigationMode: DateRangePickerNavigationMode.none,
                           controller: _controller,
                           cellBuilder: (context, cellDetails) {
                             return LayoutBuilder(
@@ -626,8 +633,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                           },
                           selectionMode: DateRangePickerSelectionMode.range,
                           view: DateRangePickerView.month,
-                          navigationDirection:
-                              DateRangePickerNavigationDirection.horizontal,
+                          // navigationDirection:
+                          //     DateRangePickerNavigationDirection.horizontal,
                           headerHeight: 0,
                         ),
                       ),
@@ -659,7 +666,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       startDate: _tempStartDate,
                       endDate: _tempEndDate,
                       destination: _tempDestinations ?? travelInfo.destination,
-                      countryInfos: _tempCountryInfos ?? travelInfo.countryInfos,
+                      countryInfos:
+                          _tempCountryInfos ?? travelInfo.countryInfos,
                     );
                     ref
                         .read(travel_providers.travelsProvider.notifier)
@@ -716,7 +724,8 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                       startDate: _tempStartDate,
                       endDate: _tempEndDate,
                       destination: _tempDestinations ?? travelInfo.destination,
-                      countryInfos: _tempCountryInfos ?? travelInfo.countryInfos,
+                      countryInfos:
+                          _tempCountryInfos ?? travelInfo.countryInfos,
                     );
 
                     // 여행 정보 업데이트
