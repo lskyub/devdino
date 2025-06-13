@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travelee/domain/entities/travel_model.dart';
 import 'package:travelee/domain/entities/schedule.dart';
@@ -106,6 +107,10 @@ class TravelSyncService {
       if (compressedData.isNotEmpty) {
         await _supabase.from(_tableName).upsert(compressedData);
       }
+
+      /// 데이터 백업 시간 저장
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('lastBackupTime', DateTime.now().toString());
     } catch (e) {
       rethrow;
     }

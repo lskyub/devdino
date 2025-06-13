@@ -98,6 +98,7 @@
     "description": "Settings related strings"
   },
   "settings": "설정",
+  "myAccount": "내 계정",
   "removeAds": "광고 제거",
   "logout": "로그아웃",
   "withdraw": "회원탈퇴",
@@ -105,6 +106,32 @@
   "version": "버전 정보",
   "privacyPolicy": "개인정보 처리방침",
   "termsOfService": "서비스 이용약관",
+  "backupRequired": "백업 필요",
+  "justNow": "방금 전",
+  "minutesAgo": "{minutes}분 전",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours}시간 전",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days}일 전",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "pdfExportSuccess": "PDF로 내보내기 완료",
   "pdfExportFailed": "PDF 내보내기 실패: {error}",
   "@pdfExportFailed": {"placeholders": {"error": {"type": "String"}}},

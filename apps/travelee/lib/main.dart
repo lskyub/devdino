@@ -86,8 +86,8 @@ class TraveleeApp extends ConsumerWidget {
           fontFamily: 'Pretendard',
         ),
         supportedLocales: const [
-          Locale('ko', 'KR'),
           Locale('en', 'US'),
+          Locale('ko', 'KR'),
         ],
         localizationsDelegates: const [
           AppLocalizations.delegate,

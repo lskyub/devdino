@@ -63,4 +63,4 @@ lib/
 4. 단위 테스트 추가
 
 
-flutter build appbundle —flavor production —release -t ./lib/main.dart —build-number=1 —build-name=0.1.0 && flutter build ipa —flavor production —release -t ./lib/main.dart  —build-number=7 —build-name=0.1.2
+flutter build appbundle —flavor production —release -t ./lib/main.dart —build-number=1 —build-name=0.1.3 && flutter build ipa —flavor production —release -t ./lib/main.dart  —build-number=1 —build-name=0.1.3

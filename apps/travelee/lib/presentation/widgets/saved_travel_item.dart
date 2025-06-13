@@ -56,6 +56,15 @@ class SavedTravelItem extends ConsumerWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: $dinoToken.color.blingGray600
+                .resolve(context)
+                .withAlpha((255 * 0.04).toInt()),
+            blurRadius: 12,
+            offset: const Offset(0, -4),
+          ),
+        ],
       );
     } else if (isEnded) {
       decoration = BoxDecoration(
@@ -63,6 +72,15 @@ class SavedTravelItem extends ConsumerWidget {
             Border.all(color: $dinoToken.color.blingGray200.resolve(context)),
         color: $dinoToken.color.blingGray75.resolve(context),
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: $dinoToken.color.blingGray600
+                .resolve(context)
+                .withAlpha((255 * 0.04).toInt()),
+            blurRadius: 12,
+            offset: const Offset(0, 10),
+          ),
+        ],
       );
     } else {
       decoration = BoxDecoration(
@@ -70,6 +88,15 @@ class SavedTravelItem extends ConsumerWidget {
             Border.all(color: $dinoToken.color.blingGray300.resolve(context)),
         color: $dinoToken.color.white.resolve(context),
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: $dinoToken.color.blingGray600
+                .resolve(context)
+                .withAlpha((255 * 0.04).toInt()),
+            blurRadius: 12,
+            offset: const Offset(0, 10),
+          ),
+        ],
       );
     }
     return GestureDetector(

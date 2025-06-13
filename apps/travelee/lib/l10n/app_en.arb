@@ -98,6 +98,7 @@
     "description": "Settings related strings"
   },
   "settings": "Settings",
+  "myAccount": "My Account",
   "removeAds": "Remove Ads",
   "logout": "Logout",
   "withdraw": "Delete Account",
@@ -105,6 +106,32 @@
   "version": "Version Info",
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
+  "backupRequired": "Backup Required",
+  "justNow": "Just now",
+  "minutesAgo": "{minutes} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "pdfExportSuccess": "PDF export completed",
   "pdfExportFailed": "PDF export failed: {error}",
   "@pdfExportFailed": {"placeholders": {"error": {"type": "String"}}},

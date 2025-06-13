@@ -151,22 +151,34 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
           alignment: Alignment.centerLeft,
           child: Row(
             children: [
-              SvgPicture.asset(
-                local.localeName == 'ko'
-                    ? 'assets/icons/logotype_travelee.svg'
-                    : 'assets/icons/logotype_travelee_e.svg',
-                width: 72,
-                height: 18,
-                colorFilter: ColorFilter.mode(
-                  $dinoToken.color.blingGray800.resolve(context),
-                  BlendMode.srcIn,
+              if (savedTravels.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DinoText.custom(
+                    fontSize: DinoTextSizeToken.text600,
+                    fontWeight: FontWeight.w700,
+                    color: $dinoToken.color.blingGray800,
+                    text: AppLocalizations.of(context)!.enjoyYourTripMessage,
+                  ),
                 ),
-              ),
-              Image.asset(
-                'assets/images/travelee_airplain.png',
-                width: 32,
-                height: 32,
-              ),
+              if (savedTravels.isEmpty) ...[
+                SvgPicture.asset(
+                  local.localeName == 'ko'
+                      ? 'assets/icons/logotype_travelee.svg'
+                      : 'assets/icons/logotype_travelee_e.svg',
+                  width: 72,
+                  height: 18,
+                  colorFilter: ColorFilter.mode(
+                    $dinoToken.color.blingGray800.resolve(context),
+                    BlendMode.srcIn,
+                  ),
+                ),
+                Image.asset(
+                  'assets/images/travelee_airplain.png',
+                  width: 32,
+                  height: 32,
+                ),
+              ]
             ],
           ),
         ),
@@ -254,16 +266,6 @@ class _SavedTravelsScreenState extends ConsumerState<SavedTravelsScreen> {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: DinoText.custom(
-                          fontSize: DinoTextSizeToken.text600,
-                          fontWeight: FontWeight.w700,
-                          color: $dinoToken.color.blingGray800,
-                          text: AppLocalizations.of(context)!
-                              .enjoyYourTripMessage,
-                        ),
-                      ),
                       Expanded(
                           child: ListView.builder(
                         itemCount: savedTravels.length,

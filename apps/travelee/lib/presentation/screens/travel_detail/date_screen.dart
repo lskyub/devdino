@@ -274,7 +274,9 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                             },
                           );
                         },
-                        child: Row(
+                        child: Container(
+                          color: Colors.white,
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -312,7 +314,9 @@ class _DateScreenState extends ConsumerState<DateScreen> {
                                 ),
                                 title: AppLocalizations.of(context)!.addCountry,
                               ),
-                            ]),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                     if (_tempDestinations?.isNotEmpty ?? false) ...[
