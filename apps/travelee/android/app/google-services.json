@@ -12,7 +12,20 @@
           "package_name": "com.devdino.travelee"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "780787532259-699gdovisgofra9o8a0h7q1blhbjcnvo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devdino.travelee",
+            "certificate_hash": "9a10c24fcf60ac09215a78e8fae37bd9452dacb9"
+          }
+        },
+        {
+          "client_id": "780787532259-acpkuhluqct0lifj7hd38alj612tbhdh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA5vP5c9V7bTQVsCQFBwX9fWKvCMshxmdE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780787532259-acpkuhluqct0lifj7hd38alj612tbhdh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "780787532259-u3h5k309oi3e6a6id45bj54tbuodsrhl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.devdino.travelee"
+              }
+            }
+          ]
         }
       }
     }
