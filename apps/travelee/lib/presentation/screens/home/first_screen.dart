@@ -72,7 +72,10 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      print(' 토큰 확인');
+      print('토큰 확인');
+      print('idToken: ${googleAuth.idToken != null ? "존재" : "null"}');
+      print('accessToken: ${googleAuth.accessToken != null ? "존재" : "null"}');
+      
       // 토큰 확인
       if (googleAuth.idToken == null) {
         print('Google Auth Error: idToken is null');
@@ -80,6 +83,7 @@ class _FirstScreenState extends ConsumerState<FirstScreen> {
         ref.read(loadingStateProvider.notifier).stopLoading();
         return false;
       }
+      
       print('Supabase: start');
 
       // Supabase 로그인
